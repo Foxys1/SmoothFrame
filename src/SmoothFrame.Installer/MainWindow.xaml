@@ -1,0 +1,222 @@
+<Window x:Class="SmoothFrame.Installer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SmoothFrame Setup"
+        Height="440" Width="580"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        FontFamily="{StaticResource DefaultFont}">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="40"
+                      ResizeBorderThickness="0"
+                      GlassFrameThickness="0"
+                      CornerRadius="12"/>
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource BrushAccent}"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="FontSize" Value="13.5"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="24,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource BrushAccentHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SecondaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource BrushSurfaceCard}"/>
+            <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="18,9"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BrushBorder}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource BrushSurfaceHover}"/>
+                                <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="WindowChromeButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}"/>
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource BrushSurfaceHover}"/>
+                                <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="{StaticResource BrushBgDark}"
+            BorderBrush="{StaticResource BrushBorder}"
+            BorderThickness="1"
+            CornerRadius="12">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="46"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Window Header / Title Bar -->
+            <Grid Grid.Row="0" Margin="16,0,8,0" Background="Transparent" MouseLeftButtonDown="OnTitleBarMouseDown">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Path Data="{StaticResource Icon.BoltFill}" Fill="{StaticResource BrushAccent}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,8,0"/>
+                    <TextBlock x:Name="HeaderTitleText" Text="SmoothFrame • Установка" Foreground="{StaticResource BrushTextSecondary}" FontSize="12.5" FontWeight="SemiBold"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Style="{StaticResource WindowChromeButton}" Click="OnMinimizeClick">
+                        <Path Data="{StaticResource Icon.Min}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" Width="10" Height="2" Stretch="Uniform"/>
+                    </Button>
+                    <Button Style="{StaticResource WindowChromeButton}" Click="OnCloseClick">
+                        <Path Data="{StaticResource Icon.Close}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" Width="10" Height="10" Stretch="Uniform"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Main Content Area -->
+            <Grid Grid.Row="1" Margin="28,10,28,24">
+
+                <!-- STEP 1: CONFIGURATION VIEW (INSTALL OR UNINSTALL PROMPT) -->
+                <Grid x:Name="ConfigView" Visibility="Visible">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- App Banner -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,4,0,24">
+                        <Border Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="12" Width="52" Height="52" Margin="0,0,16,0">
+                            <Path Data="{StaticResource Icon.BoltFill}" Fill="{StaticResource BrushAccent}" Width="24" Height="24" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock x:Name="BannerTitle" Text="SmoothFrame v1.0.0" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}"/>
+                            <TextBlock x:Name="BannerSubtitle" Text="Умный оптимизатор игровых задержек, таймеров и процессов" FontSize="12.5" Foreground="{StaticResource BrushTextMuted}" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Install Options Panel -->
+                    <StackPanel x:Name="InstallPanel" Grid.Row="1" VerticalAlignment="Center">
+                        <TextBlock Text="Папка установки программы:" FontSize="12.5" Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,8"/>
+                        <Grid Margin="0,0,0,18">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="InstallPathBox" Background="{StaticResource BrushSurfaceCard}" Foreground="{StaticResource BrushTextPrimary}"
+                                     BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" Padding="12,9" FontSize="12.5"/>
+                            <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Обзор..." Margin="8,0,0,0" Click="OnBrowseClick"/>
+                        </Grid>
+
+                        <StackPanel Margin="2,0,0,0">
+                            <CheckBox x:Name="DesktopShortcutCheck" Content="Создать ярлык на Рабочем столе" IsChecked="True" Foreground="{StaticResource BrushTextSecondary}" FontSize="12.5" Margin="0,0,0,10"/>
+                            <CheckBox x:Name="StartMenuShortcutCheck" Content="Создать ярлык в меню «Пуск»" IsChecked="True" Foreground="{StaticResource BrushTextSecondary}" FontSize="12.5" Margin="0,0,0,10"/>
+                            <CheckBox x:Name="LaunchAfterCheck" Content="Запустить SmoothFrame сразу после завершения" IsChecked="True" Foreground="{StaticResource BrushTextSecondary}" FontSize="12.5"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Uninstall Confirmation Panel -->
+                    <StackPanel x:Name="UninstallPanel" Grid.Row="1" VerticalAlignment="Center" Visibility="Collapsed">
+                        <Border Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="10" Padding="18">
+                            <StackPanel>
+                                <TextBlock Text="Вы уверены, что хотите удалить SmoothFrame?" FontSize="14.5" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                                <TextBlock Text="Все системные параметры (схема питания, таймер Windows) возвращены в заводское состояние. Ярлыки, файлы программы и служба автозагрузки будут полностью очищены."
+                                           FontSize="12.5" Foreground="{StaticResource BrushTextSecondary}" TextWrapping="Wrap" LineHeight="19"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Bottom Buttons -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource SecondaryButton}" Content="Отмена" Click="OnCancelClick" Margin="0,0,10,0"/>
+                        <Button x:Name="PrimaryActionButton" Style="{StaticResource ActionButton}" Content="Установить" Click="OnPrimaryActionClick"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- STEP 2: PROGRESS VIEW -->
+                <Grid x:Name="ProgressView" Visibility="Collapsed" VerticalAlignment="Center">
+                    <StackPanel>
+                        <TextBlock x:Name="ProgressTitle" Text="Выполняется установка SmoothFrame..." FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}" Margin="0,0,0,8"/>
+                        <TextBlock x:Name="ProgressStatusText" Text="Подготовка файлов..." FontSize="13" Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,18"/>
+
+                        <!-- Custom Modern Progress Bar -->
+                        <Grid Height="8" Margin="0,0,0,12">
+                            <Border Background="{StaticResource BrushSurfaceCard}" CornerRadius="4"/>
+                            <Border x:Name="ProgressBarFill" Background="{StaticResource BrushAccent}" CornerRadius="4" HorizontalAlignment="Left" Width="0"/>
+                        </Grid>
+
+                        <TextBlock x:Name="ProgressPercentText" Text="0%" FontSize="12" Foreground="{StaticResource BrushTextMuted}" HorizontalAlignment="Right"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- STEP 3: COMPLETED VIEW -->
+                <Grid x:Name="CompletedView" Visibility="Collapsed" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center">
+                        <Border Background="#1E293B" CornerRadius="32" Width="64" Height="64" HorizontalAlignment="Center" Margin="0,0,0,16">
+                            <Path Data="{StaticResource Icon.Check}" Stroke="#10B981" StrokeThickness="3" Width="26" Height="26" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <TextBlock x:Name="CompletedTitleText" Text="Установка успешно завершена!" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="CompletedSubText" Text="SmoothFrame готов к использованию и оптимизации ваших игр." FontSize="13" Foreground="{StaticResource BrushTextSecondary}" HorizontalAlignment="Center" Margin="0,8,0,24"/>
+
+                        <Button Style="{StaticResource ActionButton}" Content="Завершить" Padding="32,10" HorizontalAlignment="Center" Click="OnFinishClick"/>
+                    </StackPanel>
+                </Grid>
+
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

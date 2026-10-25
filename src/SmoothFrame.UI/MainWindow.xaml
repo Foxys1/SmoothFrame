@@ -1,0 +1,647 @@
+<Window x:Class="SmoothFrame.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:SmoothFrame.UI.Controls"
+        xmlns:converters="clr-namespace:SmoothFrame.UI.Converters"
+        mc:Ignorable="d"
+        Title="{DynamicResource App.Title}"
+        Height="760" Width="1120"
+        MinHeight="640" MinWidth="920"
+        WindowStartupLocation="CenterScreen"
+        Foreground="{StaticResource BrushTextPrimary}"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="40"
+                      ResizeBorderThickness="6"
+                      GlassFrameThickness="0"
+                      CornerRadius="0" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <converters:Base64ToImageConverter x:Key="Base64ToImageConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisConverter" />
+
+        <SolidColorBrush x:Key="BrushSuccessTint" Color="#0E2A21"/>
+        <SolidColorBrush x:Key="BrushWarningTint" Color="#2B2110"/>
+        <SolidColorBrush x:Key="BrushDangerHover" Color="#FF7189"/>
+        <SolidColorBrush x:Key="BrushDangerPressed" Color="#D23B55"/>
+
+        <Style x:Key="EmptyHint" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,60,0,0"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasItems, ElementName=GamesList}" Value="False">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="HeroButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="9"
+                                Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushAccentHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushAccentPressed}"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding IsOptimizing}" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushDanger}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsOptimizing}" Value="False">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushAccent}"/>
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsOptimizing}" Value="True"/>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushDangerHover}"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsOptimizing}" Value="True"/>
+                                    <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushDangerPressed}"/>
+                            </MultiDataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GameCardItem" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="CardBd"
+                                Background="{StaticResource BrushBgInset}"
+                                BorderBrush="{StaticResource BrushBorder}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Width="168" Height="136"
+                                Margin="6"
+                                Cursor="Hand">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CardBd" Property="Background" Value="{StaticResource BrushBgCardHover}"/>
+                                <Setter TargetName="CardBd" Property="BorderBrush" Value="{StaticResource BrushBorderStrong}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="CardBd" Property="BorderBrush" Value="{StaticResource BrushAccent}"/>
+                                <Setter TargetName="CardBd" Property="Background" Value="{StaticResource BrushAccentSoft}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="10"
+            Background="{StaticResource BrushBgApp}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="32"/>
+            </Grid.RowDefinitions>
+
+            <!-- ===================== TITLE BAR ===================== -->
+            <Border Grid.Row="0" Background="{StaticResource BrushBgSide}"
+                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,0,1"
+                    CornerRadius="9,9,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
+                        <Border Background="{StaticResource BrushAccent}" CornerRadius="6" Width="22" Height="22">
+                            <controls:AppIcon Data="{StaticResource Icon.BoltFill}" Filled="True" Size="12"
+                                              Foreground="{StaticResource BrushOnAccent}"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="SmoothFrame" FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{StaticResource BrushTextPrimary}"
+                                   VerticalAlignment="Center" Margin="9,0,0,0"/>
+                        <Border Background="{StaticResource BrushAccentSoft}" CornerRadius="4" Padding="7,2"
+                                Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{DynamicResource Badge.Safe}" FontSize="10.5" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushAccentHover}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Button Style="{StaticResource TitleBarButton}" Click="MinimizeButton_Click">
+                            <controls:AppIcon Data="{StaticResource Icon.Min}" Size="12"/>
+                        </Button>
+                        <Button Style="{StaticResource TitleBarButton}" Click="MaximizeButton_Click">
+                            <controls:AppIcon Data="{StaticResource Icon.Max}" Size="11"/>
+                        </Button>
+                        <Button Style="{StaticResource TitleBarCloseButton}" Click="CloseButton_Click">
+                            <controls:AppIcon Data="{StaticResource Icon.Close}" Size="11"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ===================== BODY ===================== -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="236"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- = Sidebar = -->
+                <Border Grid.Column="0" Background="{StaticResource BrushBgSide}"
+                        BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,1,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="{DynamicResource Nav.Caption}"
+                                   Style="{StaticResource TextCaption}" Margin="22,20,0,8"/>
+
+                        <StackPanel Grid.Row="1">
+                            <RadioButton x:Name="NavOpt" GroupName="Nav" Style="{StaticResource SideNavItem}"
+                                         Checked="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <controls:AppIcon Data="{StaticResource Icon.Gauge}" Size="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="{DynamicResource Nav.Opt}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="NavSettings" GroupName="Nav" Style="{StaticResource SideNavItem}"
+                                         Checked="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <controls:AppIcon Data="{StaticResource Icon.Settings}" Size="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="{DynamicResource Nav.Settings}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="NavProtect" GroupName="Nav" Style="{StaticResource SideNavItem}"
+                                         Checked="Nav_Checked">
+                                <StackPanel Orientation="Horizontal">
+                                    <controls:AppIcon Data="{StaticResource Icon.Shield}" Size="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="{DynamicResource Nav.Protect}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </RadioButton>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2">
+                            <Border Height="1" Background="{StaticResource BrushBorder}" Margin="10,8"/>
+                            <TextBlock Text="v1.0.0" Style="{StaticResource TextCaption}" Margin="22,6,0,16"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- = Content pages = -->
+                <Grid Grid.Column="1" x:Name="ContentHost">
+
+                    <!-- ===== PAGE: OPTIMIZATION ===== -->
+                    <Grid x:Name="PageOpt">
+                        <ScrollViewer Style="{StaticResource DarkScrollViewer}"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="28,22,28,26">
+                                <TextBlock Text="{DynamicResource Opt.Title}" Style="{StaticResource TextTitle}"/>
+                                <TextBlock Text="{DynamicResource Opt.Subtitle}" Style="{StaticResource TextBody}"
+                                           Margin="0,4,0,20"/>
+
+                                <!-- Telemetry cards -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Style="{StaticResource Card}" Padding="16,14" Margin="0,0,7,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="34" Height="34" CornerRadius="8"
+                                                    Background="{StaticResource BrushAccentSoft}" VerticalAlignment="Top">
+                                                <controls:AppIcon Data="{StaticResource Icon.Clock}" Size="16"
+                                                                  Foreground="{StaticResource BrushAccentHover}"
+                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                                <TextBlock Text="{DynamicResource Card.Timer.Label}" Style="{StaticResource TextCaption}"/>
+                                                <TextBlock Text="{Binding TimerText}" Style="{StaticResource TextValue}" Margin="0,4,0,2"/>
+                                                <TextBlock Text="{DynamicResource Card.Timer.Hint}" Style="{StaticResource TextCaption}" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <Border Grid.Column="1" Style="{StaticResource Card}" Padding="16,14" Margin="7,0,7,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="34" Height="34" CornerRadius="8"
+                                                    Background="{StaticResource BrushSuccessTint}" VerticalAlignment="Top">
+                                                <controls:AppIcon Data="{StaticResource Icon.Bolt}" Size="16"
+                                                                  Foreground="{StaticResource BrushSuccess}"
+                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                                <TextBlock Text="{DynamicResource Card.Power.Label}" Style="{StaticResource TextCaption}"/>
+                                                <TextBlock Text="{Binding PowerPlanText}" Style="{StaticResource TextValue}" Margin="0,4,0,2"/>
+                                                <TextBlock Text="{DynamicResource Card.Power.Hint}" Style="{StaticResource TextCaption}" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <Border Grid.Column="2" Style="{StaticResource Card}" Padding="16,14" Margin="7,0,0,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="34" Height="34" CornerRadius="8"
+                                                    Background="{StaticResource BrushWarningTint}" VerticalAlignment="Top">
+                                                <controls:AppIcon Data="{StaticResource Icon.Trend}" Size="16"
+                                                                  Foreground="{StaticResource BrushWarning}"
+                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                                <TextBlock Text="{DynamicResource Card.Prio.Label}" Style="{StaticResource TextCaption}"/>
+                                                <TextBlock Text="{Binding PriorityText}" Style="{StaticResource TextValue}" Margin="0,4,0,2"/>
+                                                <TextBlock Text="{DynamicResource Card.Prio.Hint}" Style="{StaticResource TextCaption}" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Hero action card -->
+                                <Border Style="{StaticResource Card}" Margin="0,14,0,20" Padding="22">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border Background="{StaticResource BrushSuccessTint}" CornerRadius="4"
+                                                        Padding="7,3" Margin="0,0,10,0" VerticalAlignment="Center"
+                                                        Visibility="{Binding IsOptimizing, Converter={StaticResource BoolToVisConverter}}">
+                                                    <TextBlock Text="{DynamicResource Hero.ActiveBadge}" FontSize="10"
+                                                               FontWeight="SemiBold" Foreground="{StaticResource BrushSuccess}"/>
+                                                </Border>
+                                                <TextBlock Text="{Binding StatusMessage}" FontSize="18" FontWeight="SemiBold"
+                                                           Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding SubStatusMessage}" Style="{StaticResource TextBody}" Margin="0,6,0,0"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                                <controls:AppIcon Data="{StaticResource Icon.ShieldCheck}" Size="13"
+                                                                  Foreground="{StaticResource BrushSuccess}" Margin="0,0,7,0"/>
+                                                <TextBlock Text="{DynamicResource Hero.Protect}" FontSize="11.5"
+                                                           Foreground="{StaticResource BrushSuccess}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="1" Style="{StaticResource HeroButton}"
+                                                Padding="26,15"
+                                                Command="{Binding ToggleOptimizationCommand}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <controls:AppIcon Data="{StaticResource Icon.PlayFill}" Filled="True" Size="12"
+                                                                  Margin="0,0,10,0"
+                                                                  Visibility="{Binding IsOptimizing, Converter={StaticResource InverseBoolToVisConverter}}"/>
+                                                <controls:AppIcon Data="{StaticResource Icon.Power}" Size="14"
+                                                                  Margin="0,0,10,0"
+                                                                  Visibility="{Binding IsOptimizing, Converter={StaticResource BoolToVisConverter}}"/>
+                                                <TextBlock Text="{Binding ActionButtonText}" FontSize="13.5" FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Library header -->
+                                <Grid Margin="0,0,0,10">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <controls:AppIcon Data="{StaticResource Icon.Game}" Size="16"
+                                                          Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,9,0"/>
+                                        <TextBlock Text="{DynamicResource Lib.Title}" Style="{StaticResource TextSection}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding AddCustomGameCommand}" Margin="0,0,8,0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <controls:AppIcon Data="{StaticResource Icon.Plus}" Size="11" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{DynamicResource Btn.AddGame}" FontSize="12.5"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding RefreshGamesCommand}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <controls:AppIcon Data="{StaticResource Icon.Refresh}" Size="12" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{DynamicResource Btn.Refresh}" FontSize="12.5"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Games grid -->
+                                <Border Style="{StaticResource Card}" Padding="8" MinHeight="240">
+                                    <Grid>
+                                        <ListBox x:Name="GamesList"
+                                                 ItemsSource="{Binding Games}"
+                                                 SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
+                                                 Background="Transparent"
+                                                 BorderThickness="0"
+                                                 ItemContainerStyle="{StaticResource GameCardItem}"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                            <ListBox.InputBindings>
+                                                <KeyBinding Key="Delete" Command="{Binding RemoveCustomGameCommand}" CommandParameter="{Binding SelectedGame}"/>
+                                            </ListBox.InputBindings>
+                                            <ListBox.Resources>
+                                                <Style TargetType="ScrollViewer" BasedOn="{StaticResource DarkScrollViewer}"/>
+                                            </ListBox.Resources>
+                                            <ListBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ListBox.ItemsPanel>
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="10" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
+                                                        <Grid.ContextMenu>
+                                                            <ContextMenu Background="{StaticResource BrushBgCard}" BorderBrush="{StaticResource BrushBorderStrong}" BorderThickness="1">
+                                                                <MenuItem Header="{DynamicResource VM.Msg.RemoveTitle}"
+                                                                          Foreground="{StaticResource BrushTextPrimary}"
+                                                                          Command="{Binding PlacementTarget.Tag.RemoveCustomGameCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                                          CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+                                                                    <MenuItem.Style>
+                                                                        <Style TargetType="MenuItem">
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding Source}" Value="Custom">
+                                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                                        </Style>
+                                                                    </MenuItem.Style>
+                                                                </MenuItem>
+                                                            </ContextMenu>
+                                                        </Grid.ContextMenu>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="*"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                        </Grid.RowDefinitions>
+                                                        <Image Grid.Row="0" Width="40" Height="40" HorizontalAlignment="Center"
+                                                               Source="{Binding IconBase64, Converter={StaticResource Base64ToImageConverter}}"/>
+                                                        <TextBlock Grid.Row="1" Text="{Binding Name}"
+                                                                   Foreground="{StaticResource BrushTextPrimary}"
+                                                                   FontSize="11.5" FontWeight="SemiBold"
+                                                                   TextWrapping="Wrap" TextAlignment="Center"
+                                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                   Margin="0,6,0,0"/>
+                                                        <Border Grid.Row="2" Background="{StaticResource BrushBgCard}"
+                                                                CornerRadius="4" Padding="6,2"
+                                                                HorizontalAlignment="Center" Margin="0,6,0,0">
+                                                            <TextBlock Text="{Binding Source}" FontSize="9.5"
+                                                                       Foreground="{StaticResource BrushTextMuted}"/>
+                                                        </Border>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                        <TextBlock Text="{DynamicResource Lib.Empty}" Style="{StaticResource EmptyHint}"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <!-- ===== PAGE: SETTINGS ===== -->
+                    <Grid x:Name="PageSettings" Visibility="Collapsed">
+                        <ScrollViewer Style="{StaticResource DarkScrollViewer}"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="28,22,28,26" HorizontalAlignment="Left" MaxWidth="780">
+                                <TextBlock Text="{DynamicResource Sett.Title}" Style="{StaticResource TextTitle}"/>
+                                <TextBlock Text="{DynamicResource Sett.Subtitle}" Style="{StaticResource TextBody}" Margin="0,4,0,18"/>
+
+                                <Border Style="{StaticResource Card}">
+                                    <StackPanel>
+                                        <Grid Margin="18,16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" MaxWidth="600">
+                                                <TextBlock Text="{DynamicResource Set.Autostart.Title}" FontSize="13.5" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{DynamicResource Set.Autostart.Desc}" Style="{StaticResource TextBody}" FontSize="12" TextWrapping="Wrap" Margin="0,4,24,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding AutostartEnabled, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="18,0"/>
+                                        <Grid Margin="18,16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" MaxWidth="600">
+                                                <TextBlock Text="{DynamicResource Set.Timer.Title}" FontSize="13.5" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{DynamicResource Set.Timer.Desc}" Style="{StaticResource TextBody}" FontSize="12" TextWrapping="Wrap" Margin="0,4,24,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding HighPrecisionTimer, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="18,0"/>
+                                        <Grid Margin="18,16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" MaxWidth="600">
+                                                <TextBlock Text="{DynamicResource Set.Power.Title}" FontSize="13.5" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{DynamicResource Set.Power.Desc}" Style="{StaticResource TextBody}" FontSize="12" TextWrapping="Wrap" Margin="0,4,24,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding HighPerformancePlan, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="18,0"/>
+                                        <Grid Margin="18,16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" MaxWidth="600">
+                                                <TextBlock Text="{DynamicResource Set.Bg.Title}" FontSize="13.5" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{DynamicResource Set.Bg.Desc}" Style="{StaticResource TextBody}" FontSize="12" TextWrapping="Wrap" Margin="0,4,24,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding DeprioritizeBackground, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="18,0"/>
+                                        <Grid Margin="18,16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" MaxWidth="600">
+                                                <TextBlock Text="{DynamicResource Set.Cores.Title}" FontSize="13.5" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{DynamicResource Set.Cores.Desc}" Style="{StaticResource TextBody}" FontSize="12" TextWrapping="Wrap" Margin="0,4,24,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding IsolatePCores, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="18,0"/>
+                                        <Grid Margin="18,16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" MaxWidth="600">
+                                                <TextBlock Text="{DynamicResource Set.Lang.Title}" FontSize="13.5" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{DynamicResource Set.Lang.Desc}" Style="{StaticResource TextBody}" FontSize="12" TextWrapping="Wrap" Margin="0,4,24,0"/>
+                                            </StackPanel>
+                                            <ComboBox Grid.Column="1" x:Name="LanguageCombo" Style="{StaticResource DarkComboBox}"
+                                                      Width="190" DisplayMemberPath="NativeName"
+                                                      VerticalAlignment="Center" SelectionChanged="LanguageCombo_SelectionChanged"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <!-- ===== PAGE: PROTECTION ===== -->
+                    <Grid x:Name="PageProtect" Visibility="Collapsed">
+                        <ScrollViewer Style="{StaticResource DarkScrollViewer}"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="28,22,28,26" HorizontalAlignment="Left" MaxWidth="800">
+                                <TextBlock Text="{DynamicResource Prot.Title}" Style="{StaticResource TextTitle}"/>
+                                <TextBlock Text="{DynamicResource Prot.Subtitle}" Style="{StaticResource TextBody}" Margin="0,4,0,18"/>
+
+                                <Border Style="{StaticResource Card}" Padding="20" Margin="0,0,0,12">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="38" Height="38" CornerRadius="9" Background="{StaticResource BrushAccentSoft}" VerticalAlignment="Top">
+                                            <controls:AppIcon Data="{StaticResource Icon.Lock}" Size="18"
+                                                              Foreground="{StaticResource BrushAccentHover}"
+                                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Margin="16,0,0,0">
+                                            <TextBlock Text="{DynamicResource Prot.Zero.Title}" FontSize="14.5" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{DynamicResource Prot.Zero.Body}" Style="{StaticResource TextBody}"
+                                                       FontSize="12.5" TextWrapping="Wrap" Margin="0,6,0,0" LineHeight="19"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource Card}" Padding="20" Margin="0,0,0,12">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="38" Height="38" CornerRadius="9" Background="{StaticResource BrushSuccessTint}" VerticalAlignment="Top">
+                                            <controls:AppIcon Data="{StaticResource Icon.Restore}" Size="18"
+                                                              Foreground="{StaticResource BrushSuccess}"
+                                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Margin="16,0,0,0">
+                                            <TextBlock Text="{DynamicResource Prot.Rev.Title}" FontSize="14.5" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{DynamicResource Prot.Rev.Body}" Style="{StaticResource TextBody}"
+                                                       FontSize="12.5" TextWrapping="Wrap" Margin="0,6,0,0" LineHeight="19"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource Card}" Padding="20">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="38" Height="38" CornerRadius="9" Background="{StaticResource BrushWarningTint}" VerticalAlignment="Top">
+                                            <controls:AppIcon Data="{StaticResource Icon.Activity}" Size="18"
+                                                              Foreground="{StaticResource BrushWarning}"
+                                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Margin="16,0,0,0">
+                                            <TextBlock Text="{DynamicResource Prot.Crash.Title}" FontSize="14.5" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{DynamicResource Prot.Crash.Body}" Style="{StaticResource TextBody}"
+                                                       FontSize="12.5" TextWrapping="Wrap" Margin="0,6,0,0" LineHeight="19"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <!-- ===================== FOOTER ===================== -->
+            <Border Grid.Row="2" Background="{StaticResource BrushBgSide}"
+                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,1,0,0"
+                    CornerRadius="0,0,9,9" Padding="16,0">
+                <Grid VerticalAlignment="Center">
+                    <TextBlock Text="{DynamicResource Footer.Left}" Style="{StaticResource TextCaption}"/>
+                    <TextBlock Text="{DynamicResource Footer.Right}" Style="{StaticResource TextCaption}" HorizontalAlignment="Right"/>
+                </Grid>
+            </Border>
+
+            <!-- ===================== ONBOARDING OVERLAY ===================== -->
+            <Grid Grid.Row="1" x:Name="OnboardingOverlay" Visibility="Collapsed"
+                  Background="{StaticResource BrushBgApp}">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center">
+                        <Border Background="{StaticResource BrushAccent}" CornerRadius="14" Width="58" Height="58"
+                                HorizontalAlignment="Center">
+                            <controls:AppIcon Data="{StaticResource Icon.BoltFill}" Filled="True" Size="26"
+                                              Foreground="{StaticResource BrushOnAccent}"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock x:Name="WelcomeText" FontSize="34" FontWeight="SemiBold"
+                                   Foreground="{StaticResource BrushTextPrimary}"
+                                   HorizontalAlignment="Center" Margin="0,26,0,8"/>
+                        <TextBlock x:Name="WelcomeLanguage" Style="{StaticResource TextCaption}" FontSize="12"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Onb.Tagline}" Style="{StaticResource TextBody}" FontSize="12.5"
+                                   HorizontalAlignment="Center" Margin="0,18,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,32,0,0">
+                        <controls:AppIcon Data="{StaticResource Icon.Globe}" Size="14"
+                                          Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,8,0"/>
+                        <TextBlock Text="{DynamicResource Onb.Language}" Style="{StaticResource TextBody}"/>
+                    </StackPanel>
+                    <ComboBox x:Name="OnboardingLanguageCombo" Style="{StaticResource DarkComboBox}"
+                              Width="230" DisplayMemberPath="NativeName"
+                              HorizontalAlignment="Center" Margin="0,10,0,28"
+                              SelectionChanged="OnboardingLanguage_SelectionChanged"/>
+
+                    <Button Style="{StaticResource PrimaryButton}" Padding="36,12"
+                            HorizontalAlignment="Center" Click="OnOnboardingContinue">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{DynamicResource Onb.Continue}" FontSize="13.5" FontWeight="SemiBold" Margin="0,0,10,0"/>
+                            <controls:AppIcon Data="{StaticResource Icon.ArrowRight}" Size="14"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

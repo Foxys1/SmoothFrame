@@ -1,0 +1,83 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="Lang.Code">fr</sys:String>
+
+    <sys:String x:Key="App.Title">SmoothFrame — Optimiseur de jeu</sys:String>
+    <sys:String x:Key="Badge.Safe">Sûr et réversible</sys:String>
+    <sys:String x:Key="Nav.Caption">Sections</sys:String>
+    <sys:String x:Key="Nav.Opt">Optimisation</sys:String>
+    <sys:String x:Key="Nav.Settings">Paramètres</sys:String>
+    <sys:String x:Key="Nav.Protect">Protection</sys:String>
+    <sys:String x:Key="Side.Language">Langue de l'interface</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v1.0.0 — optimiseur sûr de processus de jeu</sys:String>
+    <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
+
+    <sys:String x:Key="Opt.Title">Optimisation</sys:String>
+    <sys:String x:Key="Opt.Subtitle">Accélération du système en un clic, entièrement réversible</sys:String>
+    <sys:String x:Key="Card.Timer.Label">MINUTERIE SYSTÈME</sys:String>
+    <sys:String x:Key="Card.Timer.Hint">Réduit la latence des interruptions de l'OS</sys:String>
+    <sys:String x:Key="Card.Power.Label">MODE D'ALIMENTATION</sys:String>
+    <sys:String x:Key="Card.Power.Hint">Désactive le parking des cœurs CPU</sys:String>
+    <sys:String x:Key="Card.Prio.Label">PRIORITÉ DU PROCESSUS</sys:String>
+    <sys:String x:Key="Card.Prio.Hint">Priorité maximale aux threads du jeu</sys:String>
+    <sys:String x:Key="Hero.ActiveBadge">ACTIF</sys:String>
+    <sys:String x:Key="Hero.Protect">Protection : 0 % d'injection mémoire, compatible anti-triche</sys:String>
+    <sys:String x:Key="Lib.Title">Bibliothèque de jeux</sys:String>
+    <sys:String x:Key="Lib.Empty">Aucun jeu trouvé — ajoutez-en un avec le bouton ci-dessus</sys:String>
+    <sys:String x:Key="Btn.AddGame">Ajouter un jeu (.exe)</sys:String>
+    <sys:String x:Key="Btn.Refresh">Actualiser</sys:String>
+    <sys:String x:Key="Btn.Activate">Activer l'optimisation</sys:String>
+    <sys:String x:Key="Btn.Deactivate">Désactiver l'optimisation</sys:String>
+
+    <sys:String x:Key="Sett.Title">Paramètres</sys:String>
+    <sys:String x:Key="Sett.Subtitle">Réglage fin du profil d'optimisation</sys:String>
+    <sys:String x:Key="Set.Autostart.Title">Lancement automatique avec Windows</sys:String>
+    <sys:String x:Key="Set.Autostart.Desc">Enregistre l'application dans le Planificateur de tâches pour démarrer avec les droits administrateur sans invite UAC, et l'affiche dans l'onglet Démarrage du Gestionnaire des tâches.</sys:String>
+    <sys:String x:Key="Set.Timer.Title">Minuterie système haute précision (0,5 ms)</sys:String>
+    <sys:String x:Key="Set.Timer.Desc">Porte la fréquence d'interruption de la minuterie système à 0,5 ms. Réduit le jitter DPC/ISR et la latence de la souris.</sys:String>
+    <sys:String x:Key="Set.Power.Title">Mode "Performances élevées"</sys:String>
+    <sys:String x:Key="Set.Power.Desc">Empêche la chute de fréquence des cœurs pendant les micro-pauses et désactive le parking des cœurs.</sys:String>
+    <sys:String x:Key="Set.Bg.Title">Limitation des programmes d'arrière-plan</sys:String>
+    <sys:String x:Key="Set.Bg.Desc">Passe temporairement les navigateurs (Chrome, Edge), torrents et launchers en priorité "Inférieure à la normale", libérant des ressources pour le jeu.</sys:String>
+    <sys:String x:Key="Set.Cores.Title">Isolation des cœurs P</sys:String>
+    <sys:String x:Key="Set.Cores.Desc">Dirige les threads du jeu uniquement vers les cœurs P de performance (pour Intel 12–14 gen ou AMD 3D V-Cache).</sys:String>
+    <sys:String x:Key="Set.Lang.Title">Langue de l'interface</sys:String>
+    <sys:String x:Key="Set.Lang.Desc">S'applique instantanément à toute l'application, y compris cette fenêtre.</sys:String>
+
+    <sys:String x:Key="Prot.Title">Protection et sécurité</sys:String>
+    <sys:String x:Key="Prot.Subtitle">Pourquoi SmoothFrame est sûr pour votre système et votre compte</sys:String>
+    <sys:String x:Key="Prot.Zero.Title">Principe Zero-Injection (0 % de risque de ban)</sys:String>
+    <sys:String x:Key="Prot.Zero.Body">SmoothFrame n'injecte aucune bibliothèque dynamique (DLL), ne pose aucun hook sur les pipelines graphiques DirectX/Vulkan et ne touche pas à la mémoire virtuelle du processus de jeu. L'optimisation passe exclusivement par les API officielles du planificateur Windows. Le programme est donc totalement invisible et sûr pour Vanguard, Easy Anti-Cheat, BattlEye et VAC.</sys:String>
+    <sys:String x:Key="Prot.Rev.Title">Réversibilité totale (Strict Reversibility)</sys:String>
+    <sys:String x:Key="Prot.Rev.Body">Avant toute modification, un instantané des paramètres système est créé. En cliquant sur "Désactiver l'optimisation" ou en fermant simplement la fenêtre de SmoothFrame, le mode d'alimentation, la minuterie système et les priorités d'origine des applications d'arrière-plan retrouvent instantanément leur état initial.</sys:String>
+    <sys:String x:Key="Prot.Crash.Title">Protection anti-plante (Crash Recovery Engine)</sys:String>
+    <sys:String x:Key="Prot.Crash.Body">L'instantané d'état est conservé sur le disque. Si le PC redémarre brutalement ou que le processus meurt en pleine partie, SmoothFrame détecte la session inachevée au prochain lancement et restaure tout seul les paramètres Windows d'origine.</sys:String>
+
+    <sys:String x:Key="Onb.Continue">Continuer</sys:String>
+    <sys:String x:Key="Onb.Language">Langue de l'interface</sys:String>
+    <sys:String x:Key="Onb.Tagline">Optimiseur sûr de processus de jeu</sys:String>
+
+    <sys:String x:Key="VM.Status.SelectGame">Choisissez un jeu puis cliquez sur "Activer"</sys:String>
+    <sys:String x:Key="VM.Status.Selected">Sélectionné : {0}</sys:String>
+    <sys:String x:Key="VM.Status.Active">Optimisation active : {0}</sys:String>
+    <sys:String x:Key="VM.Sub.Protected">Protection active : mode sûr sans injection</sys:String>
+    <sys:String x:Key="VM.Sub.Active">Minuterie 0,5 ms, mode performances élevées</sys:String>
+    <sys:String x:Key="VM.Sub.Idle">Cliquez sur "Activer" pour lancer le profil</sys:String>
+    <sys:String x:Key="VM.Timer.ActiveSuffix">ms (0.5 ms High Precision)</sys:String>
+    <sys:String x:Key="VM.Timer.StdSuffix">ms (par défaut Windows)</sys:String>
+    <sys:String x:Key="VM.Power.Active">Performances élevées</sys:String>
+    <sys:String x:Key="VM.Power.Std">Utilisation normale / Standard</sys:String>
+    <sys:String x:Key="VM.Prio.Active">High Priority Class</sys:String>
+    <sys:String x:Key="VM.Prio.Std">Normal (standard)</sys:String>
+    <sys:String x:Key="VM.Msg.NoGame">Veuillez choisir un jeu dans la liste ou en ajouter un manuellement.</sys:String>
+    <sys:String x:Key="VM.Dialog.ExeTitle">Sélectionnez l'exécutable du jeu (.exe)</sys:String>
+    <sys:String x:Key="VM.Dialog.ExeFilter">Exécutables (*.exe)|*.exe|Tous les fichiers (*.*)|*.*</sys:String>
+    <sys:String x:Key="VM.Msg.AddError">Erreur lors de l'ajout : {0}</sys:String>
+    <sys:String x:Key="VM.Msg.ErrorTitle">Erreur</sys:String>
+    <sys:String x:Key="VM.Msg.RemoveConfirm">Retirer "{0}" de la liste des jeux ?</sys:String>
+    <sys:String x:Key="VM.Msg.RemoveTitle">Confirmation</sys:String>
+    <sys:String x:Key="VM.AppName">SmoothFrame</sys:String>
+
+</ResourceDictionary>

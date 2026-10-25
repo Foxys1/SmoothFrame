@@ -1,0 +1,45 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothFrame.Core", "src\SmoothFrame.Core\SmoothFrame.Core.csproj", "{B809E285-42B8-4657-B3FF-6489F11C27E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothFrame.UI", "src\SmoothFrame.UI\SmoothFrame.UI.csproj", "{1AA88689-FCEE-412E-B51C-AD513E68A27A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothFrame.Installer", "src\SmoothFrame.Installer\SmoothFrame.Installer.csproj", "{243220E5-0382-4838-9BFE-42BA28AD1073}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothFrame.Runner", "tests\SmoothFrame.Runner\SmoothFrame.Runner.csproj", "{929B912B-B04A-433D-AE49-E6043D85A751}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothFrame.Challenge", "tests\SmoothFrame.Challenge\SmoothFrame.Challenge.csproj", "{3B4B5E6A-A23C-4EE3-9D4A-1E3BA2230B87}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B809E285-42B8-4657-B3FF-6489F11C27E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B809E285-42B8-4657-B3FF-6489F11C27E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B809E285-42B8-4657-B3FF-6489F11C27E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B809E285-42B8-4657-B3FF-6489F11C27E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AA88689-FCEE-412E-B51C-AD513E68A27A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AA88689-FCEE-412E-B51C-AD513E68A27A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AA88689-FCEE-412E-B51C-AD513E68A27A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AA88689-FCEE-412E-B51C-AD513E68A27A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{243220E5-0382-4838-9BFE-42BA28AD1073}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{243220E5-0382-4838-9BFE-42BA28AD1073}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{243220E5-0382-4838-9BFE-42BA28AD1073}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{243220E5-0382-4838-9BFE-42BA28AD1073}.Release|Any CPU.Build.0 = Release|Any CPU
+		{929B912B-B04A-433D-AE49-E6043D85A751}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{929B912B-B04A-433D-AE49-E6043D85A751}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{929B912B-B04A-433D-AE49-E6043D85A751}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{929B912B-B04A-433D-AE49-E6043D85A751}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B4B5E6A-A23C-4EE3-9D4A-1E3BA2230B87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B4B5E6A-A23C-4EE3-9D4A-1E3BA2230B87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B4B5E6A-A23C-4EE3-9D4A-1E3BA2230B87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B4B5E6A-A23C-4EE3-9D4A-1E3BA2230B87}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
