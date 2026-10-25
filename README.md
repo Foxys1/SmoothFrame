@@ -5,90 +5,92 @@
 [![.NET](https://img.shields.io/badge/.NET-8.0%20WPF-purple.svg)]()
 [![Tests](https://img.shields.io/badge/Tests-164%20Passing-brightgreen.svg)]()
 
-> **SmoothFrame** — безопасный, полностью обратимый и прозрачный оптимизатор игрового процесса для Windows 10 и 11.
+🌐 **English** | **[Русский](README_RU.md)**
 
-Разработан для устранения микрофризов, стабилизации времени кадра (Frame Pacing) и снижения задержки ввода (Input Lag) без агрессивных твиков реестра и без изменения системных файлов.
+> **SmoothFrame** is a lightweight, transparent, safe, and 100% reversible game optimization utility for Windows 10 and 11.
 
----
-
-## 🚀 Ключевые возможности
-
-* **Высокоточный системный таймер:** Переключение разрешения таймера Windows до **0.5 мс** через нативный вызов `NtSetTimerResolution` для минимальной задержки обработки ввода.
-* **Схема электропитания:** Автоматический переход на план максимальной производительности во время игровой сессии с мгновенным возвратом на исходный план при закрытии игры.
-* **Тюнинг приоритетов процессов:** Повышение приоритета активной игры с мягким понижением фоновых некритичных задач.
-* **Защита от подмены процессов (PID Recycling):** Проверка времени старта (`StartTime`) и абсолютного пути исполняемого файла исключает ошибочное изменение переиспользованных идентификаторов процессов.
-* **Неизменяемый чёрный список (Blacklist):** Жёсткая защита критических процессов Windows (`csrss.exe`, `dwm.exe`, `audiodg.exe`, `explorer.exe` и др.) от любых изменений.
-* **100% обратимость и защита от сбоев (WAL Snapshot):** Все исходные настройки атомарно фиксируются в файле снимка состояния (`active_snapshot.json`). При выходе из игры, закрытии программы или аварийном выключении ПК система автоматически откатывается в первоначальное состояние.
-* **100% оффлайн и приватность:** В коде полностью отсутствуют сетевые вызовы, сокеты, аналитика и сбор телеметрии.
-* **Современный темный UI:** Плавный интерфейс на WPF с поддержкой 14 языков (русский, английский, немецкий, французский, испанский и др.).
+Engineered to eliminate micro-stutters, stabilize frame pacing, and minimize input latency without dangerous registry hacks or system file modifications.
 
 ---
 
-## 🛡️ Безопасность и архитектура
+## 🚀 Key Features
 
-SmoothFrame прошёл независимый аудит информационной безопасности и многопоточное стресс-тестирование:
+* **High-Precision System Timer:** Dynamically scales Windows multimedia timer resolution down to **0.5 ms** via the native `NtSetTimerResolution` API for lowest possible input latency.
+* **Intelligent Power Scheme Switching:** Automatically switches to the Windows High Performance power plan during active gameplay sessions and cleanly restores your previous plan on exit.
+* **Process Priority Optimization:** Elevates foreground game process priority while safely reducing priority of non-critical background clutter.
+* **PID Recycling Protection:** Verifies process start time (`StartTime`) and executable path before applying modifications, strictly preventing accidental priority changes to recycled process IDs.
+* **Immutable System Blacklist:** Hardcoded protection for essential Windows services and processes (`csrss.exe`, `dwm.exe`, `audiodg.exe`, `explorer.exe`, etc.).
+* **100% Reversible with Crash Recovery (WAL Snapshot):** Baseline system states are atomically saved to `active_snapshot.json`. On game close, application exit, or even an unexpected power cut, original system settings are automatically restored on startup.
+* **100% Offline & Private:** Zero network sockets, zero telemetry, zero analytics, and zero remote data transmission.
+* **Modern Dark WPF UI:** Fluid vector-based interface with dynamic localization supporting 14 languages (English, Russian, German, French, Spanish, Japanese, Chinese, etc.).
 
-| Критерий | Статус | Описание |
+---
+
+## 🛡️ Security & Architecture
+
+SmoothFrame has been subjected to comprehensive independent security auditing and multi-threaded stress verification:
+
+| Metric | Status | Details |
 | :--- | :---: | :--- |
-| **Вредоносный код** | 0% | Исходный код открыт. Нет троянов, кейлоггеров, стилеров и скрытых майнеров. |
-| **Сетевая активность** | Отсутствует | Программа не имеет прав и модулей для выхода в интернет. |
-| **Целостность Windows** | Гарантирована | Системные файлы и защищённые ветки реестра не модифицируются. |
-| **Откат изменений** | Автоматический | Восстановление системного таймера, плана питания и приоритетов при завершении. |
-| **Автоматические тесты** | 164 / 164 | Комплексные тесты ядра, безопасности и корректности отката. |
+| **Malware / PUP** | 0% | Open-source code. Zero trojans, keyloggers, stealers, or cryptominers. |
+| **Network Activity** | None | Fully offline. Contains no network sockets, HTTP clients, or telemetry endpoints. |
+| **System Integrity** | Guaranteed | No OS file modifications, no dangerous persistent registry tweaks. |
+| **Rollback Guarantee** | Automatic | Restores original system timer, power plan, and process priorities upon exit. |
+| **Automated Tests** | 164 / 164 | Full unit, integration, and empirical crash-resilience test coverage. |
 
-### Зачем требуются права администратора?
-Права администратора запрашиваются исключительно для двух легитимных вызовов Windows API:
-1. `NtSetTimerResolution` (переключение точности системного таймера).
-2. `PowerSetActiveScheme` (переключение схемы электропитания Windows).
+### Why Are Administrator Privileges Required?
+Administrator privileges are strictly required for two legitimate Windows API operations:
+1. `NtSetTimerResolution` (multimedia timer resolution configuration).
+2. `PowerSetActiveScheme` (active Windows power scheme switching).
 
 ---
 
-## 🛠️ Сборка из исходного кода
+## 🛠️ Building from Source
 
-### Требования
+### Prerequisites
 * Windows 10 / 11 (x64)
-* [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) или новее
+* [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or later
 * PowerShell 5.1+
 
-### Клонирование и сборка
+### Clone & Build
 ```bash
-# Клонирование репозитория
+# Clone the repository
 git clone https://github.com/Foxys1/SmoothFrame.git
 cd SmoothFrame
 
-# Сборка решения
+# Build solution
 dotnet build SmoothFrame.sln -c Release
 ```
 
-### Запуск тестов
+### Run Test Suites
 ```bash
-# Тесты безопасности ядра и черного списка (46 тестов)
+# Core safety and process blacklist verification (46 tests)
 dotnet run --project tests/SmoothFrame.Runner -c Release
 
-# Стресс-тесты надёжности и отказоустойчивости (118 тестов)
+# Empirical stress testing & crash resilience challenge suite (118 tests)
 dotnet run --project tests/SmoothFrame.Challenge -c Release
 ```
 
-### Полная сборка релизного установщика
-Для сборки компактного однофайлового установщика выполните скрипт:
+### Build Standalone Installer
+To produce the clean, compressed single-file installer, run:
 ```powershell
 powershell -ExecutionPolicy Bypass -File ./build.ps1
 ```
-Собранный установщик будет находиться в папке `installer/SmoothFrame_Setup.exe`.
+The compiled installer will be generated at `installer/SmoothFrame_Setup.exe`.
 
 ---
 
-## 📦 Установка
+## 📦 Installation
 
-1. Скачайте свежий релиз `SmoothFrame_Setup.exe` со страницы [Releases](https://github.com/Foxys1/SmoothFrame/releases).
-2. Запустите установщик и следуйте простым инструкциям мастера.
-3. Программа готова к работе сразу после запуска.
+1. Download the latest `SmoothFrame_Setup.exe` from the [Releases](https://github.com/Foxys1/SmoothFrame/releases) page.
+2. Launch the setup wizard and follow the on-screen instructions.
+3. SmoothFrame is ready to optimize your games immediately.
 
-Для полного удаления воспользуйтесь стандартным апплетом Windows «Установка и удаление программ» или файлом `Uninstall.exe` в папке программы.
+To uninstall, use standard Windows **Settings → Installed Apps** or launch `Uninstall.exe` in the program folder.
 
 ---
 
-## 📄 Лицензия
+## 📄 License
 
-Проект распространяется под свободной и открытой лицензией [MIT](LICENSE).
-Вы можете свободно использовать, модифицировать и распространять код при сохранении уведомления об авторских правах.
+This project is licensed under the [MIT License](LICENSE).
+You are free to use, inspect, modify, and distribute the code with attribution.
