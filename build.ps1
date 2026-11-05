@@ -28,11 +28,11 @@ if ($LASTEXITCODE -ne 0) { throw "Solution build failed." }
 # 2. Run Tests
 if (-not $SkipTests) {
     Write-Host "`n[2/5] Running Safety & Core Tests..." -ForegroundColor Yellow
-    dotnet run --project tests/SmoothFrame.Runner -c Release
+    dotnet run --project tests/SmoothFrame.Runner -c Release -m:1
     if ($LASTEXITCODE -ne 0) { throw "SmoothFrame.Runner tests failed." }
 
     Write-Host "`n[2/5] Running Empirical Challenge Tests..." -ForegroundColor Yellow
-    dotnet run --project tests/SmoothFrame.Challenge -c Release
+    dotnet run --project tests/SmoothFrame.Challenge -c Release -m:1
     if ($LASTEXITCODE -ne 0) { throw "SmoothFrame.Challenge tests failed." }
 } else {
     Write-Host "`n[2/5] Skipping tests (-SkipTests specified)..." -ForegroundColor DarkGray

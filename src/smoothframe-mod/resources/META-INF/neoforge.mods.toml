@@ -1,0 +1,26 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/smoothframe"
+
+[[mods]]
+modId = "smoothframe"
+version = "1.0.0"
+displayName = "SmoothFrame In-Game Optimizer"
+authors = "SmoothFrame"
+description = "High-performance frametime smoothing, chunk mesh throttling, dynamic culling, and real-time telemetry."
+displayTest = "IGNORE_ALL_VERSION"
+
+[[dependencies.smoothframe]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.smoothframe]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.21.2)"
+ordering = "NONE"
+side = "CLIENT"

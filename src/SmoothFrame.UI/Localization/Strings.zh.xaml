@@ -8,11 +8,14 @@
     <sys:String x:Key="Badge.Safe">安全且可逆</sys:String>
     <sys:String x:Key="Nav.Caption">分区</sys:String>
     <sys:String x:Key="Nav.Opt">优化</sys:String>
+    <sys:String x:Key="Nav.Minecraft">Minecraft</sys:String>
     <sys:String x:Key="Nav.Settings">设置</sys:String>
     <sys:String x:Key="Nav.Protect">防护</sys:String>
     <sys:String x:Key="Side.Language">界面语言</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v1.0.0 — 安全的游戏进程优化器</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.0.0 — 安全的游戏进程优化器</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
+    <sys:String x:Key="TitleBar.Active">优化已启用 • 0.50 ms ULTRA-LOW</sys:String>
+    <sys:String x:Key="TitleBar.Standby">系统就绪 • 等待游戏启动</sys:String>
 
     <sys:String x:Key="Opt.Title">优化</sys:String>
     <sys:String x:Key="Opt.Subtitle">一键加速系统，全程可逆</sys:String>
@@ -22,6 +25,8 @@
     <sys:String x:Key="Card.Power.Hint">关闭 CPU 核心停泊</sys:String>
     <sys:String x:Key="Card.Prio.Label">进程优先级</sys:String>
     <sys:String x:Key="Card.Prio.Hint">游戏线程最高优先级</sys:String>
+    <sys:String x:Key="Card.Prot.Label">系统安全防护</sys:String>
+    <sys:String x:Key="Hero.StandbyBadge">准备就绪</sys:String>
     <sys:String x:Key="Hero.ActiveBadge">已启用</sys:String>
     <sys:String x:Key="Hero.Protect">防护：0% 内存注入，完全兼容反作弊</sys:String>
     <sys:String x:Key="Lib.Title">游戏库</sys:String>
@@ -43,6 +48,12 @@
     <sys:String x:Key="Set.Bg.Desc">临时将浏览器（Chrome、Edge）、下载工具和后台启动器降为"低于正常"优先级，为游戏释放资源。</sys:String>
     <sys:String x:Key="Set.Cores.Title">P 核隔离</sys:String>
     <sys:String x:Key="Set.Cores.Desc">强制游戏线程只运行在性能 P 核上（适用于 Intel 12–14+ 代或 AMD 3D V-Cache）。</sys:String>
+    <sys:String x:Key="Set.Tray.Title">关闭时最小化到系统托盘</sys:String>
+    <sys:String x:Key="Set.Tray.Desc">点击关闭按钮时，窗口将最小化到任务栏通知区域，所有已激活的优化将在后台继续生效。</sys:String>
+    <sys:String x:Key="Set.AutoBoost.Title">启动游戏时自动加速</sys:String>
+    <sys:String x:Key="Set.AutoBoost.Desc">后台监控服务将在启动游戏库中的游戏时自动开启游戏优化模式，并在退出游戏时自动恢复标准模式。</sys:String>
+    <sys:String x:Key="Set.Hotkey.Title">全局快捷键 (Ctrl+Shift+B)</sys:String>
+    <sys:String x:Key="Set.Hotkey.Desc">允许在任何游戏中直接通过快捷键一键开启或关闭优化，无需切换或最小化游戏窗口。</sys:String>
     <sys:String x:Key="Set.Lang.Title">界面语言</sys:String>
     <sys:String x:Key="Set.Lang.Desc">立即应用于整个应用，包括本窗口。</sys:String>
 
@@ -79,5 +90,64 @@
     <sys:String x:Key="VM.Msg.RemoveConfirm">从游戏列表中移除"{0}"？</sys:String>
     <sys:String x:Key="VM.Msg.RemoveTitle">确认</sys:String>
     <sys:String x:Key="VM.AppName">SmoothFrame</sys:String>
+    <!-- System Tray Context Menu -->
+    <sys:String x:Key="Tray.Open">打开 SmoothFrame</sys:String>
+    <sys:String x:Key="Tray.PurgeMem">清理备用内存</sys:String>
+    <sys:String x:Key="Tray.Exit">退出</sys:String>
+
+    <!-- Minecraft Mode -->
+    <sys:String x:Key="Mc.Title">Minecraft NeoForge &amp; 专业优化</sys:String>
+    <sys:String x:Key="Mc.Subtitle">硬件加速 JVM、分代 ZGC、DirectX GPU 绑定和备用内存清理</sys:String>
+    <sys:String x:Key="Mc.Launcher.Title">已检测到的启动器</sys:String>
+    <sys:String x:Key="Mc.Launcher.None">未检测到 Minecraft 启动器</sys:String>
+    <sys:String x:Key="Mc.Ram.Title">RAM 分配 (Xms / Xmx)</sys:String>
+    <sys:String x:Key="Mc.Ram.Desc">将 Xms 与 Xmx 设为一致并启用 AlwaysPreTouch，可消除堆内存动态扩充时的卡顿。</sys:String>
+    <sys:String x:Key="Mc.Gc.Title">垃圾回收器 (GC) 方案</sys:String>
+    <sys:String x:Key="Mc.Gc.Zgc">分代 ZGC (Java 21 / NeoForge 1.21+) — 停顿 &lt; 1ms</sys:String>
+    <sys:String x:Key="Mc.Gc.G1gc">Aikar 调优 G1GC (Java 17 / Fabric / Forge)</sys:String>
+    <sys:String x:Key="Mc.Btn.Apply">应用到启动器</sys:String>
+    <sys:String x:Key="Mc.Btn.CopyArgs">复制 JVM 参数</sys:String>
+    <sys:String x:Key="Mc.Btn.Gpu">强制独显运行</sys:String>
+    <sys:String x:Key="Mc.Btn.PurgeMem">清理备用内存</sys:String>
+    <sys:String x:Key="Mc.Btn.Rollback">还原启动器设置</sys:String>
+    <sys:String x:Key="Mc.Btn.ActivateOpt">激活 Minecraft 优化</sys:String>
+    <sys:String x:Key="Mc.Hero.BadgeActive">已激活</sys:String>
+    <sys:String x:Key="Mc.Hero.BadgeInactive">未激活</sys:String>
+    <sys:String x:Key="Mc.Hero.TitleActive">Minecraft 优化已激活</sys:String>
+    <sys:String x:Key="Mc.Hero.TitleInactive">Minecraft 优化已停用</sys:String>
+    <sys:String x:Key="Mc.Hero.SubtitleActive">0.5 毫秒定时器 • 高性能独立显卡 • CPU 核心释放 • javaw.exe 实时监控</sys:String>
+    <sys:String x:Key="Mc.Hero.SubtitleInactive">点击启动实时模式，畅享极限帧率与最低延迟</sys:String>
+    <sys:String x:Key="Mc.Mods.Title">图形引擎与内置 SmoothFrame 技术</sys:String>
+
+    <!-- SmoothFrame NeoForge 1.21.1 Mod & Live Telemetry HUD -->
+    <sys:String x:Key="Mc.Mod.Title">SmoothFrame NeoForge 1.21.1 模组与游戏 HUD</sys:String>
+    <sys:String x:Key="Mc.Mod.Desc">Minecraft 1.21.1 内置渲染优化器：帧生成时间平滑、区块与实体剔除及实时性能遥测。</sys:String>
+    <sys:String x:Key="Mc.Mod.InstallBtn">安装 SmoothFrame 模组</sys:String>
+    <sys:String x:Key="Mc.Mod.UninstallBtn">卸载 SmoothFrame 模组</sys:String>
+    <sys:String x:Key="Mc.Mod.StatusInstalled">已安装</sys:String>
+    <sys:String x:Key="Mc.Mod.StatusNotInstalled">未安装</sys:String>
+
+    <sys:String x:Key="Mc.Hud.Title">实时游戏内性能遥测</sys:String>
+    <sys:String x:Key="Mc.Hud.Fps">FPS</sys:String>
+    <sys:String x:Key="Mc.Hud.OnePercentLow">1% Low FPS</sys:String>
+    <sys:String x:Key="Mc.Hud.Frametime">帧生成时间 (ms)</sys:String>
+    <sys:String x:Key="Mc.Hud.ActiveBanner">SmoothFrame 模组在游戏中已激活 (NeoForge 1.21.1)</sys:String>
+    <sys:String x:Key="Mc.Hud.WaitingBanner">等待来自游戏内部的连接...</sys:String>
+    <sys:String x:Key="Mc.Hud.BadgeActive">游戏内已激活</sys:String>
+    <sys:String x:Key="Mc.Hud.BadgeWaiting">等待中</sys:String>
+
+    <sys:String x:Key="Mc.Launcher.Subtitle">客户端与 NeoForge 版本检测</sys:String>
+    <sys:String x:Key="Mc.Launcher.Active">当前启动器：</sys:String>
+    <sys:String x:Key="Mc.Mod.Feature1">  • 视锥体与距离实体剔除 (Entity Culling)</sys:String>
+    <sys:String x:Key="Mc.Mod.Feature2">  • 区块无卡顿流式加载</sys:String>
+    <sys:String x:Key="Mc.Mod.Feature3">  • 帧时间平滑与游戏内 HUD</sys:String>
+    <sys:String x:Key="Mc.Ram.Min">2 GB</sys:String>
+    <sys:String x:Key="Mc.Ram.Optimum">建议：NeoForge 分配 6–8 GB</sys:String>
+    <sys:String x:Key="Mc.Ram.Max">最大</sys:String>
+    <sys:String x:Key="Mc.Gpu.Title">高性能独立显卡绑定</sys:String>
+    <sys:String x:Key="Mc.Gpu.Desc">通过 Windows 注册表强制 javaw.exe 使用高性能独立显卡</sys:String>
+    <sys:String x:Key="Mc.Aio.Badge">内置</sys:String>
+    <sys:String x:Key="Mc.Aio.Title">SmoothFrame All-In-One 内置加速技术：</sys:String>
+    <sys:String x:Key="Mc.Aio.Subtitle">专为 SmoothFrame 研发的专有内核与硬件加速技术</sys:String>
 
 </ResourceDictionary>

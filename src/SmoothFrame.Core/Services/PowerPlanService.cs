@@ -72,6 +72,16 @@ public class PowerPlanService : IDisposable
 
             // Try Ultimate Performance first, then High Performance
             uint status = NativeMethods.PowerSetActiveScheme(IntPtr.Zero, in NativeMethods.GUID_ULTIMATE_PERFORMANCE);
+            if (status != 0 && status != 5)
+            {
+                var ultimateGuid = GetOrDuplicateUltimateSchemeGuid();
+                if (ultimateGuid.HasValue)
+                {
+                    var targetGuid = ultimateGuid.Value;
+                    status = NativeMethods.PowerSetActiveScheme(IntPtr.Zero, in targetGuid);
+                }
+            }
+
             if (status != 0)
             {
                 status = NativeMethods.PowerSetActiveScheme(IntPtr.Zero, in NativeMethods.GUID_HIGH_PERFORMANCE);
@@ -141,6 +151,70 @@ public class PowerPlanService : IDisposable
             Debug.WriteLine($"Failed to restore specific power scheme: {ex.Message}");
             return false;
         }
+    }
+
+    private static Guid? GetOrDuplicateUltimateSchemeGuid()
+    {
+        try
+        {
+            // 1. Check if Ultimate Performance scheme is already registered
+            var listPsi = new ProcessStartInfo
+            {
+                FileName = "powercfg.exe",
+                Arguments = "/list",
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            using (var listProc = Process.Start(listPsi))
+            {
+                if (listProc != null)
+                {
+                    string output = listProc.StandardOutput.ReadToEnd();
+                    listProc.WaitForExit(1500);
+
+                    foreach (var line in output.Split('\n'))
+                    {
+                        if (line.IndexOf("Ultimate", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            var match = System.Text.RegularExpressions.Regex.Match(line, @"([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})");
+                            if (match.Success && Guid.TryParse(match.Groups[1].Value, out var existingGuid))
+                            {
+                                return existingGuid;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 2. Not found, duplicate from template once
+            var dupPsi = new ProcessStartInfo
+            {
+                FileName = "powercfg.exe",
+                Arguments = "-duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61",
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            using (var dupProc = Process.Start(dupPsi))
+            {
+                if (dupProc != null)
+                {
+                    string dupOutput = dupProc.StandardOutput.ReadToEnd();
+                    dupProc.WaitForExit(2000);
+
+                    var match = System.Text.RegularExpressions.Regex.Match(dupOutput, @"([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})");
+                    if (match.Success && Guid.TryParse(match.Groups[1].Value, out var newGuid))
+                    {
+                        return newGuid;
+                    }
+                }
+            }
+        }
+        catch { }
+        return null;
     }
 
     public void Dispose()

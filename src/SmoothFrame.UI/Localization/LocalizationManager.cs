@@ -45,8 +45,8 @@ public static class LocalizationManager
 {
     public static readonly IReadOnlyList<AppLanguage> Languages = new[]
     {
-        new AppLanguage("ru", "Русский", "Russian"),
         new AppLanguage("en", "English", "English"),
+        new AppLanguage("ru", "Русский", "Russian"),
         new AppLanguage("de", "Deutsch", "German"),
         new AppLanguage("es", "Español", "Spanish"),
         new AppLanguage("fr", "Français", "French"),
@@ -56,24 +56,25 @@ public static class LocalizationManager
     /// <summary>Greetings cycled on the first-run splash (fade in, 3 s hold, fade out).</summary>
     public static readonly IReadOnlyList<WelcomePhrase> WelcomePhrases = new[]
     {
-        new WelcomePhrase("ru", "Русский", "Добро пожаловать"),
         new WelcomePhrase("en", "English", "Welcome"),
+        new WelcomePhrase("ru", "Русский", "Добро пожаловать"),
+        new WelcomePhrase("es", "Español", "Bienvenido"),
+        new WelcomePhrase("zh", "中文", "欢迎"),
         new WelcomePhrase("de", "Deutsch", "Willkommen"),
         new WelcomePhrase("fr", "Français", "Bienvenue"),
-        new WelcomePhrase("es", "Español", "Bienvenido"),
-        new WelcomePhrase("it", "Italiano", "Benvenuto"),
+        new WelcomePhrase("ja", "日本語", "ようこそ"),
         new WelcomePhrase("pt", "Português", "Bem-vindo"),
+        new WelcomePhrase("ko", "한국어", "환영합니다"),
+        new WelcomePhrase("it", "Italiano", "Benvenuto"),
         new WelcomePhrase("tr", "Türkçe", "Hoş geldiniz"),
         new WelcomePhrase("pl", "Polski", "Witamy"),
         new WelcomePhrase("uk", "Українська", "Ласкаво просимо"),
-        new WelcomePhrase("zh", "中文", "欢迎"),
-        new WelcomePhrase("ja", "日本語", "ようこそ"),
-        new WelcomePhrase("ko", "한국어", "환영합니다"),
+        new WelcomePhrase("ar", "العربية", "أهلاً وسهلاً"),
         new WelcomePhrase("hi", "हिन्दी", "स्वागत है"),
     };
 
     private static ResourceDictionary? _current;
-    private static string _currentCode = "ru";
+    private static string _currentCode = "en";
 
     /// <summary>Raised on the UI thread after the active dictionary has been swapped.</summary>
     public static event Action? LanguageChanged;
@@ -139,7 +140,7 @@ public static class LocalizationManager
 
     private static string Normalize(string? code)
     {
-        if (string.IsNullOrWhiteSpace(code)) return "ru";
+        if (string.IsNullOrWhiteSpace(code)) return "en";
 
         var clean = code.Trim().ToLowerInvariant();
         if (clean.Length > 2) clean = clean[..2];
@@ -149,7 +150,7 @@ public static class LocalizationManager
             if (lang.Code == clean) return clean;
         }
 
-        return "ru";
+        return "en";
     }
 
     private static void Apply(string code, bool raiseEvent)

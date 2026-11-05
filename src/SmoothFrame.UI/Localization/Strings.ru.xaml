@@ -8,11 +8,14 @@
     <sys:String x:Key="Badge.Safe">Безопасно и обратимо</sys:String>
     <sys:String x:Key="Nav.Caption">Разделы</sys:String>
     <sys:String x:Key="Nav.Opt">Оптимизация</sys:String>
+    <sys:String x:Key="Nav.Minecraft">Minecraft</sys:String>
     <sys:String x:Key="Nav.Settings">Настройки</sys:String>
     <sys:String x:Key="Nav.Protect">Защита</sys:String>
     <sys:String x:Key="Side.Language">Язык интерфейса</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v1.0.0 — безопасный оптимизатор игрового процесса</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.0.0 — безопасный оптимизатор игрового процесса</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
+    <sys:String x:Key="TitleBar.Active">ОПТИМИЗАЦИЯ АКТИВНА • 0.50 ms ULTRA-LOW</sys:String>
+    <sys:String x:Key="TitleBar.Standby">СИСТЕМА В НОРМЕ • ОЖИДАНИЕ ИГРЫ</sys:String>
 
     <sys:String x:Key="Opt.Title">Оптимизация</sys:String>
     <sys:String x:Key="Opt.Subtitle">Ускорение системы в один клик с полной обратимостью</sys:String>
@@ -22,6 +25,8 @@
     <sys:String x:Key="Card.Power.Hint">Отключение парковки ядер CPU</sys:String>
     <sys:String x:Key="Card.Prio.Label">ПРИОРИТЕТ ПРОЦЕССА</sys:String>
     <sys:String x:Key="Card.Prio.Hint">Высший приоритет потоков игры</sys:String>
+    <sys:String x:Key="Card.Prot.Label">ЗАЩИТА ОС</sys:String>
+    <sys:String x:Key="Hero.StandbyBadge">ГОТОВ К БУСТУ</sys:String>
     <sys:String x:Key="Hero.ActiveBadge">АКТИВНО</sys:String>
     <sys:String x:Key="Hero.Protect">Защита: 0% инъекций в память, полная совместимость с античитами</sys:String>
     <sys:String x:Key="Lib.Title">Библиотека игр</sys:String>
@@ -43,6 +48,12 @@
     <sys:String x:Key="Set.Bg.Desc">Временно переводит браузеры (Chrome, Edge), торренты и фоновые лаунчеры в приоритет «Ниже среднего», освобождая ресурсы игре.</sys:String>
     <sys:String x:Key="Set.Cores.Title">Изоляция P-ядер процессора</sys:String>
     <sys:String x:Key="Set.Cores.Desc">Принудительно направляет потоки игры только на производительные P-ядра (для Intel 12–14+ gen или AMD 3D V-Cache).</sys:String>
+    <sys:String x:Key="Set.Tray.Title">Сворачивать в системный трей при закрытии</sys:String>
+    <sys:String x:Key="Set.Tray.Desc">При нажатии на крестик окно сворачивается в область уведомлений, а все активные оптимизации продолжают работать в фоне.</sys:String>
+    <sys:String x:Key="Set.AutoBoost.Title">Автоматический буст при запуске игры</sys:String>
+    <sys:String x:Key="Set.AutoBoost.Desc">Фоновый мониторинг автоматически включает игровой режим при запуске игры из библиотеки и выключает его при выходе из неё.</sys:String>
+    <sys:String x:Key="Set.Hotkey.Title">Глобальная горячая клавиша (Ctrl+Shift+B)</sys:String>
+    <sys:String x:Key="Set.Hotkey.Desc">Позволяет включать и отключать оптимизацию в любой момент прямо из игры без сворачивания окна.</sys:String>
     <sys:String x:Key="Set.Lang.Title">Язык интерфейса</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Применяется мгновенно ко всему приложению, включая это окно.</sys:String>
 
@@ -79,5 +90,65 @@
     <sys:String x:Key="VM.Msg.RemoveConfirm">Удалить «{0}» из списка игр?</sys:String>
     <sys:String x:Key="VM.Msg.RemoveTitle">Подтверждение</sys:String>
     <sys:String x:Key="VM.AppName">SmoothFrame</sys:String>
+
+    <!-- System Tray Context Menu -->
+    <sys:String x:Key="Tray.Open">Открыть SmoothFrame</sys:String>
+    <sys:String x:Key="Tray.PurgeMem">Очистить память</sys:String>
+    <sys:String x:Key="Tray.Exit">Выход</sys:String>
+
+    <!-- Minecraft Mode -->
+    <sys:String x:Key="Mc.Title">Minecraft NeoForge &amp; Pro Оптимизация</sys:String>
+    <sys:String x:Key="Mc.Subtitle">Аппаратное ускорение JVM, Generational ZGC, DirectX GPU и очистка Standby памяти</sys:String>
+    <sys:String x:Key="Mc.Launcher.Title">Обнаруженные лаунчеры</sys:String>
+    <sys:String x:Key="Mc.Launcher.None">Лаунчеры Minecraft не обнаружены</sys:String>
+    <sys:String x:Key="Mc.Ram.Title">Выделение оперативной памяти (Xms / Xmx)</sys:String>
+    <sys:String x:Key="Mc.Ram.Desc">Синхронное выделение Xms=Xmx с AlwaysPreTouch предотвращает лаги при динамическом росте кучи.</sys:String>
+    <sys:String x:Key="Mc.Gc.Title">Профиль сборщика мусора (GC)</sys:String>
+    <sys:String x:Key="Mc.Gc.Zgc">Generational ZGC (Java 21 / NeoForge 1.21+) — паузы &lt; 1 мс</sys:String>
+    <sys:String x:Key="Mc.Gc.G1gc">Aikar Tuned G1GC (Java 17 / Fabric / Forge)</sys:String>
+    <sys:String x:Key="Mc.Btn.Apply">Применить к лаунчеру</sys:String>
+    <sys:String x:Key="Mc.Btn.CopyArgs">Копировать аргументы</sys:String>
+    <sys:String x:Key="Mc.Btn.Gpu">Привязать к High-End GPU</sys:String>
+    <sys:String x:Key="Mc.Btn.PurgeMem">Очистить Standby память</sys:String>
+    <sys:String x:Key="Mc.Btn.Rollback">Откатить настройки лаунчера</sys:String>
+    <sys:String x:Key="Mc.Btn.ActivateOpt">Активировать оптимизацию Minecraft</sys:String>
+    <sys:String x:Key="Mc.Hero.BadgeActive">АКТИВНО</sys:String>
+    <sys:String x:Key="Mc.Hero.BadgeInactive">НЕ АКТИВНО</sys:String>
+    <sys:String x:Key="Mc.Hero.TitleActive">Оптимизация Minecraft активна</sys:String>
+    <sys:String x:Key="Mc.Hero.TitleInactive">Оптимизация Minecraft отключена</sys:String>
+    <sys:String x:Key="Mc.Hero.SubtitleActive">Таймер 0.5 мс • High Performance GPU • Разблокировка ядер • Мониторинг javaw.exe</sys:String>
+    <sys:String x:Key="Mc.Hero.SubtitleInactive">Нажмите для запуска режима реального времени с максимальным FPS и минимальной задержкой</sys:String>
+    <sys:String x:Key="Mc.Mods.Title">Встроенные технологии SmoothFrame All-In-One</sys:String>
+
+    <!-- SmoothFrame NeoForge 1.21.1 Mod & Live Telemetry HUD -->
+    <sys:String x:Key="Mc.Mod.Title">SmoothFrame NeoForge 1.21.1 Мод и In-Game HUD</sys:String>
+    <sys:String x:Key="Mc.Mod.Desc">Встроенный оптимизатор рендеринга для Minecraft 1.21.1: сглаживание времени кадра, оптимизация чанков и сущностей, трансляция телеметрии.</sys:String>
+    <sys:String x:Key="Mc.Mod.InstallBtn">Установить мод SmoothFrame</sys:String>
+    <sys:String x:Key="Mc.Mod.UninstallBtn">Удалить мод SmoothFrame</sys:String>
+    <sys:String x:Key="Mc.Mod.StatusInstalled">Установлен</sys:String>
+    <sys:String x:Key="Mc.Mod.StatusNotInstalled">Не установлен</sys:String>
+
+    <sys:String x:Key="Mc.Hud.Title">Внутриигровая телеметрия в реальном времени</sys:String>
+    <sys:String x:Key="Mc.Hud.Fps">FPS</sys:String>
+    <sys:String x:Key="Mc.Hud.OnePercentLow">1% Low FPS</sys:String>
+    <sys:String x:Key="Mc.Hud.Frametime">Время кадра (мс)</sys:String>
+    <sys:String x:Key="Mc.Hud.ActiveBanner">Мод SmoothFrame активен в игре (NeoForge 1.21.1)</sys:String>
+    <sys:String x:Key="Mc.Hud.WaitingBanner">Ожидание подключения из игры...</sys:String>
+    <sys:String x:Key="Mc.Hud.BadgeActive">АКТИВЕН В ИГРЕ</sys:String>
+    <sys:String x:Key="Mc.Hud.BadgeWaiting">ОЖИДАНИЕ</sys:String>
+
+    <sys:String x:Key="Mc.Launcher.Subtitle">Обнаружение клиентов и версий NeoForge</sys:String>
+    <sys:String x:Key="Mc.Launcher.Active">Активный лаунчер:</sys:String>
+    <sys:String x:Key="Mc.Mod.Feature1">  • Отсечение невидимых сущностей (Entity Culling)</sys:String>
+    <sys:String x:Key="Mc.Mod.Feature2">  • Устранение фризов при генерации чанков</sys:String>
+    <sys:String x:Key="Mc.Mod.Feature3">  • Отображение точного FPS и времени кадра в игре</sys:String>
+    <sys:String x:Key="Mc.Ram.Min">2 ГБ</sys:String>
+    <sys:String x:Key="Mc.Ram.Optimum">Оптимально: 6–8 ГБ для NeoForge</sys:String>
+    <sys:String x:Key="Mc.Ram.Max">Макс</sys:String>
+    <sys:String x:Key="Mc.Gpu.Title">Высокопроизводительная графика</sys:String>
+    <sys:String x:Key="Mc.Gpu.Desc">Принудительный вывод javaw.exe на дискретную видеокарту через реестр Windows</sys:String>
+    <sys:String x:Key="Mc.Aio.Badge">ВСТРОЕНО</sys:String>
+    <sys:String x:Key="Mc.Aio.Title">Встроенные технологии ускорения SmoothFrame (All-In-One):</sys:String>
+    <sys:String x:Key="Mc.Aio.Subtitle">Фирменный комплекс технологий аппаратной и системной оптимизации SmoothFrame</sys:String>
 
 </ResourceDictionary>

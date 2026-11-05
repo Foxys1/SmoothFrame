@@ -8,11 +8,14 @@
     <sys:String x:Key="Badge.Safe">Sûr et réversible</sys:String>
     <sys:String x:Key="Nav.Caption">Sections</sys:String>
     <sys:String x:Key="Nav.Opt">Optimisation</sys:String>
+    <sys:String x:Key="Nav.Minecraft">Minecraft</sys:String>
     <sys:String x:Key="Nav.Settings">Paramètres</sys:String>
     <sys:String x:Key="Nav.Protect">Protection</sys:String>
     <sys:String x:Key="Side.Language">Langue de l'interface</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v1.0.0 — optimiseur sûr de processus de jeu</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.0.0 — optimiseur sûr de processus de jeu</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
+    <sys:String x:Key="TitleBar.Active">OPTIMISATION ACTIVE • 0.50 ms ULTRA-LOW</sys:String>
+    <sys:String x:Key="TitleBar.Standby">SYSTÈME PRÊT • EN ATTENTE DU JEU</sys:String>
 
     <sys:String x:Key="Opt.Title">Optimisation</sys:String>
     <sys:String x:Key="Opt.Subtitle">Accélération du système en un clic, entièrement réversible</sys:String>
@@ -22,6 +25,8 @@
     <sys:String x:Key="Card.Power.Hint">Désactive le parking des cœurs CPU</sys:String>
     <sys:String x:Key="Card.Prio.Label">PRIORITÉ DU PROCESSUS</sys:String>
     <sys:String x:Key="Card.Prio.Hint">Priorité maximale aux threads du jeu</sys:String>
+    <sys:String x:Key="Card.Prot.Label">PROTECTION DE L'OS</sys:String>
+    <sys:String x:Key="Hero.StandbyBadge">PRÊT POUR BOOST</sys:String>
     <sys:String x:Key="Hero.ActiveBadge">ACTIF</sys:String>
     <sys:String x:Key="Hero.Protect">Protection : 0 % d'injection mémoire, compatible anti-triche</sys:String>
     <sys:String x:Key="Lib.Title">Bibliothèque de jeux</sys:String>
@@ -43,6 +48,12 @@
     <sys:String x:Key="Set.Bg.Desc">Passe temporairement les navigateurs (Chrome, Edge), torrents et launchers en priorité "Inférieure à la normale", libérant des ressources pour le jeu.</sys:String>
     <sys:String x:Key="Set.Cores.Title">Isolation des cœurs P</sys:String>
     <sys:String x:Key="Set.Cores.Desc">Dirige les threads du jeu uniquement vers les cœurs P de performance (pour Intel 12–14 gen ou AMD 3D V-Cache).</sys:String>
+    <sys:String x:Key="Set.Tray.Title">Réduire dans la zone de notification</sys:String>
+    <sys:String x:Key="Set.Tray.Desc">En cliquant sur fermer, la fenêtre se réduit dans la barre d'état tandis que les optimisations restent actives.</sys:String>
+    <sys:String x:Key="Set.AutoBoost.Title">Boost automatique au lancement du jeu</sys:String>
+    <sys:String x:Key="Set.AutoBoost.Desc">La surveillance active automatiquement le mode jeu au lancement d'un titre de la bibliothèque et le désactive à la fermeture.</sys:String>
+    <sys:String x:Key="Set.Hotkey.Title">Raccourci global (Ctrl+Maj+B)</sys:String>
+    <sys:String x:Key="Set.Hotkey.Desc">Permet d'activer et de désactiver l'optimisation en jeu sans réduire la fenêtre.</sys:String>
     <sys:String x:Key="Set.Lang.Title">Langue de l'interface</sys:String>
     <sys:String x:Key="Set.Lang.Desc">S'applique instantanément à toute l'application, y compris cette fenêtre.</sys:String>
 
@@ -79,5 +90,64 @@
     <sys:String x:Key="VM.Msg.RemoveConfirm">Retirer "{0}" de la liste des jeux ?</sys:String>
     <sys:String x:Key="VM.Msg.RemoveTitle">Confirmation</sys:String>
     <sys:String x:Key="VM.AppName">SmoothFrame</sys:String>
+    <!-- System Tray Context Menu -->
+    <sys:String x:Key="Tray.Open">Ouvrir SmoothFrame</sys:String>
+    <sys:String x:Key="Tray.PurgeMem">Purger la mémoire</sys:String>
+    <sys:String x:Key="Tray.Exit">Quitter</sys:String>
+
+    <!-- Minecraft Mode -->
+    <sys:String x:Key="Mc.Title">Optimisation Minecraft NeoForge &amp; Pro</sys:String>
+    <sys:String x:Key="Mc.Subtitle">JVM accélérée matériellement, Generational ZGC, liaison GPU DirectX et purge de mémoire en veille</sys:String>
+    <sys:String x:Key="Mc.Launcher.Title">Lanceurs détectés</sys:String>
+    <sys:String x:Key="Mc.Launcher.None">Aucun lanceur Minecraft détecté</sys:String>
+    <sys:String x:Key="Mc.Ram.Title">Allocation RAM (Xms / Xmx)</sys:String>
+    <sys:String x:Key="Mc.Ram.Desc">Faire correspondre Xms=Xmx avec AlwaysPreTouch élimine les saccades lors de l'extension dynamique du tas.</sys:String>
+    <sys:String x:Key="Mc.Gc.Title">Profil du ramasse-miettes (GC)</sys:String>
+    <sys:String x:Key="Mc.Gc.Zgc">Generational ZGC (Java 21 / NeoForge 1.21+) — pauses &lt; 1 ms</sys:String>
+    <sys:String x:Key="Mc.Gc.G1gc">Aikar Tuned G1GC (Java 17 / Fabric / Forge)</sys:String>
+    <sys:String x:Key="Mc.Btn.Apply">Appliquer au lanceur</sys:String>
+    <sys:String x:Key="Mc.Btn.CopyArgs">Copier les arguments JVM</sys:String>
+    <sys:String x:Key="Mc.Btn.Gpu">Forcer le GPU dédié</sys:String>
+    <sys:String x:Key="Mc.Btn.PurgeMem">Purger la mémoire en veille</sys:String>
+    <sys:String x:Key="Mc.Btn.Rollback">Restaurer les paramètres du lanceur</sys:String>
+    <sys:String x:Key="Mc.Btn.ActivateOpt">Activer l'optimisation Minecraft</sys:String>
+    <sys:String x:Key="Mc.Hero.BadgeActive">ACTIF</sys:String>
+    <sys:String x:Key="Mc.Hero.BadgeInactive">INACTIF</sys:String>
+    <sys:String x:Key="Mc.Hero.TitleActive">L'optimisation Minecraft est active</sys:String>
+    <sys:String x:Key="Mc.Hero.TitleInactive">L'optimisation Minecraft est désactivée</sys:String>
+    <sys:String x:Key="Mc.Hero.SubtitleActive">Minuteur 0,5 ms • GPU haute performance • Déblocage des cœurs • Surveillance javaw.exe</sys:String>
+    <sys:String x:Key="Mc.Hero.SubtitleInactive">Cliquez pour démarrer le mode temps réel avec un FPS maximal et une latence minimale</sys:String>
+    <sys:String x:Key="Mc.Mods.Title">Moteurs graphiques et technologies intégrées SmoothFrame</sys:String>
+
+    <!-- SmoothFrame NeoForge 1.21.1 Mod & Live Telemetry HUD -->
+    <sys:String x:Key="Mc.Mod.Title">Mod SmoothFrame NeoForge 1.21.1 &amp; HUD en jeu</sys:String>
+    <sys:String x:Key="Mc.Mod.Desc">Optimiseur de rendu intégré pour Minecraft 1.21.1 : lissage du frametime, culling de chunks/entités et télémétrie en direct.</sys:String>
+    <sys:String x:Key="Mc.Mod.InstallBtn">Installer le mod SmoothFrame</sys:String>
+    <sys:String x:Key="Mc.Mod.UninstallBtn">Désinstaller le mod SmoothFrame</sys:String>
+    <sys:String x:Key="Mc.Mod.StatusInstalled">Installé</sys:String>
+    <sys:String x:Key="Mc.Mod.StatusNotInstalled">Non installé</sys:String>
+
+    <sys:String x:Key="Mc.Hud.Title">Télémétrie en temps réel dans le jeu</sys:String>
+    <sys:String x:Key="Mc.Hud.Fps">FPS</sys:String>
+    <sys:String x:Key="Mc.Hud.OnePercentLow">1% Low FPS</sys:String>
+    <sys:String x:Key="Mc.Hud.Frametime">Temps de trame (ms)</sys:String>
+    <sys:String x:Key="Mc.Hud.ActiveBanner">Mod SmoothFrame actif en jeu (NeoForge 1.21.1)</sys:String>
+    <sys:String x:Key="Mc.Hud.WaitingBanner">En attente de connexion du jeu...</sys:String>
+    <sys:String x:Key="Mc.Hud.BadgeActive">ACTIF EN JEU</sys:String>
+    <sys:String x:Key="Mc.Hud.BadgeWaiting">EN ATTENTE</sys:String>
+
+    <sys:String x:Key="Mc.Launcher.Subtitle">Détection des clients et des versions NeoForge</sys:String>
+    <sys:String x:Key="Mc.Launcher.Active">Lanceur actif :</sys:String>
+    <sys:String x:Key="Mc.Mod.Feature1">  • Culling des entités par distance et frustum</sys:String>
+    <sys:String x:Key="Mc.Mod.Feature2">  • Chargement fluide des tronçons sans saccades</sys:String>
+    <sys:String x:Key="Mc.Mod.Feature3">  • Lissage du temps d'image et HUD en jeu</sys:String>
+    <sys:String x:Key="Mc.Ram.Min">2 Go</sys:String>
+    <sys:String x:Key="Mc.Ram.Optimum">Optimal : 6–8 Go pour NeoForge</sys:String>
+    <sys:String x:Key="Mc.Ram.Max">Max</sys:String>
+    <sys:String x:Key="Mc.Gpu.Title">Graphismes haute performance</sys:String>
+    <sys:String x:Key="Mc.Gpu.Desc">Force l'utilisation du GPU dédié pour javaw.exe via le registre Windows</sys:String>
+    <sys:String x:Key="Mc.Aio.Badge">INTÉGRÉ</sys:String>
+    <sys:String x:Key="Mc.Aio.Title">Technologies intégrées SmoothFrame All-In-One :</sys:String>
+    <sys:String x:Key="Mc.Aio.Subtitle">Suite exclusive d'optimisations matérielles et système conçue pour SmoothFrame</sys:String>
 
 </ResourceDictionary>

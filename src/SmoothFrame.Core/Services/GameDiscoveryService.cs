@@ -393,9 +393,13 @@ public class GameDiscoveryService
                 return null;
 
             // Prefer exe that matches folder or game name closely
-            var cleanGame = Regex.Replace(gameName, @"[^a-zA-Z0-9]", "").ToLowerInvariant();
-            var bestMatch = exes.FirstOrDefault(p =>
-                Regex.Replace(Path.GetFileNameWithoutExtension(p), @"[^a-zA-Z0-9]", "").ToLowerInvariant().Contains(cleanGame));
+            var cleanGame = Regex.Replace(gameName, @"[^\p{L}\p{N}]", "").ToLowerInvariant();
+            string? bestMatch = null;
+            if (!string.IsNullOrEmpty(cleanGame))
+            {
+                bestMatch = exes.FirstOrDefault(p =>
+                    Regex.Replace(Path.GetFileNameWithoutExtension(p), @"[^\p{L}\p{N}]", "").ToLowerInvariant().Contains(cleanGame));
+            }
 
             return bestMatch ?? exes.OrderByDescending(p => new FileInfo(p).Length).FirstOrDefault();
         }

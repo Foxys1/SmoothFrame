@@ -31,4 +31,7 @@
     <Geometry x:Key="Icon.Close">M6.4 6.4l11.2 11.2M17.6 6.4 6.4 17.6</Geometry>
     <Geometry x:Key="Icon.Check">M5.4 12.6l4.3 4.3L18.6 8</Geometry>
 
+    <!-- Windows Fluent-style Restore Window Glyph (two overlapping rectangles) -->
+    <Geometry x:Key="Icon.RestoreWindow">M6.5 9.5h7.5v7.5H6.5Z M9.5 9.5V6.5h7.5v7.5H14</Geometry>
+
 </ResourceDictionary>

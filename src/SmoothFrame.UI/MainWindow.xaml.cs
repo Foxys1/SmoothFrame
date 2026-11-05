@@ -1,13 +1,18 @@
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
+using System.Windows.Shell;
 using SmoothFrame.UI.Localization;
 using SmoothFrame.UI.Models;
+using SmoothFrame.UI.Services;
 using SmoothFrame.UI.ViewModels;
 
 namespace SmoothFrame.UI;
@@ -16,6 +21,7 @@ public partial class MainWindow : Window
 {
     private readonly MainViewModel _viewModel;
     private readonly UiSettings _settings;
+    private readonly SystemTrayManager _trayManager;
     private bool _suppressLanguageEvents = true;
     private bool _navReady;
     private Grid? _currentPage;
@@ -42,6 +48,18 @@ public partial class MainWindow : Window
         _viewModel = new MainViewModel();
         DataContext = _viewModel;
 
+        _trayManager = new SystemTrayManager(this, () => _viewModel.PurgeStandbyMemory());
+        Closed += (_, _) =>
+        {
+            if (_hotkeyRegistered && _hwndSource != null)
+            {
+                try { UnregisterHotKey(_hwndSource.Handle, HOTKEY_BOOST_ID); } catch { }
+            }
+            _hwndSource?.RemoveHook(HwndHook);
+            _trayManager.Dispose();
+            _viewModel.Dispose();
+        };
+
         if (Environment.GetCommandLineArgs().Any(a => string.Equals(a, "--minimized", StringComparison.OrdinalIgnoreCase)))
         {
             WindowState = WindowState.Minimized;
@@ -58,14 +76,7 @@ public partial class MainWindow : Window
         // First-run onboarding overlay.
         if (!_settings.OnboardingCompleted)
         {
-            for (int i = 0; i < LocalizationManager.WelcomePhrases.Count; i++)
-            {
-                if (LocalizationManager.WelcomePhrases[i].Code == LocalizationManager.CurrentCode)
-                {
-                    _welcomeIndex = i;
-                    break;
-                }
-            }
+            _welcomeIndex = 0; // Always start with English "Welcome", followed by "Добро пожаловать" and world languages
 
             OnboardingOverlay.Visibility = Visibility.Visible;
             OnboardingOverlay.Opacity = 0;
@@ -77,6 +88,8 @@ public partial class MainWindow : Window
         _navReady = true;
         NavOpt.IsChecked = true;
         ShowPage(PageOpt, animate: false);
+
+        ApplyWindowStateAdjustments();
     }
 
     // ------------------------------------------------------------------
@@ -91,6 +104,7 @@ public partial class MainWindow : Window
         }
 
         if (sender == NavOpt) ShowPage(PageOpt);
+        else if (sender == NavMinecraft) ShowPage(PageMinecraft);
         else if (sender == NavSettings) ShowPage(PageSettings);
         else if (sender == NavProtect) ShowPage(PageProtect);
     }
@@ -102,34 +116,73 @@ public partial class MainWindow : Window
             return;
         }
 
-        foreach (var candidate in new[] { PageOpt, PageSettings, PageProtect })
-        {
-            if (candidate != page)
-            {
-                candidate.Visibility = Visibility.Collapsed;
-                candidate.Opacity = 1;
-            }
-        }
-
+        var oldPage = _currentPage;
         _currentPage = page;
-        page.Visibility = Visibility.Visible;
 
-        if (!animate)
+        if (!animate || oldPage == null)
         {
+            foreach (var candidate in new[] { PageOpt, PageMinecraft, PageSettings, PageProtect })
+            {
+                if (candidate != page)
+                {
+                    candidate.Visibility = Visibility.Collapsed;
+                    candidate.Opacity = 1;
+                    candidate.RenderTransform = null;
+                }
+            }
+
+            page.Visibility = Visibility.Visible;
             page.Opacity = 1;
             page.RenderTransform = null;
             return;
         }
 
-        var shift = new TranslateTransform(0, 14);
-        page.RenderTransform = shift;
+        // Clean up any other non-active candidates immediately
+        foreach (var candidate in new[] { PageOpt, PageMinecraft, PageSettings, PageProtect })
+        {
+            if (candidate != page && candidate != oldPage)
+            {
+                candidate.Visibility = Visibility.Collapsed;
+                candidate.Opacity = 1;
+                candidate.RenderTransform = null;
+            }
+        }
+
+        // Incoming page enters with smooth scale + slide + fade
+        page.Visibility = Visibility.Visible;
         page.Opacity = 0;
 
-        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
-        var fade = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(260)) { EasingFunction = ease };
-        var slide = new DoubleAnimation(14, 0, TimeSpan.FromMilliseconds(260)) { EasingFunction = ease };
-        page.BeginAnimation(OpacityProperty, fade);
-        shift.BeginAnimation(TranslateTransform.YProperty, slide);
+        var enterTransformGroup = new TransformGroup();
+        var enterTranslate = new TranslateTransform(0, 16);
+        var enterScale = new ScaleTransform(0.985, 0.985);
+        enterTransformGroup.Children.Add(enterScale);
+        enterTransformGroup.Children.Add(enterTranslate);
+        page.RenderTransformOrigin = new Point(0.5, 0.15);
+        page.RenderTransform = enterTransformGroup;
+
+        var easeOut = new QuarticEase { EasingMode = EasingMode.EaseOut };
+        var enterFade = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(260)) { EasingFunction = easeOut };
+        var enterSlide = new DoubleAnimation(16, 0, TimeSpan.FromMilliseconds(260)) { EasingFunction = easeOut };
+        var enterScaleAnim = new DoubleAnimation(0.985, 1.0, TimeSpan.FromMilliseconds(260)) { EasingFunction = easeOut };
+
+        page.BeginAnimation(OpacityProperty, enterFade);
+        enterTranslate.BeginAnimation(TranslateTransform.YProperty, enterSlide);
+        enterScale.BeginAnimation(ScaleTransform.ScaleXProperty, enterScaleAnim);
+        enterScale.BeginAnimation(ScaleTransform.ScaleYProperty, enterScaleAnim);
+
+        // Outgoing page fades out gracefully
+        var easeIn = new CubicEase { EasingMode = EasingMode.EaseIn };
+        var exitFade = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(130)) { EasingFunction = easeIn };
+        exitFade.Completed += (_, _) =>
+        {
+            if (_currentPage != oldPage)
+            {
+                oldPage.Visibility = Visibility.Collapsed;
+                oldPage.Opacity = 1;
+                oldPage.RenderTransform = null;
+            }
+        };
+        oldPage.BeginAnimation(OpacityProperty, exitFade);
     }
 
     private static void Fade(UIElement element, double from, double to, TimeSpan duration)
@@ -180,16 +233,20 @@ public partial class MainWindow : Window
             };
             Loaded += handler;
 
-            using (token.Register(() => loadedTcs.TrySetCanceled()))
+            try
             {
-                try
+                using (token.Register(() => loadedTcs.TrySetCanceled()))
                 {
                     await loadedTcs.Task;
                 }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+            finally
+            {
+                Loaded -= handler;
             }
         }
 
@@ -322,8 +379,43 @@ public partial class MainWindow : Window
     }
 
     // ------------------------------------------------------------------
-    // Window chrome
+    // Window chrome & Win32 maximization hook
     // ------------------------------------------------------------------
+
+    private const int HOTKEY_BOOST_ID = 9001;
+    private const uint MOD_CONTROL = 0x0002;
+    private const uint MOD_SHIFT = 0x0004;
+    private const uint VK_B = 0x42;
+    private const int WM_HOTKEY = 0x0312;
+    private bool _hotkeyRegistered;
+    private bool _isExplicitExit;
+    private HwndSource? _hwndSource;
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        var handle = new WindowInteropHelper(this).Handle;
+        _hwndSource = HwndSource.FromHwnd(handle);
+        _hwndSource?.AddHook(HwndHook);
+
+        try
+        {
+            _hotkeyRegistered = RegisterHotKey(handle, HOTKEY_BOOST_ID, MOD_CONTROL | MOD_SHIFT, VK_B);
+        }
+        catch { }
+    }
+
+    protected override void OnStateChanged(EventArgs e)
+    {
+        base.OnStateChanged(e);
+        ApplyWindowStateAdjustments();
+    }
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e)
     {
@@ -337,7 +429,207 @@ public partial class MainWindow : Window
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
+        if (_viewModel.MinimizeToTrayOnClose)
+        {
+            Hide();
+        }
+        else
+        {
+            ExitApplication();
+        }
+    }
+
+    public void ExitApplication()
+    {
+        _isExplicitExit = true;
         Close();
+    }
+
+    private void UpdateMaximizedBounds()
+    {
+        if (WindowState != WindowState.Maximized)
+        {
+            MaxHeight = double.PositiveInfinity;
+            MaxWidth = double.PositiveInfinity;
+            return;
+        }
+
+        try
+        {
+            var handle = new WindowInteropHelper(this).Handle;
+            if (handle != IntPtr.Zero)
+            {
+                var monitor = MonitorFromWindow(handle, MONITOR_DEFAULTTONEAREST);
+                if (monitor != IntPtr.Zero)
+                {
+                    var monitorInfo = new MONITORINFO();
+                    monitorInfo.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+                    if (GetMonitorInfo(monitor, ref monitorInfo))
+                    {
+                        var source = PresentationSource.FromVisual(this);
+                        double dpiX = source?.CompositionTarget?.TransformToDevice.M11 ?? 1.0;
+                        double dpiY = source?.CompositionTarget?.TransformToDevice.M22 ?? 1.0;
+
+                        if (dpiX <= 0) dpiX = 1.0;
+                        if (dpiY <= 0) dpiY = 1.0;
+
+                        double workWidth = (monitorInfo.rcWork.right - monitorInfo.rcWork.left) / dpiX;
+                        double workHeight = (monitorInfo.rcWork.bottom - monitorInfo.rcWork.top) / dpiY;
+
+                        MaxHeight = workHeight;
+                        MaxWidth = workWidth;
+                        return;
+                    }
+                }
+            }
+        }
+        catch { }
+
+        MaxHeight = SystemParameters.WorkArea.Height;
+        MaxWidth = SystemParameters.WorkArea.Width;
+    }
+
+    private void ApplyWindowStateAdjustments()
+    {
+        if (RootBorder == null || TitleBarBorder == null || FooterBorder == null || MaximizeIcon == null || BtnMaximize == null)
+        {
+            return;
+        }
+
+        if (WindowState == WindowState.Maximized)
+        {
+            UpdateMaximizedBounds();
+
+            RootBorder.CornerRadius = new CornerRadius(0);
+            RootBorder.BorderThickness = new Thickness(0);
+            RootBorder.Margin = new Thickness(0);
+            RootBorder.Effect = null;
+            TitleBarBorder.CornerRadius = new CornerRadius(0);
+            FooterBorder.CornerRadius = new CornerRadius(0);
+
+            MaximizeIcon.Data = (Geometry)FindResource("Icon.RestoreWindow");
+            BtnMaximize.ToolTip = "Восстановить";
+        }
+        else
+        {
+            MaxHeight = double.PositiveInfinity;
+            MaxWidth = double.PositiveInfinity;
+
+            RootBorder.CornerRadius = new CornerRadius(16);
+            RootBorder.BorderThickness = new Thickness(1.5);
+            RootBorder.Margin = new Thickness(0);
+            RootBorder.Effect = (Effect)FindResource("WindowDropShadow");
+            TitleBarBorder.CornerRadius = new CornerRadius(15, 15, 0, 0);
+            FooterBorder.CornerRadius = new CornerRadius(0, 0, 15, 15);
+
+            MaximizeIcon.Data = (Geometry)FindResource("Icon.Max");
+            BtnMaximize.ToolTip = "Развернуть";
+        }
+    }
+
+    private const int WM_GETMINMAXINFO = 0x0024;
+    private const int WM_WINDOWPOSCHANGED = 0x0047;
+    private const int WM_DPICHANGED = 0x02E0;
+    private const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct POINT
+    {
+        public int x;
+        public int y;
+
+        public POINT(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MINMAXINFO
+    {
+        public POINT ptReserved;
+        public POINT ptMaxSize;
+        public POINT ptMaxPosition;
+        public POINT ptMinTrackSize;
+        public POINT ptMaxTrackSize;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    private struct MONITORINFO
+    {
+        public int cbSize;
+        public RECT rcMonitor;
+        public RECT rcWork;
+        public int dwFlags;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 0)]
+    private struct RECT
+    {
+        public int left;
+        public int top;
+        public int right;
+        public int bottom;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+
+    private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg == WM_GETMINMAXINFO)
+        {
+            WmGetMinMaxInfo(hwnd, lParam);
+            handled = true;
+        }
+        else if (msg == WM_WINDOWPOSCHANGED && WindowState == WindowState.Maximized)
+        {
+            UpdateMaximizedBounds();
+        }
+        else if (msg == WM_DPICHANGED && WindowState == WindowState.Maximized)
+        {
+            UpdateMaximizedBounds();
+        }
+        else if (msg == WM_HOTKEY && wParam.ToInt32() == HOTKEY_BOOST_ID)
+        {
+            if (_viewModel.GlobalHotkeyEnabled)
+            {
+                _viewModel.ToggleOptimizationCommand.Execute(null);
+                handled = true;
+            }
+        }
+        return IntPtr.Zero;
+    }
+
+    private static void WmGetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
+    {
+        var mmi = Marshal.PtrToStructure<MINMAXINFO>(lParam);
+
+        var monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+        if (monitor != IntPtr.Zero)
+        {
+            var monitorInfo = new MONITORINFO();
+            monitorInfo.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+            if (GetMonitorInfo(monitor, ref monitorInfo))
+            {
+                var rcWork = monitorInfo.rcWork;
+                var rcMonitor = monitorInfo.rcMonitor;
+
+                mmi.ptMaxPosition.x = rcWork.left - rcMonitor.left;
+                mmi.ptMaxPosition.y = rcWork.top - rcMonitor.top;
+                mmi.ptMaxSize.x = rcWork.right - rcWork.left;
+                mmi.ptMaxSize.y = rcWork.bottom - rcWork.top;
+                mmi.ptMaxTrackSize.x = mmi.ptMaxSize.x;
+                mmi.ptMaxTrackSize.y = mmi.ptMaxSize.y;
+            }
+        }
+
+        Marshal.StructureToPtr(mmi, lParam, false);
     }
 
     private bool _isClosingCleanedUp;
@@ -346,6 +638,27 @@ public partial class MainWindow : Window
     private async void OnMainWindowClosing(object? sender, CancelEventArgs e)
     {
         StopWelcomeCycle();
+
+        if (!_isExplicitExit && _viewModel.MinimizeToTrayOnClose)
+        {
+            e.Cancel = true;
+            Hide();
+            return;
+        }
+
+        try
+        {
+            if (_hotkeyRegistered)
+            {
+                var handle = new WindowInteropHelper(this).Handle;
+                if (handle != IntPtr.Zero)
+                {
+                    UnregisterHotKey(handle, HOTKEY_BOOST_ID);
+                    _hotkeyRegistered = false;
+                }
+            }
+        }
+        catch { }
 
         if (_isClosingCleanedUp)
         {
@@ -358,7 +671,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        if (_viewModel.IsOptimizing)
+        if (_viewModel.IsOptimizing || _viewModel.IsMinecraftOptimizing)
         {
             // Cancel immediate close and deactivate asynchronously without blocking the UI thread (SF-11, SF-15)
             e.Cancel = true;

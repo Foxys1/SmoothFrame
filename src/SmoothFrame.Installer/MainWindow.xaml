@@ -11,15 +11,15 @@
         FontFamily="{StaticResource DefaultFont}">
 
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="40"
+        <WindowChrome CaptionHeight="46"
                       ResizeBorderThickness="0"
                       GlassFrameThickness="0"
-                      CornerRadius="12"/>
+                      CornerRadius="16"/>
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
         <Style x:Key="ActionButton" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource BrushAccent}"/>
+            <Setter Property="Background" Value="{StaticResource BrushAccentGradient}"/>
             <Setter Property="Foreground" Value="#FFFFFF"/>
             <Setter Property="FontSize" Value="13.5"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -29,8 +29,11 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8"
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10"
                                 Padding="{TemplateBinding Padding}">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#8B5CF6" BlurRadius="12" ShadowDepth="2" Opacity="0.45"/>
+                            </Border.Effect>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -100,9 +103,12 @@
     </Window.Resources>
 
     <Border Background="{StaticResource BrushBgDark}"
-            BorderBrush="{StaticResource BrushBorder}"
-            BorderThickness="1"
-            CornerRadius="12">
+            BorderBrush="{StaticResource BrushBorderGradient}"
+            BorderThickness="1.5"
+            CornerRadius="16">
+        <Border.Effect>
+            <DropShadowEffect Color="#7C3AED" BlurRadius="24" ShadowDepth="4" Opacity="0.35"/>
+        </Border.Effect>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="46"/>
@@ -139,11 +145,14 @@
 
                     <!-- App Banner -->
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,4,0,24">
-                        <Border Background="{StaticResource BrushSurfaceCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="12" Width="52" Height="52" Margin="0,0,16,0">
-                            <Path Data="{StaticResource Icon.BoltFill}" Fill="{StaticResource BrushAccent}" Width="24" Height="24" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border Background="{StaticResource BrushAccentGradient}" CornerRadius="14" Width="54" Height="54" Margin="0,0,16,0">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#8B5CF6" BlurRadius="12" ShadowDepth="0" Opacity="0.6"/>
+                            </Border.Effect>
+                            <Path Data="{StaticResource Icon.BoltFill}" Fill="#FFFFFF" Width="26" Height="26" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock x:Name="BannerTitle" Text="SmoothFrame v1.0.0" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}"/>
+                            <TextBlock x:Name="BannerTitle" Text="SmoothFrame v2.0.0" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}"/>
                             <TextBlock x:Name="BannerSubtitle" Text="Умный оптимизатор игровых задержек, таймеров и процессов" FontSize="12.5" Foreground="{StaticResource BrushTextMuted}" Margin="0,3,0,0"/>
                         </StackPanel>
                     </StackPanel>

@@ -18,6 +18,7 @@ public class ProcessTunerService
         "torrent", "utorrent", "qbittorrent", "spotify"
     };
 
+    private readonly object _lock = new();
     public List<ProcessState> AlteredProcesses { get; } = new();
 
     private static DateTime? TryGetStartTime(Process process)
@@ -32,16 +33,40 @@ public class ProcessTunerService
         }
     }
 
-    private static string? TryGetExecutablePath(Process process)
+    public static string? TryGetExecutablePath(Process process)
     {
+        if (process == null) return null;
+
         try
         {
-            return process.MainModule?.FileName;
+            string? path = process.MainModule?.FileName;
+            if (!string.IsNullOrEmpty(path)) return path;
         }
-        catch
+        catch { }
+
+        try
         {
-            return null;
+            var hProc = NativeMethods.OpenProcess(NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION, false, process.Id);
+            if (hProc != IntPtr.Zero)
+            {
+                try
+                {
+                    var sb = new System.Text.StringBuilder(1024);
+                    int size = sb.Capacity;
+                    if (NativeMethods.QueryFullProcessImageName(hProc, 0, sb, ref size))
+                    {
+                        return sb.ToString();
+                    }
+                }
+                finally
+                {
+                    NativeMethods.CloseHandle(hProc);
+                }
+            }
         }
+        catch { }
+
+        return null;
     }
 
     public ProcessState? OptimizeGameProcess(Process gameProcess, bool isolatePCores = false)
@@ -133,7 +158,10 @@ public class ProcessTunerService
                         OriginalAffinityMask = affinitySet ? origAffinityMask : 0
                     };
 
-                    AlteredProcesses.Add(state);
+                    lock (_lock)
+                    {
+                        AlteredProcesses.Add(state);
+                    }
                     return state;
                 }
 
@@ -212,7 +240,10 @@ public class ProcessTunerService
                                     OriginalAffinityMask = 0
                                 };
 
-                                AlteredProcesses.Add(state);
+                                lock (_lock)
+                                {
+                                    AlteredProcesses.Add(state);
+                                }
                                 deprioritized.Add(state);
                             }
                             else
@@ -247,7 +278,11 @@ public class ProcessTunerService
 
     public void RestoreProcesses(IEnumerable<ProcessState>? statesToRestore = null)
     {
-        var list = (statesToRestore ?? AlteredProcesses).ToList();
+        List<ProcessState> list;
+        lock (_lock)
+        {
+            list = (statesToRestore ?? AlteredProcesses).ToList();
+        }
 
         foreach (var state in list)
         {
@@ -372,14 +407,17 @@ public class ProcessTunerService
             }
         }
 
-        if (statesToRestore == null)
+        lock (_lock)
         {
-            AlteredProcesses.Clear();
-        }
-        else
-        {
-            var restoredPids = list.Select(p => p.ProcessId).ToHashSet();
-            AlteredProcesses.RemoveAll(p => restoredPids.Contains(p.ProcessId));
+            if (statesToRestore == null)
+            {
+                AlteredProcesses.Clear();
+            }
+            else
+            {
+                var restoredPids = list.Select(p => p.ProcessId).ToHashSet();
+                AlteredProcesses.RemoveAll(p => restoredPids.Contains(p.ProcessId));
+            }
         }
     }
 }

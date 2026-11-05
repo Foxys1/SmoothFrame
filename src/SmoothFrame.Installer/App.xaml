@@ -3,15 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Startup="OnStartup">
     <Application.Resources>
-        <!-- Modern Dark Palette matching SmoothFrame -->
-        <Color x:Key="ColorBgDark">#0C0E14</Color>
-        <Color x:Key="ColorSurface">#131620</Color>
-        <Color x:Key="ColorSurfaceCard">#181B26</Color>
-        <Color x:Key="ColorSurfaceHover">#212534</Color>
-        <Color x:Key="ColorBorder">#252A3D</Color>
-        <Color x:Key="ColorAccent">#6366F1</Color>
-        <Color x:Key="ColorAccentHover">#797CF8</Color>
-        <Color x:Key="ColorTextPrimary">#F1F5F9</Color>
+        <!-- Modern Dark Palette matching SmoothFrame black-and-violet aesthetic -->
+        <Color x:Key="ColorBgDark">#08090E</Color>
+        <Color x:Key="ColorSurface">#0D0E17</Color>
+        <Color x:Key="ColorSurfaceCard">#121320</Color>
+        <Color x:Key="ColorSurfaceHover">#1A1B2E</Color>
+        <Color x:Key="ColorBorder">#232238</Color>
+        <Color x:Key="ColorAccent">#8B5CF6</Color>
+        <Color x:Key="ColorAccentHover">#A855F7</Color>
+        <Color x:Key="ColorTextPrimary">#F8FAFC</Color>
         <Color x:Key="ColorTextSecondary">#94A3B8</Color>
         <Color x:Key="ColorTextMuted">#64748B</Color>
 
@@ -26,7 +26,19 @@
         <SolidColorBrush x:Key="BrushTextSecondary" Color="{StaticResource ColorTextSecondary}"/>
         <SolidColorBrush x:Key="BrushTextMuted" Color="{StaticResource ColorTextMuted}"/>
 
-        <FontFamily x:Key="DefaultFont">Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif</FontFamily>
+        <LinearGradientBrush x:Key="BrushAccentGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#A855F7" Offset="0"/>
+            <GradientStop Color="#8B5CF6" Offset="0.5"/>
+            <GradientStop Color="#6366F1" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="BrushBorderGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#8B5CF6" Offset="0"/>
+            <GradientStop Color="#4C1D95" Offset="0.5"/>
+            <GradientStop Color="#222038" Offset="1"/>
+        </LinearGradientBrush>
+
+        <FontFamily x:Key="DefaultFont">Segoe UI Variable Text, Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif</FontFamily>
 
         <!-- Vectors -->
         <Geometry x:Key="Icon.BoltFill">M13.1 2.1 4.5 13.5h6.1l-1.1 8.4 8.7-11.4h-6.1z</Geometry>

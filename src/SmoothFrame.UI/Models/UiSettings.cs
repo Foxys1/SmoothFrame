@@ -21,7 +21,28 @@ public sealed class UiSettings
     public bool OnboardingCompleted { get; set; }
 
     [JsonPropertyName("language")]
-    public string Language { get; set; } = "ru";
+    public string Language { get; set; } = "en";
+
+    [JsonPropertyName("minimizeToTrayOnClose")]
+    public bool MinimizeToTrayOnClose { get; set; } = true;
+
+    [JsonPropertyName("autoBoostOnGameLaunch")]
+    public bool AutoBoostOnGameLaunch { get; set; } = true;
+
+    [JsonPropertyName("globalHotkeyEnabled")]
+    public bool GlobalHotkeyEnabled { get; set; } = true;
+
+    [JsonPropertyName("highPrecisionTimer")]
+    public bool HighPrecisionTimer { get; set; } = true;
+
+    [JsonPropertyName("highPerformancePlan")]
+    public bool HighPerformancePlan { get; set; } = true;
+
+    [JsonPropertyName("deprioritizeBackground")]
+    public bool DeprioritizeBackground { get; set; } = true;
+
+    [JsonPropertyName("isolatePCores")]
+    public bool IsolatePCores { get; set; } = false;
 
     public static UiSettings Load()
     {

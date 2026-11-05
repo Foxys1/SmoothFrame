@@ -16,6 +16,15 @@ public class OptimizationOptions
     public bool ElevateGamePriority { get; set; } = true;
     public bool DeprioritizeBackgroundApps { get; set; } = true;
     public bool IsolatePCores { get; set; } = false;
+
+    public OptimizationOptions Clone() => new()
+    {
+        HighPrecisionTimer = HighPrecisionTimer,
+        HighPerformancePowerPlan = HighPerformancePowerPlan,
+        ElevateGamePriority = ElevateGamePriority,
+        DeprioritizeBackgroundApps = DeprioritizeBackgroundApps,
+        IsolatePCores = IsolatePCores
+    };
 }
 
 public class OptimizationResult
@@ -125,6 +134,25 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
         }
     }
 
+    public async Task<OptimizationResult> ActivateMinecraftAsync(OptimizationOptions? options = null)
+    {
+        var minecraftGame = new GameInfo
+        {
+            Name = "Minecraft",
+            ProcessName = "javaw",
+            ExecutablePath = "javaw.exe"
+        };
+        var opt = options ?? new OptimizationOptions
+        {
+            HighPrecisionTimer = true,
+            HighPerformancePowerPlan = true,
+            ElevateGamePriority = true,
+            DeprioritizeBackgroundApps = true,
+            IsolatePCores = true
+        };
+        return await ActivateAsync(minecraftGame, opt).ConfigureAwait(false);
+    }
+
     public async Task<OptimizationResult> ActivateAsync(GameInfo game, OptimizationOptions? options = null)
     {
         if (game == null)
@@ -163,7 +191,7 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                 return new OptimizationResult { Success = false, Message = "Оптимизация уже активна." };
             }
 
-            var opt = options ?? Options;
+            var opt = (options ?? Options).Clone();
             CurrentOptimizedGame = game;
 
             Guid? originalPlanGuid = null;
@@ -318,7 +346,6 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                 // 4. Clear snapshot file
                 _snapshotManager.ClearSnapshot();
                 _currentSnapshot = null;
-                CurrentOptimizedGame = null;
             }
             catch (Exception ex)
             {
@@ -328,6 +355,7 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
             {
                 IsActive = false;
                 StateChanged?.Invoke(false);
+                CurrentOptimizedGame = null;
                 LogNotification?.Invoke("Оптимизация выключена. Все системные параметры возвращены.");
             }
         }
@@ -358,63 +386,146 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
             : game.ProcessName;
 
         bool gameOptimized = false;
+        var registeredGpuPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        Process? currentTargetProc = null;
 
-        while (!token.IsCancellationRequested)
+        try
         {
-            Process[]? processes = null;
-            try
+            while (!token.IsCancellationRequested)
             {
-                processes = Process.GetProcessesByName(procName);
-                var targetProc = processes.FirstOrDefault(p => !p.HasExited);
-
-                if (targetProc != null)
+                Process[]? processes = null;
+                try
                 {
-                    if (!gameOptimized && opt.ElevateGamePriority)
+                    // Check if existing tracked process is still alive and running
+                    if (currentTargetProc != null)
                     {
-                        var state = _processTuner.OptimizeGameProcess(targetProc, opt.IsolatePCores);
-                        if (state != null && _currentSnapshot != null)
+                        bool hasExited = true;
+                        try
                         {
-                            _currentSnapshot.AlteredProcesses.Add(state);
-                            _currentSnapshot.OptimizedGameProcessId = targetProc.Id;
-                            _snapshotManager.SaveSnapshot(_currentSnapshot);
-                            LogNotification?.Invoke($"Процесс игры {game.Name} обнаружен и переведен в High Priority!");
+                            hasExited = currentTargetProc.HasExited;
                         }
-                        gameOptimized = true;
-                    }
-                }
-                else
-                {
-                    // Game is not currently running or has exited
-                    if (gameOptimized)
-                    {
-                        LogNotification?.Invoke($"Игра {game.Name} закрыта.");
-                        gameOptimized = false;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Watcher error: {ex.Message}");
-            }
-            finally
-            {
-                if (processes != null)
-                {
-                    foreach (var p in processes)
-                    {
-                        try { p.Dispose(); } catch { }
-                    }
-                }
-            }
+                        catch
+                        {
+                            hasExited = true;
+                        }
 
+                        if (hasExited)
+                        {
+                            try { currentTargetProc.Dispose(); } catch { }
+                            currentTargetProc = null;
+
+                            if (gameOptimized)
+                            {
+                                LogNotification?.Invoke($"Игра {game.Name} закрыта.");
+                                gameOptimized = false;
+                            }
+                        }
+                    }
+
+                    // Enumerate processes only if no valid process is currently tracked
+                    if (currentTargetProc == null)
+                    {
+                        processes = Process.GetProcessesByName(procName);
+                        if ((processes == null || processes.Length == 0) &&
+                            (procName.Equals("minecraft", StringComparison.OrdinalIgnoreCase) || procName.Equals("javaw", StringComparison.OrdinalIgnoreCase)))
+                        {
+                            processes = Process.GetProcessesByName("javaw");
+                            if (processes == null || processes.Length == 0)
+                            {
+                                processes = Process.GetProcessesByName("java");
+                            }
+                        }
+
+                        var targetProc = processes?.FirstOrDefault(p => !p.HasExited);
+
+                        if (targetProc != null)
+                        {
+                            currentTargetProc = targetProc;
+
+                            ProcessState? state = null;
+                            if (!gameOptimized && opt.ElevateGamePriority)
+                            {
+                                state = _processTuner.OptimizeGameProcess(currentTargetProc, opt.IsolatePCores);
+                                if (state != null && _currentSnapshot != null)
+                                {
+                                    _currentSnapshot.AlteredProcesses.Add(state);
+                                    _currentSnapshot.OptimizedGameProcessId = currentTargetProc.Id;
+                                    _snapshotManager.SaveSnapshot(_currentSnapshot);
+                                    LogNotification?.Invoke($"Процесс игры {game.Name} обнаружен и переведен в High Priority!");
+                                }
+                                gameOptimized = true;
+                            }
+
+                            // Dynamic DirectX High Performance GPU registration for Minecraft javaw.exe
+                            if (currentTargetProc.ProcessName.Equals("javaw", StringComparison.OrdinalIgnoreCase) ||
+                                currentTargetProc.ProcessName.Equals("java", StringComparison.OrdinalIgnoreCase) ||
+                                game.ProcessName.Contains("javaw", StringComparison.OrdinalIgnoreCase) ||
+                                game.ProcessName.Contains("minecraft", StringComparison.OrdinalIgnoreCase))
+                            {
+                                try
+                                {
+                                    string? exePath = state?.ExecutablePath ?? ProcessTunerService.TryGetExecutablePath(currentTargetProc);
+                                    if (!string.IsNullOrEmpty(exePath) && Path.IsPathRooted(exePath) && File.Exists(exePath))
+                                    {
+                                        if (!registeredGpuPaths.Contains(exePath))
+                                        {
+                                            if (WindowsGpuService.SetHighPerformanceGpu(exePath))
+                                            {
+                                                registeredGpuPaths.Add(exePath);
+                                            }
+                                        }
+                                    }
+                                }
+                                catch { }
+                            }
+                        }
+                        else
+                        {
+                            // Game is not currently running or has exited
+                            if (gameOptimized)
+                            {
+                                LogNotification?.Invoke($"Игра {game.Name} закрыта.");
+                                gameOptimized = false;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Watcher error: {ex.Message}");
+                }
+                finally
+                {
+                    if (processes != null)
+                    {
+                        foreach (var p in processes)
+                        {
+                            if (!ReferenceEquals(p, currentTargetProc))
+                            {
+                                try { p.Dispose(); } catch { }
+                            }
+                        }
+                    }
+                }
+
+                try
+                {
+                    await Task.Delay(1500, token);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+            }
+        }
+        finally
+        {
             try
             {
-                await Task.Delay(1500, token);
+                currentTargetProc?.Dispose();
             }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
+            catch { }
+            currentTargetProc = null;
         }
     }
 
@@ -501,6 +612,11 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                 _disposeCts.Dispose();
             }
             catch { }
+            try
+            {
+                _deactivationLock.Dispose();
+            }
+            catch { }
             GC.SuppressFinalize(this);
         }
     }
@@ -523,11 +639,36 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
             {
                 try
                 {
-                    try
+                    if (_watcherCts != null)
                     {
-                        _watcherCts?.Cancel();
+                        try
+                        {
+                            _watcherCts.Cancel();
+                        }
+                        catch (ObjectDisposedException) { }
+
+                        if (_watcherTask != null)
+                        {
+                            try
+                            {
+                                _watcherTask.Wait(TimeSpan.FromSeconds(2));
+                            }
+                            catch (AggregateException ae) when (ae.InnerException is OperationCanceledException) { }
+                            catch (OperationCanceledException) { }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine($"Watcher task wait exception in Dispose: {ex.Message}");
+                            }
+                            _watcherTask = null;
+                        }
+
+                        try
+                        {
+                            _watcherCts.Dispose();
+                        }
+                        catch { }
+                        _watcherCts = null;
                     }
-                    catch (ObjectDisposedException) { }
 
                     _processTuner.RestoreProcesses();
                     _powerPlanService.RestoreOriginalPlan();
@@ -562,6 +703,11 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
             catch { }
             _timerService.Dispose();
             _powerPlanService.Dispose();
+            if (_watcherTask != null)
+            {
+                try { _watcherTask.Wait(TimeSpan.FromSeconds(2)); } catch { }
+                _watcherTask = null;
+            }
             try
             {
                 _watcherCts?.Dispose();
@@ -571,6 +717,11 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
             try
             {
                 _disposeCts.Dispose();
+            }
+            catch { }
+            try
+            {
+                _deactivationLock.Dispose();
             }
             catch { }
             GC.SuppressFinalize(this);

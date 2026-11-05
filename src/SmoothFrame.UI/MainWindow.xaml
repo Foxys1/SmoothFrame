@@ -7,37 +7,42 @@
         xmlns:converters="clr-namespace:SmoothFrame.UI.Converters"
         mc:Ignorable="d"
         Title="{DynamicResource App.Title}"
-        Height="760" Width="1120"
-        MinHeight="640" MinWidth="920"
+        Height="790" Width="1180"
+        MinHeight="680" MinWidth="980"
         WindowStartupLocation="CenterScreen"
         Foreground="{StaticResource BrushTextPrimary}"
         WindowStyle="None"
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType">
 
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="40"
-                      ResizeBorderThickness="6"
+        <WindowChrome CaptionHeight="48"
+                      ResizeBorderThickness="8"
                       GlassFrameThickness="0"
-                      CornerRadius="0" />
+                      CornerRadius="16" />
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
+        <DropShadowEffect x:Key="WindowDropShadow" Color="#8B5CF6" BlurRadius="28" ShadowDepth="4" Opacity="0.35"/>
         <converters:Base64ToImageConverter x:Key="Base64ToImageConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisConverter" />
 
-        <SolidColorBrush x:Key="BrushSuccessTint" Color="#0E2A21"/>
-        <SolidColorBrush x:Key="BrushWarningTint" Color="#2B2110"/>
-        <SolidColorBrush x:Key="BrushDangerHover" Color="#FF7189"/>
-        <SolidColorBrush x:Key="BrushDangerPressed" Color="#D23B55"/>
+        <SolidColorBrush x:Key="BrushSuccessTint" Color="#0D2E20"/>
+        <SolidColorBrush x:Key="BrushWarningTint" Color="#30200A"/>
+        <SolidColorBrush x:Key="BrushDangerHover" Color="#FB7185"/>
+        <SolidColorBrush x:Key="BrushDangerPressed" Color="#E11D48"/>
 
         <Style x:Key="EmptyHint" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="Visibility" Value="Collapsed"/>
             <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}"/>
-            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="FontSize" Value="13"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,60,0,0"/>
+            <Setter Property="Margin" Value="0,40,0,0"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding HasItems, ElementName=GamesList}" Value="False">
                     <Setter Property="Visibility" Value="Visible"/>
@@ -45,40 +50,65 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="HeroButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+        <!-- Master Hero Boost Button with smooth scale micro-interaction and glow -->
+        <Style x:Key="HeroButton" TargetType="Button">
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="9"
+                        <Border x:Name="Bd" Background="{StaticResource BrushAccentGradient}" CornerRadius="12"
                                 Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#8B5CF6" BlurRadius="22" ShadowDepth="2" Opacity="0.55"/>
+                            </Border.Effect>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushAccentHover}"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushAccentGradientHover}"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.03" Duration="0:0:0.12"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.03" Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.0" Duration="0:0:0.12"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.0" Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushAccentPressed}"/>
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.97" ScaleY="0.97"/>
+                                    </Setter.Value>
+                                </Setter>
                             </Trigger>
                             <DataTrigger Binding="{Binding IsOptimizing}" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushDanger}"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsOptimizing}" Value="False">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushAccent}"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushDangerGradient}"/>
                             </DataTrigger>
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding IsOptimizing}" Value="True"/>
                                     <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
                                 </MultiDataTrigger.Conditions>
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushDangerHover}"/>
-                            </MultiDataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding IsOptimizing}" Value="True"/>
-                                    <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Self}}" Value="True"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushDangerPressed}"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushDangerGradientHover}"/>
                             </MultiDataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -86,31 +116,104 @@
             </Setter>
         </Style>
 
+        <!-- Minecraft Master Hero Button -->
+        <Style x:Key="MinecraftHeroButton" TargetType="Button">
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{StaticResource BrushAccentGradient}" CornerRadius="12"
+                                Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#8B5CF6" BlurRadius="22" ShadowDepth="2" Opacity="0.55"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushAccentGradientHover}"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.03" Duration="0:0:0.12"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.03" Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.0" Duration="0:0:0.12"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.0" Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushAccentPressed}"/>
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.97" ScaleY="0.97"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding IsMinecraftOptimizing}" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushDangerGradient}"/>
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsMinecraftOptimizing}" Value="True"/>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BrushDangerGradientHover}"/>
+                            </MultiDataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Modern Bento Horizontal Game Card Item -->
         <Style x:Key="GameCardItem" TargetType="ListBoxItem">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
                         <Border x:Name="CardBd"
-                                Background="{StaticResource BrushBgInset}"
-                                BorderBrush="{StaticResource BrushBorder}"
-                                BorderThickness="1"
-                                CornerRadius="10"
-                                Width="168" Height="136"
+                                Background="{StaticResource BrushBgCard}"
+                                BorderBrush="{StaticResource BrushTopHighlightBorder}"
+                                BorderThickness="1.2"
+                                CornerRadius="12"
+                                Width="216" Height="76"
                                 Margin="6"
-                                Cursor="Hand">
+                                Padding="12,10"
+                                SnapsToDevicePixels="True">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#000000" BlurRadius="12" ShadowDepth="2" Opacity="0.3"/>
+                            </Border.Effect>
                             <ContentPresenter/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="CardBd" Property="Background" Value="{StaticResource BrushBgCardHover}"/>
-                                <Setter TargetName="CardBd" Property="BorderBrush" Value="{StaticResource BrushBorderStrong}"/>
+                                <Setter TargetName="CardBd" Property="BorderBrush" Value="{StaticResource BrushAccentHover}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="CardBd" Property="BorderBrush" Value="{StaticResource BrushAccent}"/>
-                                <Setter TargetName="CardBd" Property="Background" Value="{StaticResource BrushAccentSoft}"/>
+                                <Setter TargetName="CardBd" Property="BorderThickness" Value="1.5"/>
+                                <Setter TargetName="CardBd" Property="Background" Value="{StaticResource BrushNavActiveBg}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -119,19 +222,23 @@
         </Style>
     </Window.Resources>
 
-    <Border BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="10"
-            Background="{StaticResource BrushBgApp}">
+    <!-- Outer window border with 16px CornerRadius, vibrant border gradient, and soft drop shadow -->
+    <Border x:Name="RootBorder" BorderBrush="{StaticResource BrushBorderGradient}" BorderThickness="1.5" CornerRadius="16"
+            Background="{StaticResource BrushBgApp}"
+            RenderOptions.ClearTypeHint="Enabled"
+            SnapsToDevicePixels="True"
+            Effect="{StaticResource WindowDropShadow}">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>
+                <RowDefinition Height="48"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="32"/>
             </Grid.RowDefinitions>
 
             <!-- ===================== TITLE BAR ===================== -->
-            <Border Grid.Row="0" Background="{StaticResource BrushBgSide}"
+            <Border x:Name="TitleBarBorder" Grid.Row="0" Background="{StaticResource BrushBgSide}"
                     BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,0,1"
-                    CornerRadius="9,9,0,0">
+                    CornerRadius="15,15,0,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -139,29 +246,87 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
-                        <Border Background="{StaticResource BrushAccent}" CornerRadius="6" Width="22" Height="22">
-                            <controls:AppIcon Data="{StaticResource Icon.BoltFill}" Filled="True" Size="12"
-                                              Foreground="{StaticResource BrushOnAccent}"
+                    <!-- Brand identity with neon violet gradient container, PRO badge, and live latency pill -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                        <Border Background="{StaticResource BrushAccentGradient}" CornerRadius="8" Width="28" Height="28">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#8B5CF6" BlurRadius="10" ShadowDepth="0" Opacity="0.6"/>
+                            </Border.Effect>
+                            <controls:AppIcon Data="{StaticResource Icon.BoltFill}" Filled="True" Size="14"
+                                              Foreground="#FFFFFF"
                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="SmoothFrame" FontSize="13" FontWeight="SemiBold"
-                                   Foreground="{StaticResource BrushTextPrimary}"
-                                   VerticalAlignment="Center" Margin="9,0,0,0"/>
-                        <Border Background="{StaticResource BrushAccentSoft}" CornerRadius="4" Padding="7,2"
-                                Margin="10,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="{DynamicResource Badge.Safe}" FontSize="10.5" FontWeight="SemiBold"
+                        <TextBlock Text="SmoothFrame" FontSize="14" FontWeight="Bold"
+                                   Foreground="#FFFFFF"
+                                   VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <!-- Glowing PRO badge -->
+                        <Border Background="{StaticResource BrushNavActiveBg}" BorderBrush="{StaticResource BrushBorderGlow}" BorderThickness="1"
+                                CornerRadius="6" Padding="6,2"
+                                Margin="8,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="PRO" FontSize="10" FontWeight="Bold"
                                        Foreground="{StaticResource BrushAccentHover}"/>
+                        </Border>
+                        <Border Background="{StaticResource BrushAccentSoft}" BorderBrush="#4C1D95" BorderThickness="1"
+                                CornerRadius="6" Padding="8,2"
+                                Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{DynamicResource Badge.Safe}" FontSize="10" FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushVioletText}"/>
+                        </Border>
+
+                        <!-- Live Dynamic Status Pill in Title Bar -->
+                        <Border Background="#0A0A10" BorderBrush="#1C1B2C" BorderThickness="1"
+                                CornerRadius="12" Padding="10,3" Margin="16,0,0,0" VerticalAlignment="Center"
+                                ToolTip="SmoothFrame Low-Latency Optimization Engine">
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="7" Height="7" Margin="0,0,7,0" VerticalAlignment="Center">
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse">
+                                            <Setter Property="Fill" Value="{StaticResource BrushAccentHover}"/>
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect Color="#8B5CF6" BlurRadius="6" ShadowDepth="0" Opacity="0.8"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsOptimizing}" Value="True">
+                                                    <Setter Property="Fill" Value="{StaticResource BrushSuccess}"/>
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect Color="#10B981" BlurRadius="6" ShadowDepth="0" Opacity="0.9"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                                <TextBlock FontSize="10.5" FontWeight="SemiBold"
+                                           Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                            <Setter Property="Text" Value="{DynamicResource TitleBar.Standby}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsOptimizing}" Value="True">
+                                                    <Setter Property="Text" Value="{DynamicResource TitleBar.Active}"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
                         </Border>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2" Orientation="Horizontal"
+                    <!-- Window controls -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,8,0"
+                                VerticalAlignment="Center"
                                 WindowChrome.IsHitTestVisibleInChrome="True">
                         <Button Style="{StaticResource TitleBarButton}" Click="MinimizeButton_Click">
                             <controls:AppIcon Data="{StaticResource Icon.Min}" Size="12"/>
                         </Button>
-                        <Button Style="{StaticResource TitleBarButton}" Click="MaximizeButton_Click">
-                            <controls:AppIcon Data="{StaticResource Icon.Max}" Size="11"/>
+                        <Button x:Name="BtnMaximize" Style="{StaticResource TitleBarButton}" Click="MaximizeButton_Click">
+                            <controls:AppIcon x:Name="MaximizeIcon" Data="{StaticResource Icon.Max}" Size="11"/>
                         </Button>
                         <Button Style="{StaticResource TitleBarCloseButton}" Click="CloseButton_Click">
                             <controls:AppIcon Data="{StaticResource Icon.Close}" Size="11"/>
@@ -173,11 +338,11 @@
             <!-- ===================== BODY ===================== -->
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="236"/>
+                    <ColumnDefinition Width="220"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- = Sidebar = -->
+                <!-- = Sidebar Navigation = -->
                 <Border Grid.Column="0" Background="{StaticResource BrushBgSide}"
                         BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,1,0">
                     <Grid>
@@ -188,7 +353,8 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Text="{DynamicResource Nav.Caption}"
-                                   Style="{StaticResource TextCaption}" Margin="22,20,0,8"/>
+                                   Style="{StaticResource TextCaption}" FontWeight="Bold"
+                                   Margin="22,18,0,12"/>
 
                         <StackPanel Grid.Row="1">
                             <RadioButton x:Name="NavOpt" GroupName="Nav" Style="{StaticResource SideNavItem}"
@@ -197,6 +363,23 @@
                                     <controls:AppIcon Data="{StaticResource Icon.Gauge}" Size="16" Margin="0,0,12,0"/>
                                     <TextBlock Text="{DynamicResource Nav.Opt}" VerticalAlignment="Center"/>
                                 </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="NavMinecraft" GroupName="Nav" Style="{StaticResource SideNavItem}"
+                                         Checked="Nav_Checked">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <controls:AppIcon Data="{StaticResource Icon.Game}" Size="16" Margin="0,0,12,0"/>
+                                        <TextBlock Text="{DynamicResource Nav.Minecraft}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" HorizontalAlignment="Right" Background="#261245" BorderBrush="#8B5CF6" BorderThickness="1"
+                                            CornerRadius="4" Padding="5,1" Margin="6,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="FPS PRO" FontSize="9" FontWeight="Bold" Foreground="{StaticResource BrushVioletText}"/>
+                                    </Border>
+                                </Grid>
                             </RadioButton>
                             <RadioButton x:Name="NavSettings" GroupName="Nav" Style="{StaticResource SideNavItem}"
                                          Checked="Nav_Checked">
@@ -214,17 +397,26 @@
                             </RadioButton>
                         </StackPanel>
 
+                        <!-- Sidebar Footer Status Card -->
                         <StackPanel Grid.Row="2">
-                            <Border Height="1" Background="{StaticResource BrushBorder}" Margin="10,8"/>
-                            <TextBlock Text="v1.0.0" Style="{StaticResource TextCaption}" Margin="22,6,0,16"/>
+                            <Border Background="#0A0A10" BorderBrush="#1C1B2C" BorderThickness="1"
+                                    CornerRadius="10" Padding="12,10" Margin="12,8,12,14">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                                        <Ellipse Width="6" Height="6" Fill="{StaticResource BrushSuccess}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="SmoothFrame Engine" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
+                                    </StackPanel>
+                                    <TextBlock Text="0.5 ms • ZGC Ready • Active" FontSize="10" Foreground="{StaticResource BrushTextMuted}"/>
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
                     </Grid>
                 </Border>
 
-                <!-- = Content pages = -->
+                <!-- = Content Pages = -->
                 <Grid Grid.Column="1" x:Name="ContentHost">
 
-                    <!-- ===== PAGE: OPTIMIZATION ===== -->
+                    <!-- ===== PAGE: OPTIMIZATION (MODULAR BENTO) ===== -->
                     <Grid x:Name="PageOpt">
                         <ScrollViewer Style="{StaticResource DarkScrollViewer}"
                                       VerticalScrollBarVisibility="Auto"
@@ -232,147 +424,176 @@
                             <StackPanel Margin="28,22,28,26">
                                 <TextBlock Text="{DynamicResource Opt.Title}" Style="{StaticResource TextTitle}"/>
                                 <TextBlock Text="{DynamicResource Opt.Subtitle}" Style="{StaticResource TextBody}"
-                                           Margin="0,4,0,20"/>
+                                           Margin="0,4,0,18"/>
 
-                                <!-- Telemetry cards -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border Grid.Column="0" Style="{StaticResource Card}" Padding="16,14" Margin="0,0,7,0">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Border Width="34" Height="34" CornerRadius="8"
-                                                    Background="{StaticResource BrushAccentSoft}" VerticalAlignment="Top">
-                                                <controls:AppIcon Data="{StaticResource Icon.Clock}" Size="16"
-                                                                  Foreground="{StaticResource BrushAccentHover}"
-                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                                <TextBlock Text="{DynamicResource Card.Timer.Label}" Style="{StaticResource TextCaption}"/>
-                                                <TextBlock Text="{Binding TimerText}" Style="{StaticResource TextValue}" Margin="0,4,0,2"/>
-                                                <TextBlock Text="{DynamicResource Card.Timer.Hint}" Style="{StaticResource TextCaption}" TextWrapping="Wrap"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Border>
-
-                                    <Border Grid.Column="1" Style="{StaticResource Card}" Padding="16,14" Margin="7,0,7,0">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Border Width="34" Height="34" CornerRadius="8"
-                                                    Background="{StaticResource BrushSuccessTint}" VerticalAlignment="Top">
-                                                <controls:AppIcon Data="{StaticResource Icon.Bolt}" Size="16"
-                                                                  Foreground="{StaticResource BrushSuccess}"
-                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                                <TextBlock Text="{DynamicResource Card.Power.Label}" Style="{StaticResource TextCaption}"/>
-                                                <TextBlock Text="{Binding PowerPlanText}" Style="{StaticResource TextValue}" Margin="0,4,0,2"/>
-                                                <TextBlock Text="{DynamicResource Card.Power.Hint}" Style="{StaticResource TextCaption}" TextWrapping="Wrap"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Border>
-
-                                    <Border Grid.Column="2" Style="{StaticResource Card}" Padding="16,14" Margin="7,0,0,0">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Border Width="34" Height="34" CornerRadius="8"
-                                                    Background="{StaticResource BrushWarningTint}" VerticalAlignment="Top">
-                                                <controls:AppIcon Data="{StaticResource Icon.Trend}" Size="16"
-                                                                  Foreground="{StaticResource BrushWarning}"
-                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                                <TextBlock Text="{DynamicResource Card.Prio.Label}" Style="{StaticResource TextCaption}"/>
-                                                <TextBlock Text="{Binding PriorityText}" Style="{StaticResource TextValue}" Margin="0,4,0,2"/>
-                                                <TextBlock Text="{DynamicResource Card.Prio.Hint}" Style="{StaticResource TextCaption}" TextWrapping="Wrap"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Border>
-                                </Grid>
-
-                                <!-- Hero action card -->
-                                <Border Style="{StaticResource Card}" Margin="0,14,0,20" Padding="22">
+                                <!-- Bento Full-Width Command Deck & System Metrics Card -->
+                                <Border Style="{StaticResource HeroCard}" Padding="26,22" Margin="0,0,0,18">
                                     <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
 
-                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                            <StackPanel Orientation="Horizontal">
-                                                <Border Background="{StaticResource BrushSuccessTint}" CornerRadius="4"
-                                                        Padding="7,3" Margin="0,0,10,0" VerticalAlignment="Center"
-                                                        Visibility="{Binding IsOptimizing, Converter={StaticResource BoolToVisConverter}}">
-                                                    <TextBlock Text="{DynamicResource Hero.ActiveBadge}" FontSize="10"
-                                                               FontWeight="SemiBold" Foreground="{StaticResource BrushSuccess}"/>
+                                        <!-- Row 0: Status Header & Master Boost Button -->
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,18,0">
+                                                <Border HorizontalAlignment="Left" CornerRadius="6" Padding="8,3" Margin="0,0,0,8">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="{StaticResource BrushNavActiveBg}"/>
+                                                            <Setter Property="BorderBrush" Value="{StaticResource BrushBorderGlow}"/>
+                                                            <Setter Property="BorderThickness" Value="1"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsOptimizing}" Value="True">
+                                                                    <Setter Property="Background" Value="#2D1117"/>
+                                                                    <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Ellipse Width="7" Height="7" Margin="0,0,6,0" VerticalAlignment="Center">
+                                                            <Ellipse.Style>
+                                                                <Style TargetType="Ellipse">
+                                                                    <Setter Property="Fill" Value="{StaticResource BrushAccentHover}"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsOptimizing}" Value="True">
+                                                                            <Setter Property="Fill" Value="{StaticResource BrushDanger}"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Ellipse.Style>
+                                                        </Ellipse>
+                                                        <TextBlock FontSize="10.5" FontWeight="Bold">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Text" Value="{DynamicResource Hero.StandbyBadge}"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource BrushVioletText}"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsOptimizing}" Value="True">
+                                                                            <Setter Property="Text" Value="{DynamicResource Hero.ActiveBadge}"/>
+                                                                            <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </StackPanel>
                                                 </Border>
-                                                <TextBlock Text="{Binding StatusMessage}" FontSize="18" FontWeight="SemiBold"
-                                                           Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                            <TextBlock Text="{Binding SubStatusMessage}" Style="{StaticResource TextBody}" Margin="0,6,0,0"/>
-                                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                                <controls:AppIcon Data="{StaticResource Icon.ShieldCheck}" Size="13"
-                                                                  Foreground="{StaticResource BrushSuccess}" Margin="0,0,7,0"/>
-                                                <TextBlock Text="{DynamicResource Hero.Protect}" FontSize="11.5"
-                                                           Foreground="{StaticResource BrushSuccess}"/>
-                                            </StackPanel>
-                                        </StackPanel>
 
-                                        <Button Grid.Column="1" Style="{StaticResource HeroButton}"
-                                                Padding="26,15"
-                                                Command="{Binding ToggleOptimizationCommand}">
-                                            <StackPanel Orientation="Horizontal">
-                                                <controls:AppIcon Data="{StaticResource Icon.PlayFill}" Filled="True" Size="12"
-                                                                  Margin="0,0,10,0"
-                                                                  Visibility="{Binding IsOptimizing, Converter={StaticResource InverseBoolToVisConverter}}"/>
-                                                <controls:AppIcon Data="{StaticResource Icon.Power}" Size="14"
-                                                                  Margin="0,0,10,0"
-                                                                  Visibility="{Binding IsOptimizing, Converter={StaticResource BoolToVisConverter}}"/>
-                                                <TextBlock Text="{Binding ActionButtonText}" FontSize="13.5" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding StatusMessage}" FontSize="22" FontWeight="Bold"
+                                                           Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" Margin="0,0,0,4"/>
+                                                <TextBlock Text="{Binding SubStatusMessage}" Style="{StaticResource TextBody}"/>
                                             </StackPanel>
-                                        </Button>
+
+                                            <Button Grid.Column="1" Style="{StaticResource HeroButton}"
+                                                    Padding="28,15" VerticalAlignment="Center"
+                                                    Command="{Binding ToggleOptimizationCommand}"
+                                                    ToolTip="{DynamicResource Opt.Subtitle}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <controls:AppIcon Data="{StaticResource Icon.PlayFill}" Filled="True" Size="14" Margin="0,0,8,0"
+                                                                      Visibility="{Binding IsOptimizing, Converter={StaticResource InverseBoolToVisConverter}}"/>
+                                                    <controls:AppIcon Data="{StaticResource Icon.Power}" Size="15" Margin="0,0,8,0"
+                                                                      Visibility="{Binding IsOptimizing, Converter={StaticResource BoolToVisConverter}}"/>
+                                                    <TextBlock Text="{Binding ActionButtonText}" FontSize="14" FontWeight="Bold"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </Grid>
+
+                                        <!-- Row 1: 4 Spacious Bento Telemetry Tiles -->
+                                        <Grid Grid.Row="1" Margin="0,20,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Bento Tile 1: Timer -->
+                                            <Border Grid.Column="0" Style="{StaticResource CardInset}" Padding="14,12" Margin="0,0,6,0"
+                                                    ToolTip="{DynamicResource Card.Timer.Hint}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                        <controls:AppIcon Data="{StaticResource Icon.Clock}" Size="14" Foreground="{StaticResource BrushAccentHover}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{DynamicResource Card.Timer.Label}" Style="{StaticResource TextCaption}" FontSize="10.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{Binding TimerText}" FontSize="13.5" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" Margin="0,0,0,2"/>
+                                                    <TextBlock Text="{DynamicResource Card.Timer.Hint}" Style="{StaticResource TextCaption}" FontSize="10" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!-- Bento Tile 2: Power Plan -->
+                                            <Border Grid.Column="1" Style="{StaticResource CardInset}" Padding="14,12" Margin="4,0,4,0"
+                                                    ToolTip="{DynamicResource Card.Power.Hint}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                        <controls:AppIcon Data="{StaticResource Icon.Bolt}" Size="14" Foreground="#38BDF8" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{DynamicResource Card.Power.Label}" Style="{StaticResource TextCaption}" FontSize="10.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{Binding PowerPlanText}" FontSize="13.5" FontWeight="Bold" Foreground="#38BDF8" TextTrimming="CharacterEllipsis" Margin="0,0,0,2"/>
+                                                    <TextBlock Text="{DynamicResource Card.Power.Hint}" Style="{StaticResource TextCaption}" FontSize="10" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!-- Bento Tile 3: Priority -->
+                                            <Border Grid.Column="2" Style="{StaticResource CardInset}" Padding="14,12" Margin="4,0,4,0"
+                                                    ToolTip="{DynamicResource Card.Prio.Hint}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                        <controls:AppIcon Data="{StaticResource Icon.Trend}" Size="14" Foreground="#FBBF24" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{DynamicResource Card.Prio.Label}" Style="{StaticResource TextCaption}" FontSize="10.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{Binding PriorityText}" FontSize="13.5" FontWeight="Bold" Foreground="#FBBF24" TextTrimming="CharacterEllipsis" Margin="0,0,0,2"/>
+                                                    <TextBlock Text="{DynamicResource Card.Prio.Hint}" Style="{StaticResource TextCaption}" FontSize="10" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!-- Bento Tile 4: Protection -->
+                                            <Border Grid.Column="3" Style="{StaticResource CardInset}" Padding="14,12" Margin="6,0,0,0"
+                                                    ToolTip="{DynamicResource Hero.Protect}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                        <controls:AppIcon Data="{StaticResource Icon.ShieldCheck}" Size="14" Foreground="{StaticResource BrushSuccess}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{DynamicResource Card.Prot.Label}" Style="{StaticResource TextCaption}" FontSize="10.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Text="Zero-Lag DPC" FontSize="13.5" FontWeight="Bold" Foreground="{StaticResource BrushSuccess}" Margin="0,0,0,2"/>
+                                                    <TextBlock Text="{DynamicResource Hero.Protect}" Style="{StaticResource TextCaption}" FontSize="10" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
                                     </Grid>
                                 </Border>
 
-                                <!-- Library header -->
-                                <Grid Margin="0,0,0,10">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                        <controls:AppIcon Data="{StaticResource Icon.Game}" Size="16"
-                                                          Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,9,0"/>
-                                        <TextBlock Text="{DynamicResource Lib.Title}" Style="{StaticResource TextSection}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding AddCustomGameCommand}" Margin="0,0,8,0">
-                                            <StackPanel Orientation="Horizontal">
-                                                <controls:AppIcon Data="{StaticResource Icon.Plus}" Size="11" Margin="0,0,8,0"/>
-                                                <TextBlock Text="{DynamicResource Btn.AddGame}" FontSize="12.5"/>
+                                <!-- Bento Row 2: Game Library Bento Module -->
+                                <Border Style="{StaticResource Card}" Padding="20">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,14">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <controls:AppIcon Data="{StaticResource Icon.Game}" Size="16" Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{DynamicResource Lib.Title}" Style="{StaticResource TextSection}"/>
                                             </StackPanel>
-                                        </Button>
-                                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding RefreshGamesCommand}">
-                                            <StackPanel Orientation="Horizontal">
-                                                <controls:AppIcon Data="{StaticResource Icon.Refresh}" Size="12" Margin="0,0,8,0"/>
-                                                <TextBlock Text="{DynamicResource Btn.Refresh}" FontSize="12.5"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Style="{StaticResource SecondaryButton}" Command="{Binding AddCustomGameCommand}" Margin="0,0,8,0">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <controls:AppIcon Data="{StaticResource Icon.Plus}" Size="12" Margin="0,0,6,0"/>
+                                                        <TextBlock Text="{DynamicResource Btn.AddGame}" FontSize="12"/>
+                                                    </StackPanel>
+                                                </Button>
+                                                <Button Style="{StaticResource SecondaryButton}" Command="{Binding RefreshGamesCommand}">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <controls:AppIcon Data="{StaticResource Icon.Refresh}" Size="12" Margin="0,0,6,0"/>
+                                                        <TextBlock Text="{DynamicResource Btn.Refresh}" FontSize="12"/>
+                                                    </StackPanel>
+                                                </Button>
                                             </StackPanel>
-                                        </Button>
-                                    </StackPanel>
-                                </Grid>
+                                        </Grid>
 
-                                <!-- Games grid -->
-                                <Border Style="{StaticResource Card}" Padding="8" MinHeight="240">
-                                    <Grid>
+                                        <!-- Games Grid -->
                                         <ListBox x:Name="GamesList"
                                                  ItemsSource="{Binding Games}"
                                                  SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
@@ -380,7 +601,8 @@
                                                  BorderThickness="0"
                                                  ItemContainerStyle="{StaticResource GameCardItem}"
                                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                 MinHeight="200">
                                             <ListBox.InputBindings>
                                                 <KeyBinding Key="Delete" Command="{Binding RemoveCustomGameCommand}" CommandParameter="{Binding SelectedGame}"/>
                                             </ListBox.InputBindings>
@@ -394,7 +616,7 @@
                                             </ListBox.ItemsPanel>
                                             <ListBox.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Grid Margin="10" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
+                                                    <Grid Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}">
                                                         <Grid.ContextMenu>
                                                             <ContextMenu Background="{StaticResource BrushBgCard}" BorderBrush="{StaticResource BrushBorderStrong}" BorderThickness="1">
                                                                 <MenuItem Header="{DynamicResource VM.Msg.RemoveTitle}"
@@ -414,31 +636,548 @@
                                                                 </MenuItem>
                                                             </ContextMenu>
                                                         </Grid.ContextMenu>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="Auto"/>
-                                                            <RowDefinition Height="*"/>
-                                                            <RowDefinition Height="Auto"/>
-                                                        </Grid.RowDefinitions>
-                                                        <Image Grid.Row="0" Width="40" Height="40" HorizontalAlignment="Center"
-                                                               Source="{Binding IconBase64, Converter={StaticResource Base64ToImageConverter}}"/>
-                                                        <TextBlock Grid.Row="1" Text="{Binding Name}"
-                                                                   Foreground="{StaticResource BrushTextPrimary}"
-                                                                   FontSize="11.5" FontWeight="SemiBold"
-                                                                   TextWrapping="Wrap" TextAlignment="Center"
-                                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                                   Margin="0,6,0,0"/>
-                                                        <Border Grid.Row="2" Background="{StaticResource BrushBgCard}"
-                                                                CornerRadius="4" Padding="6,2"
-                                                                HorizontalAlignment="Center" Margin="0,6,0,0">
-                                                            <TextBlock Text="{Binding Source}" FontSize="9.5"
-                                                                       Foreground="{StaticResource BrushTextMuted}"/>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="10" Background="#12111E" BorderBrush="#25233D" BorderThickness="1" VerticalAlignment="Center">
+                                                            <Image Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                   Source="{Binding IconBase64, Converter={StaticResource Base64ToImageConverter}}"/>
                                                         </Border>
+                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                                                            <TextBlock Text="{Binding Name}"
+                                                                       Foreground="#FFFFFF"
+                                                                       FontSize="12.5" FontWeight="Bold"
+                                                                       TextTrimming="CharacterEllipsis" MaxWidth="135"/>
+                                                            <Border Background="#241448" BorderBrush="#8B5CF6" BorderThickness="1"
+                                                                    CornerRadius="4" Padding="6,1" HorizontalAlignment="Left" Margin="0,5,0,0">
+                                                                <TextBlock Text="{Binding Source}" FontSize="9.5" FontWeight="Bold"
+                                                                           Foreground="{StaticResource BrushVioletText}"/>
+                                                            </Border>
+                                                        </StackPanel>
                                                     </Grid>
                                                 </DataTemplate>
                                             </ListBox.ItemTemplate>
                                         </ListBox>
                                         <TextBlock Text="{DynamicResource Lib.Empty}" Style="{StaticResource EmptyHint}"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <!-- ===== PAGE: MINECRAFT PRO BOOSTER (MODULAR BENTO) ===== -->
+                    <Grid x:Name="PageMinecraft" Visibility="Collapsed">
+                        <ScrollViewer Style="{StaticResource DarkScrollViewer}"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="28,22,28,26">
+                                <TextBlock Text="{DynamicResource Mc.Title}" Style="{StaticResource TextTitle}"/>
+                                <TextBlock Text="{DynamicResource Mc.Subtitle}" Style="{StaticResource TextBody}" Margin="0,4,0,18"/>
+
+                                <!-- Bento Module 1: Live Telemetry & Master HUD (Top Wide Bento Tile) -->
+                                <Border Style="{StaticResource HeroCard}" Margin="0,0,0,16" Padding="24,20"
+                                        Background="{StaticResource BrushMinecraftHeroBg}" BorderBrush="{StaticResource BrushBorderGlow}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Top Row: Master Toggle & Status -->
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+                                                <!-- Live pulsing status badge -->
+                                                <Border HorizontalAlignment="Left" CornerRadius="6" Padding="8,3" Margin="0,0,0,8">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="{StaticResource BrushNavActiveBg}"/>
+                                                            <Setter Property="BorderBrush" Value="{StaticResource BrushBorderGlow}"/>
+                                                            <Setter Property="BorderThickness" Value="1"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsMinecraftOptimizing}" Value="True">
+                                                                    <Setter Property="Background" Value="#2D1117"/>
+                                                                    <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Ellipse Width="7" Height="7" Margin="0,0,6,0" VerticalAlignment="Center">
+                                                            <Ellipse.Style>
+                                                                <Style TargetType="Ellipse">
+                                                                    <Setter Property="Fill" Value="{StaticResource BrushTextMuted}"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsMinecraftOptimizing}" Value="True">
+                                                                            <Setter Property="Fill" Value="{StaticResource BrushDanger}"/>
+                                                                            <DataTrigger.EnterActions>
+                                                                                <BeginStoryboard x:Name="PulseStoryboard">
+                                                                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                                         From="1.0" To="0.25" Duration="0:0:0.8"/>
+                                                                                    </Storyboard>
+                                                                                </BeginStoryboard>
+                                                                            </DataTrigger.EnterActions>
+                                                                            <DataTrigger.ExitActions>
+                                                                                <StopStoryboard BeginStoryboardName="PulseStoryboard"/>
+                                                                            </DataTrigger.ExitActions>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Ellipse.Style>
+                                                        </Ellipse>
+                                                        <TextBlock Text="{Binding MinecraftHeroBadgeText}" FontSize="10.5" FontWeight="Bold">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Foreground" Value="{StaticResource BrushVioletText}"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsMinecraftOptimizing}" Value="True">
+                                                                            <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <TextBlock Text="{Binding MinecraftHeroStatusTitle}" FontSize="21" FontWeight="Bold"
+                                                           Foreground="#FFFFFF" Margin="0,0,0,4"/>
+                                                <TextBlock Text="{Binding MinecraftHeroStatusSubtitle}" Style="{StaticResource TextBody}"/>
+
+                                                <!-- Live technical status banner -->
+                                                <Border Background="#150E28" BorderBrush="{StaticResource BrushBorderGlow}"
+                                                        BorderThickness="1" CornerRadius="8" Padding="12,6" Margin="0,10,0,0"
+                                                        Visibility="{Binding IsMinecraftOptimizing, Converter={StaticResource BoolToVisConverter}}">
+                                                    <TextBlock Text="{DynamicResource Mc.Hero.SubtitleActive}"
+                                                               Foreground="{StaticResource BrushVioletText}" FontSize="11" FontWeight="SemiBold"/>
+                                                </Border>
+                                            </StackPanel>
+
+                                            <!-- Prominent Master Toggle Button -->
+                                            <Button Grid.Column="1" Style="{StaticResource MinecraftHeroButton}"
+                                                    Padding="28,14" VerticalAlignment="Center" Margin="14,0,0,0"
+                                                    Command="{Binding ToggleMinecraftOptimizationCommand}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <controls:AppIcon Data="{StaticResource Icon.BoltFill}" Filled="True" Size="14" Margin="0,0,8,0"
+                                                                      Visibility="{Binding IsMinecraftOptimizing, Converter={StaticResource InverseBoolToVisConverter}}"/>
+                                                    <controls:AppIcon Data="{StaticResource Icon.Power}" Size="15" Margin="0,0,8,0"
+                                                                      Visibility="{Binding IsMinecraftOptimizing, Converter={StaticResource BoolToVisConverter}}"/>
+                                                    <TextBlock Text="{Binding MinecraftActionButtonText}" FontSize="14" FontWeight="Bold"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </Grid>
+
+                                        <!-- Middle Row: 3 Large In-Game Telemetry Gauges -->
+                                        <Grid Grid.Row="1" Margin="0,18,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Metric 1: Current FPS -->
+                                            <Border Grid.Column="0" Style="{StaticResource CardInset}" Padding="16,14" Margin="0,0,8,0"
+                                                    Background="#0D0D14" BorderBrush="#201E35" BorderThickness="1">
+                                                <StackPanel>
+                                                    <Grid Margin="0,0,0,6">
+                                                        <TextBlock Text="{DynamicResource Mc.Hud.Fps}" Style="{StaticResource TextCaption}" FontWeight="Bold"/>
+                                                        <controls:AppIcon Data="{StaticResource Icon.Activity}" Size="14" Foreground="{StaticResource BrushAccentHover}" HorizontalAlignment="Right"/>
+                                                    </Grid>
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                                        <TextBlock Text="{Binding InGameFps}" FontSize="32" FontWeight="Bold"
+                                                                   Foreground="{StaticResource BrushAccentHover}" FontFamily="Segoe UI"/>
+                                                        <TextBlock Text=" FPS" Style="{StaticResource TextCaption}" Margin="6,0,0,6" VerticalAlignment="Bottom" FontWeight="SemiBold"/>
+                                                    </StackPanel>
+                                                    <Border Height="2" Background="{StaticResource BrushAccentGradient}" Margin="0,8,0,0" CornerRadius="1"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!-- Metric 2: 1% Low FPS -->
+                                            <Border Grid.Column="1" Style="{StaticResource CardInset}" Padding="16,14" Margin="4,0,4,0"
+                                                    Background="#0D0D14" BorderBrush="#201E35" BorderThickness="1">
+                                                <StackPanel>
+                                                    <Grid Margin="0,0,0,6">
+                                                        <TextBlock Text="{DynamicResource Mc.Hud.OnePercentLow}" Style="{StaticResource TextCaption}" FontWeight="Bold"/>
+                                                        <controls:AppIcon Data="{StaticResource Icon.Trend}" Size="14" Foreground="{StaticResource BrushSuccess}" HorizontalAlignment="Right"/>
+                                                    </Grid>
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                                        <TextBlock Text="{Binding InGameOnePercentLow}" FontSize="32" FontWeight="Bold"
+                                                                   Foreground="{StaticResource BrushSuccess}" FontFamily="Segoe UI"/>
+                                                        <TextBlock Text=" FPS" Style="{StaticResource TextCaption}" Margin="6,0,0,6" VerticalAlignment="Bottom" FontWeight="SemiBold"/>
+                                                    </StackPanel>
+                                                    <Border Height="2" Background="{StaticResource BrushSuccess}" Margin="0,8,0,0" CornerRadius="1"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!-- Metric 3: Frametime (ms) -->
+                                            <Border Grid.Column="2" Style="{StaticResource CardInset}" Padding="16,14" Margin="8,0,0,0"
+                                                    Background="#0D0D14" BorderBrush="#201E35" BorderThickness="1">
+                                                <StackPanel>
+                                                    <Grid Margin="0,0,0,6">
+                                                        <TextBlock Text="{DynamicResource Mc.Hud.Frametime}" Style="{StaticResource TextCaption}" FontWeight="Bold"/>
+                                                        <controls:AppIcon Data="{StaticResource Icon.Clock}" Size="14" Foreground="{StaticResource BrushWarning}" HorizontalAlignment="Right"/>
+                                                    </Grid>
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                                        <TextBlock Text="{Binding InGameFrametimeMs, StringFormat='{}{0:F1}'}" FontSize="32" FontWeight="Bold"
+                                                                   Foreground="#FFFFFF" FontFamily="Segoe UI"/>
+                                                        <TextBlock Text=" ms" Style="{StaticResource TextCaption}" Margin="6,0,0,6" VerticalAlignment="Bottom" FontWeight="SemiBold"/>
+                                                    </StackPanel>
+                                                    <Border Height="2" Background="{StaticResource BrushWarning}" Margin="0,8,0,0" CornerRadius="1"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- Bottom Row: In-Game Connection Banner & Secondary Stats -->
+                                        <Border Grid.Row="2" CornerRadius="8" Padding="14,8" Margin="0,12,0,0" BorderThickness="1">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{StaticResource BrushBgInset}"/>
+                                                    <Setter Property="BorderBrush" Value="{StaticResource BrushBorder}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsModActiveInGame}" Value="True">
+                                                            <Setter Property="Background" Value="{StaticResource BrushAccentSoft}"/>
+                                                            <Setter Property="BorderBrush" Value="{StaticResource BrushAccent}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Border Grid.Column="0" Width="8" Height="8" CornerRadius="4" VerticalAlignment="Center" Margin="0,0,10,0">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="{StaticResource BrushTextMuted}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsModActiveInGame}" Value="True">
+                                                                    <Setter Property="Background" Value="{StaticResource BrushSuccess}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                </Border>
+
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding InGameStatusTitle}" FontSize="12" FontWeight="SemiBold">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsModActiveInGame}" Value="True">
+                                                                        <Setter Property="Foreground" Value="{StaticResource BrushAccentHover}"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                    <TextBlock FontSize="10" Margin="0,1,0,0">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}"/>
+                                                                <Setter Property="Text" Value="{DynamicResource Mc.Hud.WaitingBanner}"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsModActiveInGame}" Value="True">
+                                                                        <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                        <Setter Property="Text" Value="{DynamicResource Mc.Hud.ActiveBanner}"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </StackPanel>
+
+                                                <Border Grid.Column="2" VerticalAlignment="Center" CornerRadius="4" Padding="8,3"
+                                                        Background="{StaticResource BrushBgCard}" BorderBrush="{StaticResource BrushBorderStrong}" BorderThickness="1">
+                                                    <TextBlock Text="{Binding InGameStatusBadgeText}" FontSize="9.5" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}"/>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
                                     </Grid>
+                                </Border>
+
+                                <!-- Bento 2x2 Grid (4 balanced cards of equal visual weight) -->
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- ================= LEFT COLUMN ================= -->
+                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+
+                                        <!-- Bento Tile A: Launcher & Environment -->
+                                        <Border Style="{StaticResource Card}" Padding="20" Margin="0,0,0,16">
+                                            <StackPanel>
+                                                <Grid Margin="0,0,0,10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0">
+                                                        <TextBlock Text="{DynamicResource Mc.Launcher.Title}" Style="{StaticResource TextSection}"/>
+                                                        <TextBlock Text="{DynamicResource Mc.Launcher.Subtitle}" Style="{StaticResource TextCaption}" Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Command="{Binding RefreshMinecraftCommand}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <controls:AppIcon Data="{StaticResource Icon.Refresh}" Size="12" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{DynamicResource Btn.Refresh}" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </Grid>
+
+                                                <Border Height="1" Background="{StaticResource BrushBorder}" Margin="0,0,0,12"/>
+
+                                                <TextBlock Text="{DynamicResource Mc.Launcher.Active}" Style="{StaticResource TextBody}" Margin="0,0,0,6"/>
+                                                <ComboBox Style="{StaticResource DarkComboBox}"
+                                                          ItemsSource="{Binding MinecraftLaunchers}"
+                                                          SelectedItem="{Binding SelectedMinecraftLauncher, Mode=TwoWay}"
+                                                          DisplayMemberPath="Name" Margin="0,0,0,12"/>
+
+                                                <Grid Visibility="{Binding HasSelectedLauncher, Converter={StaticResource BoolToVisConverter}}">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border Grid.Column="0" Background="{StaticResource BrushAccentSoft}" BorderBrush="{StaticResource BrushBorderGlow}" BorderThickness="1"
+                                                            CornerRadius="6" Padding="8,4" Margin="0,0,10,0">
+                                                        <TextBlock Text="{Binding SelectedMinecraftLauncher.ActiveVersionName, FallbackValue='NeoForge 1.21.1'}"
+                                                                   Foreground="{StaticResource BrushVioletText}" FontWeight="SemiBold" FontSize="12"/>
+                                                    </Border>
+                                                    <TextBlock Grid.Column="1" Text="Java 21 / Generational ZGC Ready" Style="{StaticResource TextCaption}" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Bento Tile B: SmoothFrame NeoForge 1.21.1 In-Game Mod -->
+                                        <Border Style="{StaticResource Card}" Padding="20">
+                                            <StackPanel>
+                                                <Grid Margin="0,0,0,10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0">
+                                                        <TextBlock Text="{DynamicResource Mc.Mod.Title}" Style="{StaticResource TextSection}"/>
+                                                        <TextBlock Text="{DynamicResource Mc.Mod.Desc}" Style="{StaticResource TextCaption}" Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                    <Border Grid.Column="1" VerticalAlignment="Center" CornerRadius="6" Padding="8,3" BorderThickness="1">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="Background" Value="{StaticResource BrushBgInset}"/>
+                                                                <Setter Property="BorderBrush" Value="{StaticResource BrushBorderStrong}"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsSmoothFrameModInstalled}" Value="True">
+                                                                        <Setter Property="Background" Value="{StaticResource BrushSuccessTint}"/>
+                                                                        <Setter Property="BorderBrush" Value="{StaticResource BrushSuccess}"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Ellipse Width="6" Height="6" Margin="0,0,6,0" VerticalAlignment="Center">
+                                                                <Ellipse.Style>
+                                                                    <Style TargetType="Ellipse">
+                                                                        <Setter Property="Fill" Value="{StaticResource BrushTextMuted}"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsSmoothFrameModInstalled}" Value="True">
+                                                                                <Setter Property="Fill" Value="{StaticResource BrushSuccess}"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Ellipse.Style>
+                                                            </Ellipse>
+                                                            <TextBlock Text="{Binding SmoothFrameModStatusText}" FontSize="11" FontWeight="Bold">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                                        <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsSmoothFrameModInstalled}" Value="True">
+                                                                                <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Grid>
+
+                                                <Border Height="1" Background="{StaticResource BrushBorder}" Margin="0,0,0,12"/>
+
+                                                <!-- Features Checklist -->
+                                                <StackPanel Margin="0,0,0,12">
+                                                    <TextBlock Text="{DynamicResource Mc.Mod.Feature1}" Style="{StaticResource TextCaption}" Margin="0,0,0,4"/>
+                                                    <TextBlock Text="{DynamicResource Mc.Mod.Feature2}" Style="{StaticResource TextCaption}" Margin="0,0,0,4"/>
+                                                    <TextBlock Text="{DynamicResource Mc.Mod.Feature3}" Style="{StaticResource TextCaption}"/>
+                                                </StackPanel>
+
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button Style="{StaticResource PrimaryButton}" Command="{Binding InstallSmoothFrameModCommand}" Margin="0,0,8,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <controls:AppIcon Data="{StaticResource Icon.BoltFill}" Size="12" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{DynamicResource Mc.Mod.InstallBtn}" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <Button Style="{StaticResource SecondaryButton}" Command="{Binding UninstallSmoothFrameModCommand}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <controls:AppIcon Data="{StaticResource Icon.Restore}" Size="12" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{DynamicResource Mc.Mod.UninstallBtn}" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- ================= RIGHT COLUMN ================= -->
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+
+                                        <!-- Bento Tile C: RAM Allocation & Garbage Collector (JVM) -->
+                                        <Border Style="{StaticResource Card}" Padding="20" Margin="0,0,0,16">
+                                            <StackPanel>
+                                                <Grid Margin="0,0,0,4">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" Text="{DynamicResource Mc.Ram.Title}" Style="{StaticResource TextSection}"
+                                                               TextTrimming="CharacterEllipsis" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                                    <Border Grid.Column="1" Background="{StaticResource BrushNavActiveBg}" BorderBrush="{StaticResource BrushBorderGlow}"
+                                                            BorderThickness="1" CornerRadius="6" Padding="8,2" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding MinecraftRamGbText}" FontWeight="Bold"
+                                                                   FontSize="12.5" Foreground="{StaticResource BrushVioletText}"/>
+                                                    </Border>
+                                                </Grid>
+                                                <TextBlock Text="{DynamicResource Mc.Ram.Desc}" Style="{StaticResource TextCaption}" Margin="0,0,0,10"/>
+
+                                                <Slider Style="{StaticResource DarkSlider}"
+                                                        Minimum="{Binding MinRamMb}" Maximum="{Binding MaxRamMb}"
+                                                        Value="{Binding MinecraftRamMb, Mode=TwoWay}"
+                                                        SmallChange="512" LargeChange="1024"
+                                                        TickFrequency="1024" IsSnapToTickEnabled="True"
+                                                        Margin="0,0,0,8"/>
+
+                                                <Grid Margin="0,0,0,12">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" Text="{DynamicResource Mc.Ram.Min}" Style="{StaticResource TextCaption}"/>
+                                                    <TextBlock Grid.Column="1" Text="{DynamicResource Mc.Ram.Optimum}" Style="{StaticResource TextCaption}" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Grid.Column="2" Text="{DynamicResource Mc.Ram.Max}" Style="{StaticResource TextCaption}"/>
+                                                </Grid>
+
+                                                <Border Height="1" Background="{StaticResource BrushBorder}" Margin="0,0,0,12"/>
+
+                                                <TextBlock Text="{DynamicResource Mc.Gc.Title}" Style="{StaticResource TextSection}" FontSize="13.5" Margin="0,0,0,6"/>
+                                                <StackPanel Margin="0,0,0,10">
+                                                    <RadioButton GroupName="GcProfile" Style="{StaticResource DarkRadioButton}"
+                                                                 Content="{DynamicResource Mc.Gc.Zgc}"
+                                                                 IsChecked="{Binding IsZgcSelected, Mode=TwoWay}" Margin="0,0,0,5"/>
+                                                    <RadioButton GroupName="GcProfile" Style="{StaticResource DarkRadioButton}"
+                                                                 Content="{DynamicResource Mc.Gc.G1gc}"
+                                                                 IsChecked="{Binding IsG1gcSelected, Mode=TwoWay}"/>
+                                                </StackPanel>
+
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button Style="{StaticResource PrimaryButton}" Command="{Binding ApplyMinecraftCommand}" Margin="0,0,8,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <controls:AppIcon Data="{StaticResource Icon.BoltFill}" Size="12" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{DynamicResource Mc.Btn.Apply}" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <Button Style="{StaticResource SecondaryButton}" Command="{Binding CopyJvmArgsCommand}" Margin="0,0,8,0">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <controls:AppIcon Data="{StaticResource Icon.Check}" Size="12" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{DynamicResource Mc.Btn.CopyArgs}" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <Button Style="{StaticResource SecondaryButton}" Command="{Binding RollbackMinecraftCommand}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <controls:AppIcon Data="{StaticResource Icon.Restore}" Size="12" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{DynamicResource Mc.Btn.Rollback}" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Bento Tile D: Hardware & OS Optimizations -->
+                                        <Border Style="{StaticResource Card}" Padding="20">
+                                            <StackPanel>
+                                                <TextBlock Text="{DynamicResource Mc.Gpu.Title}" Style="{StaticResource TextSection}"/>
+                                                <TextBlock Text="{DynamicResource Mc.Gpu.Desc}" Style="{StaticResource TextCaption}" Margin="0,2,0,10"/>
+
+                                                <WrapPanel Margin="0,0,0,8">
+                                                    <Button Style="{StaticResource SecondaryButton}" Command="{Binding ForceGpuCommand}" Margin="0,0,8,8">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <controls:AppIcon Data="{StaticResource Icon.Gauge}" Size="12" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{DynamicResource Mc.Btn.Gpu}" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <Button Style="{StaticResource SecondaryButton}" Command="{Binding PurgeStandbyMemoryCommand}" Margin="0,0,8,8">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <controls:AppIcon Data="{StaticResource Icon.Restore}" Size="12" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{DynamicResource Mc.Btn.PurgeMem}" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </WrapPanel>
+
+                                                <!-- Status notification banner -->
+                                                <Border Background="{StaticResource BrushAccentSoft}" BorderBrush="{StaticResource BrushBorderGlow}"
+                                                        BorderThickness="1" CornerRadius="8" Padding="12,6"
+                                                        Visibility="{Binding HasMinecraftStatus, Converter={StaticResource BoolToVisConverter}}">
+                                                    <TextBlock Text="{Binding MinecraftStatusMessage}" Foreground="{StaticResource BrushVioletText}" FontSize="12"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Bento Module 3: Built-in Technologies SmoothFrame (All-In-One) -->
+                                <Border Style="{StaticResource Card}" Padding="22">
+                                    <StackPanel>
+                                        <TextBlock Text="{DynamicResource Mc.Mods.Title}" Style="{StaticResource TextSection}"/>
+                                        <TextBlock Text="{DynamicResource Mc.Aio.Subtitle}" Style="{StaticResource TextCaption}" Margin="0,2,0,14"/>
+
+                                        <TextBlock Text="{DynamicResource Mc.Aio.Title}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,8"/>
+                                        <ItemsControl ItemsSource="{Binding BuiltinTechnologies}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="{StaticResource BrushBgInset}" CornerRadius="8" Padding="12,9" Margin="0,0,0,6">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Border Background="{StaticResource BrushAccentSoft}" BorderBrush="{StaticResource BrushBorderGlow}" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,10,0" VerticalAlignment="Top">
+                                                                <TextBlock Text="{DynamicResource Mc.Aio.Badge}" Foreground="{StaticResource BrushVioletText}" FontSize="10" FontWeight="Bold"/>
+                                                            </Border>
+                                                            <StackPanel Grid.Column="1">
+                                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12.5" Foreground="{StaticResource BrushTextPrimary}"/>
+                                                                    <TextBlock Text="{Binding Category, StringFormat=' ({0})'}" Style="{StaticResource TextCaption}"/>
+                                                                </StackPanel>
+                                                                <TextBlock Text="{Binding Description}" Style="{StaticResource TextCaption}" TextWrapping="Wrap"/>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
                                 </Border>
                             </StackPanel>
                         </ScrollViewer>
@@ -451,11 +1190,11 @@
                                       HorizontalScrollBarVisibility="Disabled">
                             <StackPanel Margin="28,22,28,26" HorizontalAlignment="Left" MaxWidth="780">
                                 <TextBlock Text="{DynamicResource Sett.Title}" Style="{StaticResource TextTitle}"/>
-                                <TextBlock Text="{DynamicResource Sett.Subtitle}" Style="{StaticResource TextBody}" Margin="0,4,0,18"/>
+                                <TextBlock Text="{DynamicResource Sett.Subtitle}" Style="{StaticResource TextBody}" Margin="0,4,0,20"/>
 
                                 <Border Style="{StaticResource Card}">
                                     <StackPanel>
-                                        <Grid Margin="18,16">
+                                        <Grid Margin="20,18">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
@@ -466,8 +1205,8 @@
                                             </StackPanel>
                                             <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding AutostartEnabled, Mode=TwoWay}" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="18,0"/>
-                                        <Grid Margin="18,16">
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="20,0"/>
+                                        <Grid Margin="20,18">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
@@ -478,8 +1217,8 @@
                                             </StackPanel>
                                             <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding HighPrecisionTimer, Mode=TwoWay}" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="18,0"/>
-                                        <Grid Margin="18,16">
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="20,0"/>
+                                        <Grid Margin="20,18">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
@@ -490,8 +1229,8 @@
                                             </StackPanel>
                                             <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding HighPerformancePlan, Mode=TwoWay}" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="18,0"/>
-                                        <Grid Margin="18,16">
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="20,0"/>
+                                        <Grid Margin="20,18">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
@@ -502,8 +1241,8 @@
                                             </StackPanel>
                                             <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding DeprioritizeBackground, Mode=TwoWay}" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="18,0"/>
-                                        <Grid Margin="18,16">
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="20,0"/>
+                                        <Grid Margin="20,18">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
@@ -514,8 +1253,44 @@
                                             </StackPanel>
                                             <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding IsolatePCores, Mode=TwoWay}" VerticalAlignment="Center"/>
                                         </Grid>
-                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="18,0"/>
-                                        <Grid Margin="18,16">
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="20,0"/>
+                                        <Grid Margin="20,18">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" MaxWidth="600">
+                                                <TextBlock Text="{DynamicResource Set.Tray.Title}" FontSize="13.5" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{DynamicResource Set.Tray.Desc}" Style="{StaticResource TextBody}" FontSize="12" TextWrapping="Wrap" Margin="0,4,24,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding MinimizeToTrayOnClose, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="20,0"/>
+                                        <Grid Margin="20,18">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" MaxWidth="600">
+                                                <TextBlock Text="{DynamicResource Set.AutoBoost.Title}" FontSize="13.5" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{DynamicResource Set.AutoBoost.Desc}" Style="{StaticResource TextBody}" FontSize="12" TextWrapping="Wrap" Margin="0,4,24,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding AutoBoostOnGameLaunch, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="20,0"/>
+                                        <Grid Margin="20,18">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" MaxWidth="600">
+                                                <TextBlock Text="{DynamicResource Set.Hotkey.Title}" FontSize="13.5" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{DynamicResource Set.Hotkey.Desc}" Style="{StaticResource TextBody}" FontSize="12" TextWrapping="Wrap" Margin="0,4,24,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding GlobalHotkeyEnabled, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="20,0"/>
+                                        <Grid Margin="20,18">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
@@ -541,11 +1316,11 @@
                                       HorizontalScrollBarVisibility="Disabled">
                             <StackPanel Margin="28,22,28,26" HorizontalAlignment="Left" MaxWidth="800">
                                 <TextBlock Text="{DynamicResource Prot.Title}" Style="{StaticResource TextTitle}"/>
-                                <TextBlock Text="{DynamicResource Prot.Subtitle}" Style="{StaticResource TextBody}" Margin="0,4,0,18"/>
+                                <TextBlock Text="{DynamicResource Prot.Subtitle}" Style="{StaticResource TextBody}" Margin="0,4,0,20"/>
 
-                                <Border Style="{StaticResource Card}" Padding="20" Margin="0,0,0,12">
+                                <Border Style="{StaticResource Card}" Padding="22" Margin="0,0,0,14">
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="38" Height="38" CornerRadius="9" Background="{StaticResource BrushAccentSoft}" VerticalAlignment="Top">
+                                        <Border Width="40" Height="40" CornerRadius="10" Background="{StaticResource BrushAccentSoft}" VerticalAlignment="Top">
                                             <controls:AppIcon Data="{StaticResource Icon.Lock}" Size="18"
                                                               Foreground="{StaticResource BrushAccentHover}"
                                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -558,9 +1333,9 @@
                                     </StackPanel>
                                 </Border>
 
-                                <Border Style="{StaticResource Card}" Padding="20" Margin="0,0,0,12">
+                                <Border Style="{StaticResource Card}" Padding="22" Margin="0,0,0,14">
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="38" Height="38" CornerRadius="9" Background="{StaticResource BrushSuccessTint}" VerticalAlignment="Top">
+                                        <Border Width="40" Height="40" CornerRadius="10" Background="{StaticResource BrushSuccessTint}" VerticalAlignment="Top">
                                             <controls:AppIcon Data="{StaticResource Icon.Restore}" Size="18"
                                                               Foreground="{StaticResource BrushSuccess}"
                                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -573,9 +1348,9 @@
                                     </StackPanel>
                                 </Border>
 
-                                <Border Style="{StaticResource Card}" Padding="20">
+                                <Border Style="{StaticResource Card}" Padding="22">
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="38" Height="38" CornerRadius="9" Background="{StaticResource BrushWarningTint}" VerticalAlignment="Top">
+                                        <Border Width="40" Height="40" CornerRadius="10" Background="{StaticResource BrushWarningTint}" VerticalAlignment="Top">
                                             <controls:AppIcon Data="{StaticResource Icon.Activity}" Size="18"
                                                               Foreground="{StaticResource BrushWarning}"
                                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -594,9 +1369,9 @@
             </Grid>
 
             <!-- ===================== FOOTER ===================== -->
-            <Border Grid.Row="2" Background="{StaticResource BrushBgSide}"
+            <Border x:Name="FooterBorder" Grid.Row="2" Background="{StaticResource BrushBgSide}"
                     BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,1,0,0"
-                    CornerRadius="0,0,9,9" Padding="16,0">
+                    CornerRadius="0,0,15,15" Padding="20,0">
                 <Grid VerticalAlignment="Center">
                     <TextBlock Text="{DynamicResource Footer.Left}" Style="{StaticResource TextCaption}"/>
                     <TextBlock Text="{DynamicResource Footer.Right}" Style="{StaticResource TextCaption}" HorizontalAlignment="Right"/>
@@ -608,10 +1383,10 @@
                   Background="{StaticResource BrushBgApp}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                     <StackPanel HorizontalAlignment="Center">
-                        <Border Background="{StaticResource BrushAccent}" CornerRadius="14" Width="58" Height="58"
+                        <Border Background="{StaticResource BrushAccentGradient}" CornerRadius="18" Width="68" Height="68"
                                 HorizontalAlignment="Center">
-                            <controls:AppIcon Data="{StaticResource Icon.BoltFill}" Filled="True" Size="26"
-                                              Foreground="{StaticResource BrushOnAccent}"
+                            <controls:AppIcon Data="{StaticResource Icon.BoltFill}" Filled="True" Size="30"
+                                              Foreground="#FFFFFF"
                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <TextBlock x:Name="WelcomeText" FontSize="34" FontWeight="SemiBold"
