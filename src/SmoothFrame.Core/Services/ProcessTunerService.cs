@@ -69,7 +69,7 @@ public class ProcessTunerService
         return null;
     }
 
-    public ProcessState? OptimizeGameProcess(Process gameProcess, bool isolatePCores = false)
+    public ProcessState? OptimizeGameProcess(Process gameProcess, bool isolatePCores = false, bool optimizeIoPriority = true)
     {
         try
         {
@@ -82,8 +82,13 @@ public class ProcessTunerService
             }
 
             var pid = gameProcess.Id;
-            uint accessRights = NativeMethods.PROCESS_SET_INFORMATION | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
+            uint accessRights = NativeMethods.PROCESS_SET_INFORMATION | NativeMethods.PROCESS_QUERY_INFORMATION;
             var hProcess = NativeMethods.OpenProcess(accessRights, false, pid);
+            if (hProcess == IntPtr.Zero)
+            {
+                accessRights = NativeMethods.PROCESS_SET_INFORMATION | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
+                hProcess = NativeMethods.OpenProcess(accessRights, false, pid);
+            }
             if (hProcess == IntPtr.Zero)
             {
                 accessRights = NativeMethods.PROCESS_SET_INFORMATION;
@@ -145,8 +150,16 @@ public class ProcessTunerService
                     }
                 }
 
-                // Only record into AlteredProcesses if priority/affinity change actually succeeded
-                if (prioritySet || affinitySet)
+                bool ioPrioritySet = false;
+                int origIoPriority = NativeMethods.IoPriorityNormal;
+                if (optimizeIoPriority)
+                {
+                    origIoPriority = ProcessIoPriorityService.GetProcessIoPriority(hProcess);
+                    ioPrioritySet = ProcessIoPriorityService.SetProcessIoPriority(hProcess, NativeMethods.IoPriorityHigh);
+                }
+
+                // Only record into AlteredProcesses if priority/affinity/IO change actually succeeded
+                if (prioritySet || affinitySet || ioPrioritySet)
                 {
                     var state = new ProcessState
                     {
@@ -155,7 +168,9 @@ public class ProcessTunerService
                         StartTime = TryGetStartTime(gameProcess),
                         ExecutablePath = TryGetExecutablePath(gameProcess),
                         OriginalPriorityClass = prioritySet ? origPriority : 0,
-                        OriginalAffinityMask = affinitySet ? origAffinityMask : 0
+                        OriginalAffinityMask = affinitySet ? origAffinityMask : 0,
+                        OriginalIoPriority = origIoPriority,
+                        HasIoPriorityChanged = ioPrioritySet
                     };
 
                     lock (_lock)
@@ -179,7 +194,7 @@ public class ProcessTunerService
         }
     }
 
-    public List<ProcessState> DeprioritizeBackgroundApps()
+    public List<ProcessState> DeprioritizeBackgroundApps(bool optimizeIoPriority = true)
     {
         var deprioritized = new List<ProcessState>();
 
@@ -198,8 +213,13 @@ public class ProcessTunerService
                     if (!KnownBackgroundApps.Contains(name))
                         continue;
 
-                    uint accessRights = NativeMethods.PROCESS_SET_INFORMATION | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
+                    uint accessRights = NativeMethods.PROCESS_SET_INFORMATION | NativeMethods.PROCESS_QUERY_INFORMATION;
                     var hProcess = NativeMethods.OpenProcess(accessRights, false, proc.Id);
+                    if (hProcess == IntPtr.Zero)
+                    {
+                        accessRights = NativeMethods.PROCESS_SET_INFORMATION | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
+                        hProcess = NativeMethods.OpenProcess(accessRights, false, proc.Id);
+                    }
                     if (hProcess == IntPtr.Zero)
                     {
                         accessRights = NativeMethods.PROCESS_SET_INFORMATION;
@@ -228,7 +248,16 @@ public class ProcessTunerService
                         {
                             // Set to Below Normal for smooth background execution without CPU hogging
                             bool prioritySet = NativeMethods.SetPriorityClass(hProcess, NativeMethods.BELOW_NORMAL_PRIORITY_CLASS);
-                            if (prioritySet)
+                            bool ioPrioritySet = false;
+                            int origIoPriority = NativeMethods.IoPriorityNormal;
+
+                            if (optimizeIoPriority)
+                            {
+                                origIoPriority = ProcessIoPriorityService.GetProcessIoPriority(hProcess);
+                                ioPrioritySet = ProcessIoPriorityService.SetProcessIoPriority(hProcess, NativeMethods.IoPriorityVeryLow);
+                            }
+
+                            if (prioritySet || ioPrioritySet)
                             {
                                 var state = new ProcessState
                                 {
@@ -236,8 +265,10 @@ public class ProcessTunerService
                                     ProcessName = name,
                                     StartTime = TryGetStartTime(proc),
                                     ExecutablePath = TryGetExecutablePath(proc),
-                                    OriginalPriorityClass = origPriority,
-                                    OriginalAffinityMask = 0
+                                    OriginalPriorityClass = prioritySet ? origPriority : 0,
+                                    OriginalAffinityMask = 0,
+                                    OriginalIoPriority = origIoPriority,
+                                    HasIoPriorityChanged = ioPrioritySet
                                 };
 
                                 lock (_lock)
@@ -398,6 +429,11 @@ public class ProcessTunerService
                             int err = Marshal.GetLastWin32Error();
                             Debug.WriteLine($"[ProcessTuner] SetProcessAffinityMask failed restoring PID {state.ProcessId} to {state.OriginalAffinityMask:X}, Win32 error: {err}");
                         }
+                    }
+
+                    if (state.HasIoPriorityChanged)
+                    {
+                        ProcessIoPriorityService.SetProcessIoPriority(hProcess, state.OriginalIoPriority);
                     }
                 }
                 finally

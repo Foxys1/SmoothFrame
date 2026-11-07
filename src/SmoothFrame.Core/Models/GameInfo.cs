@@ -6,6 +6,10 @@ public enum GameSource
 {
     Steam,
     Epic,
+    GOG,
+    Ubisoft,
+    EA,
+    Riot,
     Custom
 }
 

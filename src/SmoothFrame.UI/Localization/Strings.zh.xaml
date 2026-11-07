@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">设置</sys:String>
     <sys:String x:Key="Nav.Protect">防护</sys:String>
     <sys:String x:Key="Side.Language">界面语言</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.0 — 安全的游戏进程优化器</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.1 — 安全的游戏进程优化器</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">优化已启用 • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">系统就绪 • 等待游戏启动</sys:String>
@@ -48,6 +48,12 @@
     <sys:String x:Key="Set.Bg.Desc">临时将浏览器（Chrome、Edge）、下载工具和后台启动器降为"低于正常"优先级，为游戏释放资源。</sys:String>
     <sys:String x:Key="Set.Cores.Title">P 核隔离</sys:String>
     <sys:String x:Key="Set.Cores.Desc">强制游戏线程只运行在性能 P 核上（适用于 Intel 12–14+ 代或 AMD 3D V-Cache）。</sys:String>
+    <sys:String x:Key="Set.Network.Title">超低延迟网络 (Zero-Ping)</sys:String>
+    <sys:String x:Key="Set.Network.Desc">禁用 Windows 多媒体网络数据包限流并启用 TCP NoDelay（绕过 Nagle 算法）。</sys:String>
+    <sys:String x:Key="Set.Io.Title">磁盘 I/O 流式传输加速</sys:String>
+    <sys:String x:Key="Set.Io.Desc">为活跃游戏分配高 I/O 优先级，后台程序分配低优先级，消除加载地图时的卡顿。</sys:String>
+    <sys:String x:Key="Set.Audio.Title">音频延迟与 DPC 隔离</sys:String>
+    <sys:String x:Key="Set.Audio.Desc">将 audiodg.exe 绑定到独立 CPU 核心并提高优先级，防止爆音和 DPC 延迟峰值。</sys:String>
     <sys:String x:Key="Set.Tray.Title">关闭时最小化到系统托盘</sys:String>
     <sys:String x:Key="Set.Tray.Desc">点击关闭按钮时，窗口将最小化到任务栏通知区域，所有已激活的优化将在后台继续生效。</sys:String>
     <sys:String x:Key="Set.AutoBoost.Title">启动游戏时自动加速</sys:String>
@@ -90,6 +96,8 @@
     <sys:String x:Key="VM.Msg.RemoveConfirm">从游戏列表中移除"{0}"？</sys:String>
     <sys:String x:Key="VM.Msg.RemoveTitle">确认</sys:String>
     <sys:String x:Key="VM.AppName">SmoothFrame</sys:String>
+    <sys:String x:Key="VM.Shaders.Cleaned">已清理 {0} 个着色器缓存文件 ({1})。</sys:String>
+    <sys:String x:Key="VM.Shaders.Clean">着色器缓存已经是最新的。</sys:String>
     <!-- System Tray Context Menu -->
     <sys:String x:Key="Tray.Open">打开 SmoothFrame</sys:String>
     <sys:String x:Key="Tray.PurgeMem">清理备用内存</sys:String>
@@ -161,9 +169,16 @@
     <sys:String x:Key="Deck.PCores.Desc">将高性能 CPU 核心专用于游戏进程</sys:String>
     <sys:String x:Key="Deck.Bg.Title">静音后台程序</sys:String>
     <sys:String x:Key="Deck.Bg.Desc">限制 Discord、浏览器及后台任务资源占用</sys:String>
+    <sys:String x:Key="Deck.Network.Title">Zero-Ping 极速网络</sys:String>
+    <sys:String x:Key="Deck.Network.Desc">禁用多媒体限速并启用 TCP NoDelay</sys:String>
+    <sys:String x:Key="Deck.Io.Title">磁盘 I/O 加速</sys:String>
+    <sys:String x:Key="Deck.Io.Desc">高 I/O 优先级以实现极速游戏资源加载</sys:String>
     <sys:String x:Key="Deck.Ram.Title">清理备用内存</sys:String>
     <sys:String x:Key="Deck.Ram.Desc">清理 Windows 备用内存缓存以消除微卡顿</sys:String>
     <sys:String x:Key="Deck.Ram.Btn">清理备用内存</sys:String>
+    <sys:String x:Key="Deck.Shaders.Title">DirectX 与显卡着色器缓存</sys:String>
+    <sys:String x:Key="Deck.Shaders.Desc">清除已损坏或过期的 DirectX、NVIDIA 和 AMD 着色器缓存</sys:String>
+    <sys:String x:Key="Deck.Shaders.Btn">清理着色器缓存</sys:String>
     <sys:String x:Key="Card.Timer.Sub">降低鼠标与输入延迟</sys:String>
     <sys:String x:Key="Card.Power.Sub">CPU 核心频率不降频</sys:String>
     <sys:String x:Key="Card.Prio.Sub">游戏线程最高优先级</sys:String>
@@ -176,7 +191,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">游戏检测规则、Windows 开机自启与全局快捷键</sys:String>
     <sys:String x:Key="Set.Group.App">界面与系统</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">界面语言偏好与 SmoothFrame 后台引擎运行状态</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.1 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">安全 Win32 API 模式 • 0% 内存注入 • 适配所有主流反作弊系统</sys:String>
     <sys:String x:Key="Set.Engine.Badge">已激活</sys:String>
 

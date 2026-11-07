@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Ajustes</sys:String>
     <sys:String x:Key="Nav.Protect">Protección</sys:String>
     <sys:String x:Key="Side.Language">Idioma de la interfaz</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.0 — optimizador seguro de procesos de juego</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.1 — optimizador seguro de procesos de juego</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMIZACIÓN ACTIVA • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SISTEMA LISTO • EN ESPERA DE JUEGO</sys:String>
@@ -48,6 +48,12 @@
     <sys:String x:Key="Set.Bg.Desc">Pone temporalmente navegadores (Chrome, Edge), torrents y launchers en prioridad "Inferior a lo normal", liberando recursos para el juego.</sys:String>
     <sys:String x:Key="Set.Cores.Title">Aislamiento de núcleos P</sys:String>
     <sys:String x:Key="Set.Cores.Desc">Dirige los hilos del juego solo a los núcleos P de rendimiento (para Intel 12–14 gen o AMD 3D V-Cache).</sys:String>
+    <sys:String x:Key="Set.Network.Title">Red de baja latencia (Zero-Ping)</sys:String>
+    <sys:String x:Key="Set.Network.Desc">Desactiva la limitación de paquetes de red multimedia y activa TCP NoDelay (omisión de Nagle).</sys:String>
+    <sys:String x:Key="Set.Io.Title">Aceleración de transmisión de E/S de disco</sys:String>
+    <sys:String x:Key="Set.Io.Desc">Asigna alta prioridad de E/S al juego activo para eliminar tirones al cargar texturas y mundos.</sys:String>
+    <sys:String x:Key="Set.Audio.Title">Aislamiento de latencia de audio y DPC</sys:String>
+    <sys:String x:Key="Set.Audio.Desc">Asigna audiodg.exe a un núcleo dedicado con prioridad elevada para evitar cortes de audio y picos de DPC.</sys:String>
     <sys:String x:Key="Set.Tray.Title">Minimizar a la bandeja del sistema al cerrar</sys:String>
     <sys:String x:Key="Set.Tray.Desc">Al hacer clic en cerrar, la ventana se minimiza en la bandeja de notificación mientras las optimizaciones activas siguen funcionando.</sys:String>
     <sys:String x:Key="Set.AutoBoost.Title">Aceleración automática al iniciar el juego</sys:String>
@@ -90,6 +96,8 @@
     <sys:String x:Key="VM.Msg.RemoveConfirm">¿Quitar "{0}" de la lista de juegos?</sys:String>
     <sys:String x:Key="VM.Msg.RemoveTitle">Confirmación</sys:String>
     <sys:String x:Key="VM.AppName">SmoothFrame</sys:String>
+    <sys:String x:Key="VM.Shaders.Cleaned">Se limpiaron {0} archivos de caché de shaders ({1}).</sys:String>
+    <sys:String x:Key="VM.Shaders.Clean">La caché de shaders ya está limpia.</sys:String>
     <!-- System Tray Context Menu -->
     <sys:String x:Key="Tray.Open">Abrir SmoothFrame</sys:String>
     <sys:String x:Key="Tray.PurgeMem">Purgar memoria en espera</sys:String>
@@ -161,9 +169,16 @@
     <sys:String x:Key="Deck.PCores.Desc">Núcleos de alto rendimiento dedicados al juego</sys:String>
     <sys:String x:Key="Deck.Bg.Title">Fondo Silencioso</sys:String>
     <sys:String x:Key="Deck.Bg.Desc">Reduce Discord, navegador y tareas en segundo plano</sys:String>
+    <sys:String x:Key="Deck.Network.Title">Red Zero-Ping</sys:String>
+    <sys:String x:Key="Deck.Network.Desc">Desactiva la limitación de red y activa TCP NoDelay</sys:String>
+    <sys:String x:Key="Deck.Io.Title">Aceleración I/O Disco</sys:String>
+    <sys:String x:Key="Deck.Io.Desc">Alta prioridad de E/S para carga rápida de recursos</sys:String>
     <sys:String x:Key="Deck.Ram.Title">Purgar RAM en Espera</sys:String>
     <sys:String x:Key="Deck.Ram.Desc">Libera la caché en espera de Windows para eliminar micro-tirones</sys:String>
     <sys:String x:Key="Deck.Ram.Btn">Purgar RAM en Espera</sys:String>
+    <sys:String x:Key="Deck.Shaders.Title">Caché de Shaders GPU</sys:String>
+    <sys:String x:Key="Deck.Shaders.Desc">Elimina la caché de shaders obsoleta de DirectX, NVIDIA y AMD</sys:String>
+    <sys:String x:Key="Deck.Shaders.Btn">Limpiar Caché de Shaders</sys:String>
     <sys:String x:Key="Card.Timer.Sub">Latencia de ratón y entrada</sys:String>
     <sys:String x:Key="Card.Power.Sub">Frecuencia de CPU sin bloqueos</sys:String>
     <sys:String x:Key="Card.Prio.Sub">Máxima prioridad al hilo del juego</sys:String>
@@ -176,7 +191,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">Detección de juegos, inicio con Windows y atajos globales</sys:String>
     <sys:String x:Key="Set.Group.App">Interfaz y Sistema</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">Preferencias de idioma y estado del servicio SmoothFrame</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.1 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Modo API Win32 seguro • 0% inyecciones en memoria • Seguro para anti-cheats</sys:String>
     <sys:String x:Key="Set.Engine.Badge">ACTIVO</sys:String>
 

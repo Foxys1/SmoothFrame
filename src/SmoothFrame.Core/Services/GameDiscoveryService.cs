@@ -50,7 +50,19 @@ public class GameDiscoveryService
         // 2. Epic Games
         games.AddRange(GetEpicGames());
 
-        // 3. Custom Games
+        // 3. GOG Galaxy Games
+        games.AddRange(GetGogGames());
+
+        // 4. Ubisoft Connect Games
+        games.AddRange(GetUbisoftGames());
+
+        // 5. EA Games
+        games.AddRange(GetEaGames());
+
+        // 6. Riot Games
+        games.AddRange(GetRiotGames());
+
+        // 7. Custom Games
         games.AddRange(GetCustomGames());
 
         // Deduplicate by normalized executable path AND by game name
@@ -233,6 +245,196 @@ public class GameDiscoveryService
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Failed to discover Epic games: {ex.Message}");
+        }
+
+        return list;
+    }
+
+    public List<GameInfo> GetGogGames()
+    {
+        var list = new List<GameInfo>();
+        var gogKeys = new[] { @"SOFTWARE\GOG.com\Games", @"SOFTWARE\WOW6432Node\GOG.com\Games" };
+
+        foreach (var keyPath in gogKeys)
+        {
+            try
+            {
+                using var key = Registry.LocalMachine.OpenSubKey(keyPath);
+                if (key == null) continue;
+
+                foreach (var subName in key.GetSubKeyNames())
+                {
+                    try
+                    {
+                        using var gameKey = key.OpenSubKey(subName);
+                        if (gameKey == null) continue;
+
+                        var name = gameKey.GetValue("gameName") as string;
+                        var path = gameKey.GetValue("path") as string;
+                        var exe = gameKey.GetValue("exe") as string;
+
+                        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(path)) continue;
+
+                        string? fullExe = null;
+                        if (!string.IsNullOrWhiteSpace(exe))
+                        {
+                            var candidate = Path.IsPathRooted(exe) ? exe : Path.Combine(path, exe);
+                            if (File.Exists(candidate)) fullExe = candidate;
+                        }
+
+                        if (fullExe == null && Directory.Exists(path))
+                        {
+                            fullExe = FindMainExecutable(path, name);
+                        }
+
+                        if (!string.IsNullOrEmpty(fullExe) && File.Exists(fullExe))
+                        {
+                            list.Add(new GameInfo
+                            {
+                                Name = name,
+                                ExecutablePath = fullExe,
+                                ProcessName = Path.GetFileNameWithoutExtension(fullExe),
+                                IconBase64 = ExtractIconAsBase64(fullExe),
+                                Source = GameSource.GOG
+                            });
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+        }
+
+        return list;
+    }
+
+    public List<GameInfo> GetUbisoftGames()
+    {
+        var list = new List<GameInfo>();
+        var ubiKeys = new[] { @"SOFTWARE\Ubisoft\Launcher\Installs", @"SOFTWARE\WOW6432Node\Ubisoft\Launcher\Installs" };
+
+        foreach (var keyPath in ubiKeys)
+        {
+            try
+            {
+                using var key = Registry.LocalMachine.OpenSubKey(keyPath);
+                if (key == null) continue;
+
+                foreach (var subName in key.GetSubKeyNames())
+                {
+                    try
+                    {
+                        using var gameKey = key.OpenSubKey(subName);
+                        if (gameKey == null) continue;
+
+                        var installDir = gameKey.GetValue("InstallDir") as string;
+                        if (string.IsNullOrWhiteSpace(installDir) || !Directory.Exists(installDir)) continue;
+
+                        var dirName = Path.GetFileName(installDir.TrimEnd('\\', '/'));
+                        var exe = FindMainExecutable(installDir, dirName);
+                        if (!string.IsNullOrEmpty(exe) && File.Exists(exe))
+                        {
+                            list.Add(new GameInfo
+                            {
+                                Name = dirName,
+                                ExecutablePath = exe,
+                                ProcessName = Path.GetFileNameWithoutExtension(exe),
+                                IconBase64 = ExtractIconAsBase64(exe),
+                                Source = GameSource.Ubisoft
+                            });
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+        }
+
+        return list;
+    }
+
+    public List<GameInfo> GetEaGames()
+    {
+        var list = new List<GameInfo>();
+        var eaKeys = new[]
+        {
+            @"SOFTWARE\Electronic Arts\EA Core\Installed Games",
+            @"SOFTWARE\WOW6432Node\Electronic Arts\EA Core\Installed Games",
+            @"SOFTWARE\Origin Games",
+            @"SOFTWARE\WOW6432Node\Origin Games"
+        };
+
+        foreach (var keyPath in eaKeys)
+        {
+            try
+            {
+                using var key = Registry.LocalMachine.OpenSubKey(keyPath);
+                if (key == null) continue;
+
+                foreach (var subName in key.GetSubKeyNames())
+                {
+                    try
+                    {
+                        using var gameKey = key.OpenSubKey(subName);
+                        if (gameKey == null) continue;
+
+                        var installDir = gameKey.GetValue("InstallDir") as string ?? gameKey.GetValue("path") as string;
+                        if (string.IsNullOrWhiteSpace(installDir) || !Directory.Exists(installDir)) continue;
+
+                        var dirName = Path.GetFileName(installDir.TrimEnd('\\', '/'));
+                        var exe = FindMainExecutable(installDir, dirName);
+                        if (!string.IsNullOrEmpty(exe) && File.Exists(exe))
+                        {
+                            list.Add(new GameInfo
+                            {
+                                Name = dirName,
+                                ExecutablePath = exe,
+                                ProcessName = Path.GetFileNameWithoutExtension(exe),
+                                IconBase64 = ExtractIconAsBase64(exe),
+                                Source = GameSource.EA
+                            });
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+        }
+
+        return list;
+    }
+
+    public List<GameInfo> GetRiotGames()
+    {
+        var list = new List<GameInfo>();
+        var commonRiotGames = new (string Name, string ExeRelativePath)[]
+        {
+            ("VALORANT", @"Riot Games\VALORANT\live\VALORANT.exe"),
+            ("League of Legends", @"Riot Games\League of Legends\LeagueClient.exe")
+        };
+
+        var drives = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Fixed);
+        foreach (var drive in drives)
+        {
+            foreach (var (name, relPath) in commonRiotGames)
+            {
+                try
+                {
+                    var fullPath = Path.Combine(drive.RootDirectory.FullName, relPath);
+                    if (File.Exists(fullPath))
+                    {
+                        list.Add(new GameInfo
+                        {
+                            Name = name,
+                            ExecutablePath = fullPath,
+                            ProcessName = Path.GetFileNameWithoutExtension(fullPath),
+                            IconBase64 = ExtractIconAsBase64(fullPath),
+                            Source = GameSource.Riot
+                        });
+                    }
+                }
+                catch { }
+            }
         }
 
         return list;

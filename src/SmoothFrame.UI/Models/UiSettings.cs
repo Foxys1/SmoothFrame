@@ -44,6 +44,15 @@ public sealed class UiSettings
     [JsonPropertyName("isolatePCores")]
     public bool IsolatePCores { get; set; } = false;
 
+    [JsonPropertyName("optimizeNetwork")]
+    public bool OptimizeNetwork { get; set; } = true;
+
+    [JsonPropertyName("optimizeIoPriority")]
+    public bool OptimizeIoPriority { get; set; } = true;
+
+    [JsonPropertyName("optimizeAudioDg")]
+    public bool OptimizeAudioDg { get; set; } = true;
+
     public static UiSettings Load()
     {
         try

@@ -31,6 +31,12 @@
     <Geometry x:Key="Icon.Close">M6.4 6.4l11.2 11.2M17.6 6.4 6.4 17.6</Geometry>
     <Geometry x:Key="Icon.Check">M5.4 12.6l4.3 4.3L18.6 8</Geometry>
 
+    <!-- Additional System & Hardware Icons -->
+    <Geometry x:Key="Icon.Trash">M3 6h18 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2</Geometry>
+    <Geometry x:Key="Icon.Wifi">M5 12.55a11 11 0 0 1 14.08 0 M1.42 9a16 16 0 0 1 21.16 0 M8.53 16.11a6 6 0 0 1 6.95 0 M12 20h.01</Geometry>
+    <Geometry x:Key="Icon.HardDrive">M22 12H2 M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z M6 16h.01 M10 16h.01</Geometry>
+    <Geometry x:Key="Icon.Volume">M11 5 6 9H2v6h4l5 4V5z M19.07 4.93a10 10 0 0 1 0 14.14 M15.54 8.46a5 5 0 0 1 0 7.07</Geometry>
+
     <!-- Windows Fluent-style Restore Window Glyph (two overlapping rectangles) -->
     <Geometry x:Key="Icon.RestoreWindow">M6.5 9.5h7.5v7.5H6.5Z M9.5 9.5V6.5h7.5v7.5H14</Geometry>
 

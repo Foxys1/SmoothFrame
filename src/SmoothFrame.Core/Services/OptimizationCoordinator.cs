@@ -16,6 +16,9 @@ public class OptimizationOptions
     public bool ElevateGamePriority { get; set; } = true;
     public bool DeprioritizeBackgroundApps { get; set; } = true;
     public bool IsolatePCores { get; set; } = false;
+    public bool OptimizeNetwork { get; set; } = true;
+    public bool OptimizeIoPriority { get; set; } = true;
+    public bool OptimizeAudioDg { get; set; } = true;
 
     public OptimizationOptions Clone() => new()
     {
@@ -23,7 +26,10 @@ public class OptimizationOptions
         HighPerformancePowerPlan = HighPerformancePowerPlan,
         ElevateGamePriority = ElevateGamePriority,
         DeprioritizeBackgroundApps = DeprioritizeBackgroundApps,
-        IsolatePCores = IsolatePCores
+        IsolatePCores = IsolatePCores,
+        OptimizeNetwork = OptimizeNetwork,
+        OptimizeIoPriority = OptimizeIoPriority,
+        OptimizeAudioDg = OptimizeAudioDg
     };
 }
 
@@ -110,6 +116,18 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                 if (snapshot.HasTimerResolutionChanged)
                 {
                     _timerService.RevertFromSnapshot(snapshot.OriginalTimerResolution);
+                }
+
+                if (snapshot.HasNetworkOptimized)
+                {
+                    bool netRestored = NetworkOptimizerService.Revert(snapshot);
+                    if (!netRestored) allRestored = false;
+                }
+
+                if (snapshot.HasAudioDgOptimized)
+                {
+                    bool audioRestored = AudioOptimizerService.Revert(snapshot);
+                    if (!audioRestored) allRestored = false;
                 }
 
                 if (snapshot.AlteredProcesses.Any())
@@ -246,10 +264,22 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                 _currentSnapshot.HasPowerPlanChanged = _powerPlanService.SwitchToHighPerformance();
             }
 
-            // 3. Deprioritize background non-critical apps
+            // 3. Low-latency Network optimization (Zero-Ping / Multimedia Throttling disable / TCPNoDelay)
+            if (opt.OptimizeNetwork)
+            {
+                NetworkOptimizerService.Apply(_currentSnapshot);
+            }
+
+            // 4. AudioDG DPC & buffer underrun isolation
+            if (opt.OptimizeAudioDg)
+            {
+                AudioOptimizerService.Apply(_currentSnapshot);
+            }
+
+            // 5. Deprioritize background non-critical apps (CPU & I/O Priority)
             if (opt.DeprioritizeBackgroundApps)
             {
-                var deprioritized = _processTuner.DeprioritizeBackgroundApps();
+                var deprioritized = _processTuner.DeprioritizeBackgroundApps(opt.OptimizeIoPriority);
                 _currentSnapshot.AlteredProcesses.AddRange(deprioritized);
             }
 
@@ -337,7 +367,19 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                 // 1. Revert processes
                 _processTuner.RestoreProcesses();
 
-                // 2. Revert power scheme
+                // 2. Revert AudioDG isolation
+                if (_currentSnapshot != null)
+                {
+                    AudioOptimizerService.Revert(_currentSnapshot);
+                }
+
+                // 3. Revert Network optimization
+                if (_currentSnapshot != null)
+                {
+                    NetworkOptimizerService.Revert(_currentSnapshot);
+                }
+
+                // 4. Revert power scheme
                 _powerPlanService.RestoreOriginalPlan();
 
                 // 3. Revert timer resolution
@@ -445,7 +487,7 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                             ProcessState? state = null;
                             if (!gameOptimized && opt.ElevateGamePriority)
                             {
-                                state = _processTuner.OptimizeGameProcess(currentTargetProc, opt.IsolatePCores);
+                                state = _processTuner.OptimizeGameProcess(currentTargetProc, opt.IsolatePCores, opt.OptimizeIoPriority);
                                 if (state != null && _currentSnapshot != null)
                                 {
                                     _currentSnapshot.AlteredProcesses.Add(state);
@@ -569,6 +611,11 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                     }
 
                     _processTuner.RestoreProcesses();
+                    if (_currentSnapshot != null)
+                    {
+                        AudioOptimizerService.Revert(_currentSnapshot);
+                        NetworkOptimizerService.Revert(_currentSnapshot);
+                    }
                     _powerPlanService.RestoreOriginalPlan();
                     _timerService.Revert();
                     _snapshotManager.ClearSnapshot();
@@ -671,6 +718,11 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                     }
 
                     _processTuner.RestoreProcesses();
+                    if (_currentSnapshot != null)
+                    {
+                        AudioOptimizerService.Revert(_currentSnapshot);
+                        NetworkOptimizerService.Revert(_currentSnapshot);
+                    }
                     _powerPlanService.RestoreOriginalPlan();
                     _timerService.Revert();
                     _snapshotManager.ClearSnapshot();

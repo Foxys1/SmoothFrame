@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Настройки</sys:String>
     <sys:String x:Key="Nav.Protect">Защита</sys:String>
     <sys:String x:Key="Side.Language">Язык интерфейса</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.0 — безопасный оптимизатор игрового процесса</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.1 — безопасный оптимизатор игрового процесса</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">ОПТИМИЗАЦИЯ АКТИВНА • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">СИСТЕМА В НОРМЕ • ОЖИДАНИЕ ИГРЫ</sys:String>
@@ -45,9 +45,16 @@
     <sys:String x:Key="Deck.PCores.Desc">Мощные ядра только игре</sys:String>
     <sys:String x:Key="Deck.Bg.Title">Приглушать фон</sys:String>
     <sys:String x:Key="Deck.Bg.Desc">Discord и браузер в тихий режим</sys:String>
+    <sys:String x:Key="Deck.Network.Title">Zero-Ping Сеть</sys:String>
+    <sys:String x:Key="Deck.Network.Desc">Отключение троттлинга пакетов и TCP NoDelay</sys:String>
+    <sys:String x:Key="Deck.Io.Title">Ускорение I/O диска</sys:String>
+    <sys:String x:Key="Deck.Io.Desc">Высокий приоритет ввода-вывода для загрузки ассетов</sys:String>
     <sys:String x:Key="Deck.Ram.Title">Очистка памяти RAM</sys:String>
     <sys:String x:Key="Deck.Ram.Desc">Освобождает Standby кэш Windows для устранения микрофризов</sys:String>
     <sys:String x:Key="Deck.Ram.Btn">Очистить кэш памяти</sys:String>
+    <sys:String x:Key="Deck.Shaders.Title">Кэш шейдеров GPU</sys:String>
+    <sys:String x:Key="Deck.Shaders.Desc">Очистка устаревшего кэша DirectX, NVIDIA и AMD</sys:String>
+    <sys:String x:Key="Deck.Shaders.Btn">Очистить кэш шейдеров</sys:String>
     <sys:String x:Key="Card.Timer.Sub">Задержка мыши и ввода</sys:String>
     <sys:String x:Key="Card.Power.Sub">Частота ядер без сброса</sys:String>
     <sys:String x:Key="Card.Prio.Sub">Высший приоритет игре</sys:String>
@@ -70,6 +77,12 @@
     <sys:String x:Key="Set.Cores.Desc">Выделяет мощные Performance-ядра процессора эксклюзивно для запущенной игры.</sys:String>
     <sys:String x:Key="Set.Bg.Title">Подавление фоновых программ</sys:String>
     <sys:String x:Key="Set.Bg.Desc">Снижает приоритет браузеров, Discord и фоновых служб для устранения микрофризов.</sys:String>
+    <sys:String x:Key="Set.Network.Title">Низкозадерживаемая сеть (Zero-Ping)</sys:String>
+    <sys:String x:Key="Set.Network.Desc">Отключает сетевой троттлинг Windows Multimedia и активирует TCP NoDelay (обход алгоритма Нейгла).</sys:String>
+    <sys:String x:Key="Set.Io.Title">Ускорение потокового ввода-вывода (I/O)</sys:String>
+    <sys:String x:Key="Set.Io.Desc">Назначает высокий приоритет диску активной игре и фоновый для остальных приложений, устраняя микрофризы.</sys:String>
+    <sys:String x:Key="Set.Audio.Title">Изоляция задержек аудио и DPC</sys:String>
+    <sys:String x:Key="Set.Audio.Desc">Привязывает audiodg.exe к выделенному ядру CPU с повышенным приоритетом для устранения треска и задержек DPC.</sys:String>
     <sys:String x:Key="Set.AutoBoost.Title">Авто-активация при запуске игры</sys:String>
     <sys:String x:Key="Set.AutoBoost.Desc">Автоматически включает режим оптимизации при обнаружении добавленной игры.</sys:String>
     <sys:String x:Key="Set.Hotkey.Title">Глобальная горячая клавиша (Ctrl+Shift+B)</sys:String>
@@ -80,7 +93,7 @@
     <sys:String x:Key="Set.Tray.Desc">Оставляет оптимизатор активным возле часов при нажатии на кнопку закрытия.</sys:String>
     <sys:String x:Key="Set.Lang.Title">Язык интерфейса</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Мгновенное переключение языка программы (English / Русский).</sys:String>
-    <sys:String x:Key="Set.Engine.Title">Фоновая служба SmoothFrame Engine v2.1.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">Фоновая служба SmoothFrame Engine v2.1.1 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Безопасный режим Win32 API • 0% инъекций в память • Совместимо со всеми античитами</sys:String>
     <sys:String x:Key="Set.Engine.Badge">АКТИВНО</sys:String>
 
@@ -128,6 +141,8 @@
     <sys:String x:Key="VM.Msg.RemoveConfirm">Удалить «{0}» из списка игр?</sys:String>
     <sys:String x:Key="VM.Msg.RemoveTitle">Подтверждение</sys:String>
     <sys:String x:Key="VM.AppName">SmoothFrame</sys:String>
+    <sys:String x:Key="VM.Shaders.Cleaned">Очищено {0} файлов кэша шейдеров ({1}).</sys:String>
+    <sys:String x:Key="VM.Shaders.Clean">Кэш шейдеров уже чист.</sys:String>
 
     <!-- System Tray Context Menu -->
     <sys:String x:Key="Tray.Open">Открыть SmoothFrame</sys:String>

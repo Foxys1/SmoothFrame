@@ -113,11 +113,34 @@ public static class NativeMethods
         IntPtr SystemInformation,
         int SystemInformationLength);
 
+    // --- NT Process I/O Priority (ntdll.dll) ---
+    public const int ProcessIoPriority = 21;
+    public const int IoPriorityVeryLow = 0;
+    public const int IoPriorityLow = 1;
+    public const int IoPriorityNormal = 2;
+    public const int IoPriorityHigh = 3;
+
+    [DllImport("ntdll.dll")]
+    public static extern int NtSetInformationProcess(
+        IntPtr processHandle,
+        int processInformationClass,
+        ref int processInformation,
+        int processInformationLength);
+
+    [DllImport("ntdll.dll")]
+    public static extern int NtQueryInformationProcess(
+        IntPtr processHandle,
+        int processInformationClass,
+        out int processInformation,
+        int processInformationLength,
+        out int returnLength);
+
     // --- Process Token Privileges (advapi32.dll) ---
     public const uint TOKEN_ADJUST_PRIVILEGES = 0x0020;
     public const uint TOKEN_QUERY = 0x0008;
     public const string SE_PROFILE_SINGLE_PROCESS_NAME = "SeProfileSingleProcessPrivilege";
     public const string SE_INCREASE_QUOTA_NAME = "SeIncreaseQuotaPrivilege";
+    public const string SE_DEBUG_NAME = "SeDebugPrivilege";
     public const uint SE_PRIVILEGE_ENABLED = 0x00000002;
 
     [StructLayout(LayoutKind.Sequential)]

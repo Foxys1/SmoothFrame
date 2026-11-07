@@ -37,6 +37,9 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
     private string _priorityText = string.Empty;
     private bool _autostartEnabled;
     private bool _isolatePCores;
+    private bool _optimizeNetwork = true;
+    private bool _optimizeIoPriority = true;
+    private bool _optimizeAudioDg = true;
     private bool _highPrecisionTimer = true;
     private bool _highPerformancePlan = true;
     private bool _deprioritizeBackground = true;
@@ -214,6 +217,51 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         }
     }
 
+    public bool OptimizeNetwork
+    {
+        get => _optimizeNetwork;
+        set
+        {
+            if (_optimizeNetwork != value)
+            {
+                _optimizeNetwork = value;
+                OnPropertyChanged();
+                _uiSettings.OptimizeNetwork = value;
+                _uiSettings.Save();
+            }
+        }
+    }
+
+    public bool OptimizeIoPriority
+    {
+        get => _optimizeIoPriority;
+        set
+        {
+            if (_optimizeIoPriority != value)
+            {
+                _optimizeIoPriority = value;
+                OnPropertyChanged();
+                _uiSettings.OptimizeIoPriority = value;
+                _uiSettings.Save();
+            }
+        }
+    }
+
+    public bool OptimizeAudioDg
+    {
+        get => _optimizeAudioDg;
+        set
+        {
+            if (_optimizeAudioDg != value)
+            {
+                _optimizeAudioDg = value;
+                OnPropertyChanged();
+                _uiSettings.OptimizeAudioDg = value;
+                _uiSettings.Save();
+            }
+        }
+    }
+
     public bool HighPrecisionTimer
     {
         get => _highPrecisionTimer;
@@ -314,6 +362,7 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
     public ICommand ApplyMinecraftCommand { get; }
     public ICommand ForceGpuCommand { get; }
     public ICommand PurgeStandbyMemoryCommand { get; }
+    public ICommand ClearShaderCacheCommand { get; }
     public ICommand CopyJvmArgsCommand { get; }
     public ICommand InstallSmoothFrameModCommand { get; }
     public ICommand UninstallSmoothFrameModCommand { get; }
@@ -332,6 +381,9 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         _highPerformancePlan = _uiSettings.HighPerformancePlan;
         _deprioritizeBackground = _uiSettings.DeprioritizeBackground;
         _isolatePCores = _uiSettings.IsolatePCores;
+        _optimizeNetwork = _uiSettings.OptimizeNetwork;
+        _optimizeIoPriority = _uiSettings.OptimizeIoPriority;
+        _optimizeAudioDg = _uiSettings.OptimizeAudioDg;
         _minimizeToTrayOnClose = _uiSettings.MinimizeToTrayOnClose;
         _autoBoostOnGameLaunch = _uiSettings.AutoBoostOnGameLaunch;
         _globalHotkeyEnabled = _uiSettings.GlobalHotkeyEnabled;
@@ -372,6 +424,7 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         ApplyMinecraftCommand = new RelayCommand(ApplyMinecraftToLauncher);
         ForceGpuCommand = new RelayCommand(ForceDiscreteGpuForMinecraft);
         PurgeStandbyMemoryCommand = new RelayCommand(PurgeStandbyMemory);
+        ClearShaderCacheCommand = new RelayCommand(ClearShaderCache);
         CopyJvmArgsCommand = new RelayCommand(() =>
         {
             try
@@ -761,7 +814,10 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
                     HighPerformancePowerPlan = HighPerformancePlan,
                     ElevateGamePriority = true,
                     DeprioritizeBackgroundApps = DeprioritizeBackground,
-                    IsolatePCores = IsolatePCores
+                    IsolatePCores = IsolatePCores,
+                    OptimizeNetwork = OptimizeNetwork,
+                    OptimizeIoPriority = OptimizeIoPriority,
+                    OptimizeAudioDg = OptimizeAudioDg
                 };
 
                 var result = await _coordinator.ActivateAsync(SelectedGame, options);
@@ -1268,7 +1324,10 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
                     HighPerformancePowerPlan = true,
                     ElevateGamePriority = true,
                     DeprioritizeBackgroundApps = DeprioritizeBackground,
-                    IsolatePCores = IsolatePCores
+                    IsolatePCores = IsolatePCores,
+                    OptimizeNetwork = OptimizeNetwork,
+                    OptimizeIoPriority = OptimizeIoPriority,
+                    OptimizeAudioDg = OptimizeAudioDg
                 };
 
                 var result = await _coordinator.ActivateMinecraftAsync(options);
@@ -1343,11 +1402,45 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         {
             var result = MemoryCleanerService.PurgeMemory(trimWorkingSets: false, purgeStandby: true);
             MinecraftStatusMessage = result.Message;
+            SubStatusMessage = result.Message;
         }
         catch (Exception ex)
         {
             MinecraftStatusMessage = $"Ошибка очистки памяти: {ex.Message}";
         }
+    }
+
+    public void ClearShaderCache()
+    {
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                var result = ShaderCacheCleaner.CleanShaderCache();
+                string message = result.FilesDeleted > 0
+                    ? Loc.Format("VM.Shaders.Cleaned", result.FilesDeleted, result.FormattedSize)
+                    : Loc.T("VM.Shaders.Clean");
+
+                if (Application.Current?.Dispatcher != null)
+                {
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        SubStatusMessage = message;
+                        MinecraftStatusMessage = message;
+                    }));
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Application.Current?.Dispatcher != null)
+                {
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        SubStatusMessage = $"Error: {ex.Message}";
+                    }));
+                }
+            }
+        });
     }
 
     // ==================================================================

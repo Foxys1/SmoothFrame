@@ -16,7 +16,7 @@ public record InstallProgress(double Percent, string Status);
 public static class InstallerEngine
 {
     private const string AppName = "SmoothFrame";
-    private const string AppVersion = "2.1.0";
+    private const string AppVersion = "2.1.1";
     private const string ExeName = "SmoothFrame.UI.exe";
     private const string UninstallerName = "Uninstall.exe";
     private const string UninstallRegistryPath = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\SmoothFrame";

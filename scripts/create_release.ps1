@@ -23,35 +23,38 @@ $headers = @{
 }
 
 $releaseNotes = @'
-# SmoothFrame v2.1.0 ⚡
+# SmoothFrame v2.1.1 ⚡
 
 A modern, transparent, safe, and 100% reversible game optimization suite for Windows 10 & 11.
 
-## What's New in v2.1.0:
-- **Laser Precision Monolith Installer**: Completely redesigned setup wizard featuring interactive micro-scale button physics, high-contrast laser borders, and physical verification chips (`NT_TIMER: 0.50 ms`, `UDP_HUD: 127.0.0.1`, `SAFETY: 100% REVERSIBLE`).
-- **Orchestrated First-Launch Onboarding**: Staggered entrance animations, real-time language capsule preview, and a calibrated 1-second pause before smooth multi-language greeting cycling.
-- **Enhanced Bento Grid & Quick Control Deck**: Modular quick-control cards with one-click toggles for Auto-Boost on game launch, P-Core isolation, background app throttling (Discord/browser silencing), and Windows Standby RAM purge.
-- **Robust Internationalization (i18n)**:
-  - 100% key coverage across all 6 supported languages: English, Russian, German, Spanish, French, and Simplified Chinese.
-  - Automatic English fallback protection layer in `LocalizationManager` preventing any missing strings.
-- **Dedicated Minecraft Mode (NeoForge 1.21.1)**:
-  - High-frequency UDP Loopback HUD (127.0.0.1:28511) streaming live FPS, 1% Low FPS, frametime, and heap telemetry.
-  - Frustum & distance entity culling, zero-stall chunk streamer, and dynamic background frame limiter.
-  - One-click JVM GC profiles (Generational ZGC & Aikar G1GC) with synchronous memory allocation.
-- **System-Level Gaming Optimizations**:
-  - 0.50 ms high-precision multimedia timer via native `NtSetTimerResolution`.
-  - Automated Ultimate Performance power plan management with deduplication prevention.
-  - Hardware GPU binding and RAM standby cache purge.
-  - Zero OS handle leaks, memory safety hardening, and 100% reversible WAL state recovery.
+## What's New in v2.1.1:
+- **Universal Game I/O Priority Streaming**:
+  - Native `ntdll!NtSetInformationProcess` (`IoPriorityHigh`) prioritizes real-time texture and asset streaming for active games.
+  - Automatically deprioritizes background disk activity (`IoPriorityVeryLow`) to eliminate asset-load hitching.
+  - 100% reversible in-memory tuning with zero permanent registry modifications.
+- **Zero-Ping Network Low-Latency Stack**:
+  - Disables Windows Multimedia Network Throttling during gameplay.
+  - Activates `TcpAckFrequency = 1` and `TCPNoDelay = 1` on active gaming network interfaces for instantaneous packet response.
+  - Safely restores original registry network state via WAL snapshot on exit.
+- **AudioDG Core Isolation & DPC Latency Shield**:
+  - Automatically shields Windows Audio Device Graph (`audiodg.exe`) from DPC spikes and thread starvation.
+  - Pins audio processing to a dedicated CPU core and elevates scheduling priority to eliminate micro-crackles and audio dropouts.
+- **Multi-Vendor Shader Cache Cleaner**:
+  - One-click safe cleanup for DirectX, NVIDIA, AMD, and Intel shader caches with locked-file skip protection.
+- **Multi-Launcher Auto-Detection**:
+  - Automatic game detection expanded to Steam, Epic Games, GOG Galaxy, Ubisoft Connect, EA Desktop / Origin, and Riot Games.
+- **Code Quality & Memory Hardening**:
+  - Resolved process handle lifetimes in audio management services.
+  - Dynamic multi-language localization for shader cleanup metrics across all 6 languages.
 
 ## Download:
 Download **SmoothFrame_Setup.exe** below and run the installer.
 '@
 
 $bodyObj = @{
-    tag_name = "v2.1.0"
+    tag_name = "v2.1.1"
     target_commitish = "main"
-    name = "SmoothFrame v2.1.0 - Laser Monolith UI & Enhanced Control Deck"
+    name = "SmoothFrame v2.1.1 - Universal Game Engine, Zero-Ping & I/O Priority"
     body = $releaseNotes
     draft = $false
     prerelease = $false
@@ -60,13 +63,13 @@ $bodyObj = @{
 $bodyJson = $bodyObj | ConvertTo-Json -Depth 5
 $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($bodyJson)
 
-Write-Host "Creating GitHub Release for v2.1.0..."
+Write-Host "Creating GitHub Release for v2.1.1..."
 try {
     $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases" -Method Post -Headers $headers -Body $bodyBytes -ContentType "application/json; charset=utf-8"
     Write-Host "Created release: $($release.html_url)"
 } catch {
     Write-Host "Checking if release already exists..."
-    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases/tags/v2.1.0" -Method Get -Headers $headers
+    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases/tags/v2.1.1" -Method Get -Headers $headers
     Write-Host "Found existing release: $($release.html_url)"
 }
 

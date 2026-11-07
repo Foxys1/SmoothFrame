@@ -749,7 +749,7 @@
                                             </Border>
 
                                             <!-- Toggle 3: Deprioritize Background -->
-                                            <Border Style="{StaticResource CardInset}" Padding="12,10" Margin="0,0,0,14">
+                                            <Border Style="{StaticResource CardInset}" Padding="12,10" Margin="0,0,0,8">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*"/>
@@ -763,7 +763,37 @@
                                                 </Grid>
                                             </Border>
 
-                                            <!-- Quick Action: Standby RAM Purge -->
+                                            <!-- Toggle 4: Low-Latency Network (Zero-Ping) -->
+                                            <Border Style="{StaticResource CardInset}" Padding="12,10" Margin="0,0,0,8">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0">
+                                                        <TextBlock Text="{DynamicResource Deck.Network.Title}" FontSize="12" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                                        <TextBlock Text="{DynamicResource Deck.Network.Desc}" FontSize="10.5" Foreground="{StaticResource BrushTextMuted}" TextTrimming="CharacterEllipsis"/>
+                                                    </StackPanel>
+                                                    <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding OptimizeNetwork, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+
+                                            <!-- Toggle 5: Disk I/O Acceleration -->
+                                            <Border Style="{StaticResource CardInset}" Padding="12,10" Margin="0,0,0,14">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0">
+                                                        <TextBlock Text="{DynamicResource Deck.Io.Title}" FontSize="12" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                                        <TextBlock Text="{DynamicResource Deck.Io.Desc}" FontSize="10.5" Foreground="{StaticResource BrushTextMuted}" TextTrimming="CharacterEllipsis"/>
+                                                    </StackPanel>
+                                                    <CheckBox Grid.Column="1" Style="{StaticResource SwitchStyle}" IsChecked="{Binding OptimizeIoPriority, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+
+                                            <!-- Quick Action 1: Standby RAM Purge -->
                                             <Border Style="{StaticResource CardInset}" Padding="14,12" Background="#14111E" BorderBrush="#2A2246" BorderThickness="1">
                                                 <StackPanel>
                                                     <Grid Margin="0,0,0,6">
@@ -777,6 +807,25 @@
                                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                             <controls:AppIcon Data="{StaticResource Icon.Refresh}" Size="12" Margin="0,0,6,0" Foreground="{StaticResource BrushAccentHover}"/>
                                                             <TextBlock Text="{DynamicResource Deck.Ram.Btn}" FontSize="11.5" FontWeight="SemiBold"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!-- Quick Action 2: DirectX / GPU Shader Cache Purge -->
+                                            <Border Style="{StaticResource CardInset}" Padding="14,12" Background="#14111E" BorderBrush="#2A2246" BorderThickness="1" Margin="0,8,0,0">
+                                                <StackPanel>
+                                                    <Grid Margin="0,0,0,6">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <controls:AppIcon Data="{StaticResource Icon.Trash}" Size="13" Foreground="#A855F7" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{DynamicResource Deck.Shaders.Title}" FontSize="12" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                    <TextBlock Text="{DynamicResource Deck.Shaders.Desc}" FontSize="10.5" Foreground="{StaticResource BrushTextMuted}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                                    <Button Style="{StaticResource SecondaryButton}" Command="{Binding ClearShaderCacheCommand}" HorizontalAlignment="Stretch" Padding="0,8">
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                            <controls:AppIcon Data="{StaticResource Icon.Refresh}" Size="12" Margin="0,0,6,0" Foreground="{StaticResource BrushAccentHover}"/>
+                                                            <TextBlock Text="{DynamicResource Deck.Shaders.Btn}" FontSize="11.5" FontWeight="SemiBold"/>
                                                         </StackPanel>
                                                     </Button>
                                                 </StackPanel>
@@ -1424,6 +1473,78 @@
                                                 <TextBlock Text="{DynamicResource Set.Bg.Desc}" Style="{StaticResource TextBody}" FontSize="11.5" Foreground="{StaticResource BrushTextMuted}" TextWrapping="Wrap" Margin="0,2,0,0"/>
                                             </StackPanel>
                                             <CheckBox Grid.Column="2" Style="{StaticResource SwitchStyle}" IsChecked="{Binding DeprioritizeBackground, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="66,0,16,0" Opacity="0.5"/>
+
+                                        <!-- Row 5: Low-Latency Network (Zero-Ping) -->
+                                        <Grid Margin="16,12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="10" 
+                                                    Background="{StaticResource BrushAccentSoft}" 
+                                                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="1"
+                                                    Margin="0,0,14,0" VerticalAlignment="Center">
+                                                <controls:AppIcon Data="{StaticResource Icon.Wifi}" Size="17"
+                                                                  Foreground="{StaticResource BrushAccentHover}"
+                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
+                                                <TextBlock Text="{DynamicResource Set.Network.Title}" FontSize="13.5" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
+                                                <TextBlock Text="{DynamicResource Set.Network.Desc}" Style="{StaticResource TextBody}" FontSize="11.5" Foreground="{StaticResource BrushTextMuted}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="2" Style="{StaticResource SwitchStyle}" IsChecked="{Binding OptimizeNetwork, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="66,0,16,0" Opacity="0.5"/>
+
+                                        <!-- Row 6: Disk I/O Streaming Acceleration -->
+                                        <Grid Margin="16,12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="10" 
+                                                    Background="{StaticResource BrushAccentSoft}" 
+                                                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="1"
+                                                    Margin="0,0,14,0" VerticalAlignment="Center">
+                                                <controls:AppIcon Data="{StaticResource Icon.HardDrive}" Size="17"
+                                                                  Foreground="{StaticResource BrushAccentHover}"
+                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
+                                                <TextBlock Text="{DynamicResource Set.Io.Title}" FontSize="13.5" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
+                                                <TextBlock Text="{DynamicResource Set.Io.Desc}" Style="{StaticResource TextBody}" FontSize="11.5" Foreground="{StaticResource BrushTextMuted}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="2" Style="{StaticResource SwitchStyle}" IsChecked="{Binding OptimizeIoPriority, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="66,0,16,0" Opacity="0.5"/>
+
+                                        <!-- Row 7: Audio Latency & DPC Isolation -->
+                                        <Grid Margin="16,12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="10" 
+                                                    Background="{StaticResource BrushAccentSoft}" 
+                                                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="1"
+                                                    Margin="0,0,14,0" VerticalAlignment="Center">
+                                                <controls:AppIcon Data="{StaticResource Icon.Volume}" Size="17"
+                                                                  Foreground="{StaticResource BrushAccentHover}"
+                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
+                                                <TextBlock Text="{DynamicResource Set.Audio.Title}" FontSize="13.5" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
+                                                <TextBlock Text="{DynamicResource Set.Audio.Desc}" Style="{StaticResource TextBody}" FontSize="11.5" Foreground="{StaticResource BrushTextMuted}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="2" Style="{StaticResource SwitchStyle}" IsChecked="{Binding OptimizeAudioDg, Mode=TwoWay}" VerticalAlignment="Center"/>
                                         </Grid>
                                     </StackPanel>
                                 </Border>

@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Paramètres</sys:String>
     <sys:String x:Key="Nav.Protect">Protection</sys:String>
     <sys:String x:Key="Side.Language">Langue de l'interface</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.0 — optimiseur sûr de processus de jeu</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.1 — optimiseur sûr de processus de jeu</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMISATION ACTIVE • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SYSTÈME PRÊT • EN ATTENTE DU JEU</sys:String>
@@ -48,6 +48,12 @@
     <sys:String x:Key="Set.Bg.Desc">Passe temporairement les navigateurs (Chrome, Edge), torrents et launchers en priorité "Inférieure à la normale", libérant des ressources pour le jeu.</sys:String>
     <sys:String x:Key="Set.Cores.Title">Isolation des cœurs P</sys:String>
     <sys:String x:Key="Set.Cores.Desc">Dirige les threads du jeu uniquement vers les cœurs P de performance (pour Intel 12–14 gen ou AMD 3D V-Cache).</sys:String>
+    <sys:String x:Key="Set.Network.Title">Réseau ultra-faible latence (Zero-Ping)</sys:String>
+    <sys:String x:Key="Set.Network.Desc">Désactive le bridage réseau Windows Multimedia et active TCP NoDelay (contournement de Nagle).</sys:String>
+    <sys:String x:Key="Set.Io.Title">Accélération du streaming disque (E/S)</sys:String>
+    <sys:String x:Key="Set.Io.Desc">Accorde une priorité d'E/S élevée au jeu actif et basse aux applications de fond pour supprimer les saccades.</sys:String>
+    <sys:String x:Key="Set.Audio.Title">Isolation de la latence audio et DPC</sys:String>
+    <sys:String x:Key="Set.Audio.Desc">Assigne audiodg.exe à un cœur dédié avec priorité élevée pour éliminer les micro-coupures sonores.</sys:String>
     <sys:String x:Key="Set.Tray.Title">Réduire dans la zone de notification</sys:String>
     <sys:String x:Key="Set.Tray.Desc">En cliquant sur fermer, la fenêtre se réduit dans la barre d'état tandis que les optimisations restent actives.</sys:String>
     <sys:String x:Key="Set.AutoBoost.Title">Boost automatique au lancement du jeu</sys:String>
@@ -90,6 +96,8 @@
     <sys:String x:Key="VM.Msg.RemoveConfirm">Retirer "{0}" de la liste des jeux ?</sys:String>
     <sys:String x:Key="VM.Msg.RemoveTitle">Confirmation</sys:String>
     <sys:String x:Key="VM.AppName">SmoothFrame</sys:String>
+    <sys:String x:Key="VM.Shaders.Cleaned">{0} fichiers de cache de shaders nettoyés ({1}).</sys:String>
+    <sys:String x:Key="VM.Shaders.Clean">Le cache des shaders est déjà propre.</sys:String>
     <!-- System Tray Context Menu -->
     <sys:String x:Key="Tray.Open">Ouvrir SmoothFrame</sys:String>
     <sys:String x:Key="Tray.PurgeMem">Purger la mémoire</sys:String>
@@ -161,9 +169,16 @@
     <sys:String x:Key="Deck.PCores.Desc">Cœurs haute performance dédiés au jeu</sys:String>
     <sys:String x:Key="Deck.Bg.Title">Arrière-plan Discret</sys:String>
     <sys:String x:Key="Deck.Bg.Desc">Ralentit Discord, navigateur et tâches de fond</sys:String>
+    <sys:String x:Key="Deck.Network.Title">Réseau Zero-Ping</sys:String>
+    <sys:String x:Key="Deck.Network.Desc">Désactive la limitation réseau &amp; active TCP NoDelay</sys:String>
+    <sys:String x:Key="Deck.Io.Title">Boost E/S Disque</sys:String>
+    <sys:String x:Key="Deck.Io.Desc">Priorité d'E/S élevée pour le chargement des textures</sys:String>
     <sys:String x:Key="Deck.Ram.Title">Purger la RAM en Veille</sys:String>
     <sys:String x:Key="Deck.Ram.Desc">Vide le cache mémoire de Windows pour éliminer les micro-saccades</sys:String>
     <sys:String x:Key="Deck.Ram.Btn">Purger la RAM en Veille</sys:String>
+    <sys:String x:Key="Deck.Shaders.Title">Cache Shaders GPU</sys:String>
+    <sys:String x:Key="Deck.Shaders.Desc">Supprime les caches de shaders corrompus DirectX, NVIDIA et AMD</sys:String>
+    <sys:String x:Key="Deck.Shaders.Btn">Purger le Cache Shaders</sys:String>
     <sys:String x:Key="Card.Timer.Sub">Latence souris et commandes</sys:String>
     <sys:String x:Key="Card.Power.Sub">Fréquence CPU maximale sans baisse</sys:String>
     <sys:String x:Key="Card.Prio.Sub">Priorité maximale pour le jeu</sys:String>
@@ -176,7 +191,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">Détection de jeux, démarrage Windows et raccourcis globaux</sys:String>
     <sys:String x:Key="Set.Group.App">Interface &amp; Système</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">Préférences de langue et statut du service d'arrière-plan SmoothFrame</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.1 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Mode API Win32 sécurisé • 0% injection mémoire • Compatible avec tous les anti-triches</sys:String>
     <sys:String x:Key="Set.Engine.Badge">ACTIF</sys:String>
 

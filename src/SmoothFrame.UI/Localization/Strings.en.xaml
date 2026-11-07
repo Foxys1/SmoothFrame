@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Settings</sys:String>
     <sys:String x:Key="Nav.Protect">Protection</sys:String>
     <sys:String x:Key="Side.Language">Interface language</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.0 — safe game-process optimizer</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.1 — safe game-process optimizer</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMIZATION ACTIVE • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SYSTEM READY • STANDBY FOR GAME</sys:String>
@@ -45,9 +45,16 @@
     <sys:String x:Key="Deck.PCores.Desc">Dedicate performance cores to game</sys:String>
     <sys:String x:Key="Deck.Bg.Title">Quiet Background</sys:String>
     <sys:String x:Key="Deck.Bg.Desc">Throttle Discord, browser &amp; background tasks</sys:String>
+    <sys:String x:Key="Deck.Network.Title">Zero-Ping Network</sys:String>
+    <sys:String x:Key="Deck.Network.Desc">Disables network throttling &amp; activates TCP NoDelay</sys:String>
+    <sys:String x:Key="Deck.Io.Title">Disk I/O Boost</sys:String>
+    <sys:String x:Key="Deck.Io.Desc">High I/O priority for fast game asset streaming</sys:String>
     <sys:String x:Key="Deck.Ram.Title">Standby RAM Purge</sys:String>
     <sys:String x:Key="Deck.Ram.Desc">Flushes Windows standby cache to eliminate micro-stutters</sys:String>
     <sys:String x:Key="Deck.Ram.Btn">Purge Standby RAM</sys:String>
+    <sys:String x:Key="Deck.Shaders.Title">DirectX &amp; GPU Shader Cache</sys:String>
+    <sys:String x:Key="Deck.Shaders.Desc">Purges corrupted or stale DirectX, NVIDIA, and AMD shader caches</sys:String>
+    <sys:String x:Key="Deck.Shaders.Btn">Clear Shader Cache</sys:String>
     <sys:String x:Key="Card.Timer.Sub">Input &amp; mouse latency</sys:String>
     <sys:String x:Key="Card.Power.Sub">Unparked CPU core frequency</sys:String>
     <sys:String x:Key="Card.Prio.Sub">Highest game thread priority</sys:String>
@@ -70,6 +77,12 @@
     <sys:String x:Key="Set.Cores.Desc">Dedicating high-performance CPU cores exclusively to the active game process.</sys:String>
     <sys:String x:Key="Set.Bg.Title">Background app suppression</sys:String>
     <sys:String x:Key="Set.Bg.Desc">Throttles browsers, Discord and background apps to eliminate frame drops.</sys:String>
+    <sys:String x:Key="Set.Network.Title">Low-latency network (Zero-Ping)</sys:String>
+    <sys:String x:Key="Set.Network.Desc">Disables Windows multimedia network packet throttling and enables TCP NoDelay (Nagle bypass).</sys:String>
+    <sys:String x:Key="Set.Io.Title">Disk I/O streaming acceleration</sys:String>
+    <sys:String x:Key="Set.Io.Desc">Assigns High I/O priority to the active game and Low I/O to background apps to stop asset stutters.</sys:String>
+    <sys:String x:Key="Set.Audio.Title">Audio latency &amp; DPC isolation</sys:String>
+    <sys:String x:Key="Set.Audio.Desc">Pins Windows Audio Isolation (audiodg.exe) to a dedicated core to prevent audio dropouts and DPC spikes.</sys:String>
     <sys:String x:Key="Set.AutoBoost.Title">Automatic boost on game launch</sys:String>
     <sys:String x:Key="Set.AutoBoost.Desc">Automatically activates optimization when a recognized game process starts.</sys:String>
     <sys:String x:Key="Set.Hotkey.Title">Global hotkey (Ctrl+Shift+B)</sys:String>
@@ -80,7 +93,7 @@
     <sys:String x:Key="Set.Tray.Desc">Keeps optimizations active in the notification area when closing the window.</sys:String>
     <sys:String x:Key="Set.Lang.Title">Interface language</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Instant language switching across the entire application (English / Russian).</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.1 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Safe Win32 API mode • 0% memory injection • Safe for all anti-cheats</sys:String>
     <sys:String x:Key="Set.Engine.Badge">ACTIVE</sys:String>
 
@@ -128,6 +141,8 @@
     <sys:String x:Key="VM.Msg.RemoveConfirm">Remove "{0}" from the game list?</sys:String>
     <sys:String x:Key="VM.Msg.RemoveTitle">Confirmation</sys:String>
     <sys:String x:Key="VM.AppName">SmoothFrame</sys:String>
+    <sys:String x:Key="VM.Shaders.Cleaned">Cleaned {0} shader cache files ({1}).</sys:String>
+    <sys:String x:Key="VM.Shaders.Clean">Shader cache is already clean.</sys:String>
 
     <!-- System Tray Context Menu -->
     <sys:String x:Key="Tray.Open">Open SmoothFrame</sys:String>
