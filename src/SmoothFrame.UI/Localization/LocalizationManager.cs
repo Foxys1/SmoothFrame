@@ -74,6 +74,7 @@ public static class LocalizationManager
     };
 
     private static ResourceDictionary? _current;
+    private static ResourceDictionary? _fallback;
     private static string _currentCode = "en";
 
     /// <summary>Raised on the UI thread after the active dictionary has been swapped.</summary>
@@ -123,7 +124,17 @@ public static class LocalizationManager
             return s;
         }
 
-        return _current?[key] as string ?? key;
+        if (_current?[key] is string cur)
+        {
+            return cur;
+        }
+
+        if (_fallback?[key] is string fb)
+        {
+            return fb;
+        }
+
+        return key;
     }
 
     public static string Format(string key, params object?[] args)
@@ -155,17 +166,37 @@ public static class LocalizationManager
 
     private static void Apply(string code, bool raiseEvent)
     {
+        var merged = Application.Current.Resources.MergedDictionaries;
+
+        // Ensure English fallback dictionary is always available as baseline
+        if (_fallback == null)
+        {
+            var fallbackUri = new Uri("/SmoothFrame.UI;component/Localization/Strings.en.xaml", UriKind.Relative);
+            _fallback = (ResourceDictionary)Application.LoadComponent(fallbackUri);
+            if (!merged.Contains(_fallback))
+            {
+                merged.Insert(0, _fallback);
+            }
+        }
+
         var uri = new Uri($"/SmoothFrame.UI;component/Localization/Strings.{code}.xaml", UriKind.Relative);
         var dict = (ResourceDictionary)Application.LoadComponent(uri);
 
-        var merged = Application.Current.Resources.MergedDictionaries;
-        if (_current != null && merged.Contains(_current))
+        if (_current != null && merged.Contains(_current) && _current != _fallback)
         {
             merged.Remove(_current);
         }
 
-        merged.Add(dict);
-        _current = dict;
+        if (code != "en")
+        {
+            merged.Add(dict);
+            _current = dict;
+        }
+        else
+        {
+            _current = _fallback;
+        }
+
         _currentCode = code;
 
         if (raiseEvent)

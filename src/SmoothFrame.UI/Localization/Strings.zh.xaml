@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">设置</sys:String>
     <sys:String x:Key="Nav.Protect">防护</sys:String>
     <sys:String x:Key="Side.Language">界面语言</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.0.0 — 安全的游戏进程优化器</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.0 — 安全的游戏进程优化器</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">优化已启用 • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">系统就绪 • 等待游戏启动</sys:String>
@@ -149,5 +149,50 @@
     <sys:String x:Key="Mc.Aio.Badge">内置</sys:String>
     <sys:String x:Key="Mc.Aio.Title">SmoothFrame All-In-One 内置加速技术：</sys:String>
     <sys:String x:Key="Mc.Aio.Subtitle">专为 SmoothFrame 研发的专有内核与硬件加速技术</sys:String>
+
+    <!-- Redesign & Bento Grid additions -->
+    <sys:String x:Key="Lib.Desc">选择游戏以应用 CPU 优先级和系统高精度计时器优化</sys:String>
+    <sys:String x:Key="Deck.QuickTitle">快速控制</sys:String>
+    <sys:String x:Key="Deck.QuickBadge">自动</sys:String>
+    <sys:String x:Key="Deck.QuickDesc">进程优先级与内存加速参数</sys:String>
+    <sys:String x:Key="Deck.AutoBoost.Title">启动自动加速</sys:String>
+    <sys:String x:Key="Deck.AutoBoost.Desc">检测到游戏启动时自动激活优化配置文件</sys:String>
+    <sys:String x:Key="Deck.PCores.Title">P 性能核心隔离</sys:String>
+    <sys:String x:Key="Deck.PCores.Desc">将高性能 CPU 核心专用于游戏进程</sys:String>
+    <sys:String x:Key="Deck.Bg.Title">静音后台程序</sys:String>
+    <sys:String x:Key="Deck.Bg.Desc">限制 Discord、浏览器及后台任务资源占用</sys:String>
+    <sys:String x:Key="Deck.Ram.Title">清理备用内存</sys:String>
+    <sys:String x:Key="Deck.Ram.Desc">清理 Windows 备用内存缓存以消除微卡顿</sys:String>
+    <sys:String x:Key="Deck.Ram.Btn">清理备用内存</sys:String>
+    <sys:String x:Key="Card.Timer.Sub">降低鼠标与输入延迟</sys:String>
+    <sys:String x:Key="Card.Power.Sub">CPU 核心频率不降频</sys:String>
+    <sys:String x:Key="Card.Prio.Sub">游戏线程最高优先级</sys:String>
+    <sys:String x:Key="Card.Prot.Sub">0% 内存注入 • 反作弊安全</sys:String>
+    <sys:String x:Key="Header.HotkeyHint">快速加速:</sys:String>
+
+    <sys:String x:Key="Set.Group.Core">硬件核心与操作系统</sys:String>
+    <sys:String x:Key="Set.Group.CoreDesc">直接控制系统计时器、CPU 核心调度与供电电源计划</sys:String>
+    <sys:String x:Key="Set.Group.Automation">自动化与启动</sys:String>
+    <sys:String x:Key="Set.Group.AutomationDesc">游戏检测规则、Windows 开机自启与全局快捷键</sys:String>
+    <sys:String x:Key="Set.Group.App">界面与系统</sys:String>
+    <sys:String x:Key="Set.Group.AppDesc">界面语言偏好与 SmoothFrame 后台引擎运行状态</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Desc">安全 Win32 API 模式 • 0% 内存注入 • 适配所有主流反作弊系统</sys:String>
+    <sys:String x:Key="Set.Engine.Badge">已激活</sys:String>
+
+    <sys:String x:Key="Prot.Badge">100% 反作弊安全</sys:String>
+    <sys:String x:Key="Prot.Zero.Desc">对游戏内存与执行程序零干扰零篡改</sys:String>
+    <sys:String x:Key="Prot.Zero.P1">0% 内存注入：不会向活跃游戏进程内存注入任何 DLL 模块。</sys:String>
+    <sys:String x:Key="Prot.Zero.P2">无 DirectX 或 Vulkan 钩子：完全不修改渲染管线与着色器。</sys:String>
+    <sys:String x:Key="Prot.Zero.P3">官方 Win32 API：仅通过 Windows 操作系统原生调度接口实现优化。</sys:String>
+    <sys:String x:Key="Prot.Rev.Desc">一键将所有 Windows 系统设置即时恢复至优化前原始状态</sys:String>
+    <sys:String x:Key="Prot.Rev.P1">系统快照记录：在启动优化前完整记录原始计时器精度与电源方案。</sys:String>
+    <sys:String x:Key="Prot.Rev.P2">一键即时回滚：关闭程序或关闭加速时立即无缝恢复原有参数。</sys:String>
+    <sys:String x:Key="Prot.Rev.P3">纯净无残留：退出时不留后台服务、守护进程或注册表垃圾。</sys:String>
+    <sys:String x:Key="Prot.Crash.Desc">即使遭遇电脑突发重启或断电也能确保 100% 恢复</sys:String>
+    <sys:String x:Key="Prot.Crash.P1">非易失性安全日志：恢复还原点安全写入物理固态硬盘。</sys:String>
+    <sys:String x:Key="Prot.Crash.P2">故障自动检测：发生蓝屏或异常关机后，下次开机自动复原系统配置。</sys:String>
+    <sys:String x:Key="Prot.Crash.P3">零系统风险：完全不破坏 Windows 核心系统文件，保障系统极致稳定。</sys:String>
+    <sys:String x:Key="Prot.Chips.Title">经严格测试兼容所有主流反作弊系统</sys:String>
 
 </ResourceDictionary>

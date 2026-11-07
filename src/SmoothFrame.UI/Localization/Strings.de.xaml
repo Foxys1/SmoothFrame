@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Einstellungen</sys:String>
     <sys:String x:Key="Nav.Protect">Schutz</sys:String>
     <sys:String x:Key="Side.Language">Oberflächensprache</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.0.0 — sicherer Optimierer für Spielprozesse</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.0 — sicherer Optimierer für Spielprozesse</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMIERUNG AKTIV • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SYSTEM BEREIT • WARTE AUF SPIEL</sys:String>
@@ -149,5 +149,50 @@
     <sys:String x:Key="Mc.Aio.Badge">INTEGRIERT</sys:String>
     <sys:String x:Key="Mc.Aio.Title">Integrierte SmoothFrame All-In-One-Technologien:</sys:String>
     <sys:String x:Key="Mc.Aio.Subtitle">Eigene hardware- und systemnahe Optimierungstechnologien für SmoothFrame</sys:String>
+
+    <!-- Redesign & Bento Grid additions -->
+    <sys:String x:Key="Lib.Desc">Wählen Sie ein Spiel, um CPU-Prioritäten und Systemtimer-Optimierungen anzuwenden</sys:String>
+    <sys:String x:Key="Deck.QuickTitle">Schnellsteuerung</sys:String>
+    <sys:String x:Key="Deck.QuickBadge">Auto</sys:String>
+    <sys:String x:Key="Deck.QuickDesc">Prozessprioritäten und Speicherbeschleunigung</sys:String>
+    <sys:String x:Key="Deck.AutoBoost.Title">Auto-Boost beim Start</sys:String>
+    <sys:String x:Key="Deck.AutoBoost.Desc">Profil aktivieren, wenn Spiel erkannt wird</sys:String>
+    <sys:String x:Key="Deck.PCores.Title">P-Kerne-Isolierung</sys:String>
+    <sys:String x:Key="Deck.PCores.Desc">Leistungskerne exklusiv für das Spiel</sys:String>
+    <sys:String x:Key="Deck.Bg.Title">Hintergrund drosseln</sys:String>
+    <sys:String x:Key="Deck.Bg.Desc">Discord, Browser &amp; Hintergrundaufgaben drosseln</sys:String>
+    <sys:String x:Key="Deck.Ram.Title">Standby-RAM leeren</sys:String>
+    <sys:String x:Key="Deck.Ram.Desc">Leert Windows-Standby-Cache zur Behebung von Mikrorucklern</sys:String>
+    <sys:String x:Key="Deck.Ram.Btn">Standby-RAM leeren</sys:String>
+    <sys:String x:Key="Card.Timer.Sub">Maus- &amp; Eingabelatenz</sys:String>
+    <sys:String x:Key="Card.Power.Sub">Maximale CPU-Kernfrequenz</sys:String>
+    <sys:String x:Key="Card.Prio.Sub">Höchste Spiel-Thread-Priorität</sys:String>
+    <sys:String x:Key="Card.Prot.Sub">0% Injektionen • Anti-Cheat-sicher</sys:String>
+    <sys:String x:Key="Header.HotkeyHint">Schnell-Boost:</sys:String>
+
+    <sys:String x:Key="Set.Group.Core">Hardware-Kern &amp; OS</sys:String>
+    <sys:String x:Key="Set.Group.CoreDesc">Direkte Steuerung von Systemtimer, CPU-Kernen und Energieverwaltung</sys:String>
+    <sys:String x:Key="Set.Group.Automation">Automatisierung &amp; Start</sys:String>
+    <sys:String x:Key="Set.Group.AutomationDesc">Spielerkennung, Windows-Autostart und globale Hotkeys</sys:String>
+    <sys:String x:Key="Set.Group.App">Oberfläche &amp; System</sys:String>
+    <sys:String x:Key="Set.Group.AppDesc">Spracheinstellungen und Status des SmoothFrame-Hintergrunddienstes</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Desc">Sicherer Win32-API-Modus • 0% Speicherinjektion • Sicher für alle Anti-Cheats</sys:String>
+    <sys:String x:Key="Set.Engine.Badge">AKTIV</sys:String>
+
+    <sys:String x:Key="Prot.Badge">100% ANTI-CHEAT-SICHER</sys:String>
+    <sys:String x:Key="Prot.Zero.Desc">Absolut kein Eingriff in den Spielspeicher oder Spieldateien</sys:String>
+    <sys:String x:Key="Prot.Zero.P1">0% Injektionen: injiziert keine DLLs in den Speicher aktiver Spielprozesse.</sys:String>
+    <sys:String x:Key="Prot.Zero.P2">Keine DirectX- oder Vulkan-Hooks: Render-Pipelines und Shader bleiben unberührt.</sys:String>
+    <sys:String x:Key="Prot.Zero.P3">Offizielle Win32-APIs: Optimierungen nutzen nur native Windows-Scheduler-Schnittstellen.</sys:String>
+    <sys:String x:Key="Prot.Rev.Desc">Sofortige Wiederherstellung aller Windows-Einstellungen in den vorherigen Zustand</sys:String>
+    <sys:String x:Key="Prot.Rev.P1">System-Snapshot: Timer-Auflösungen und Energiesparpläne werden vorab erfasst.</sys:String>
+    <sys:String x:Key="Prot.Rev.P2">1-Klick-Rollback: Schließen der App oder Deaktivieren setzt alle Werte sofort zurück.</sys:String>
+    <sys:String x:Key="Prot.Rev.P3">Sauberes System: hinterlässt keine Hintergrunddienste, Daemons oder Registry-Müll.</sys:String>
+    <sys:String x:Key="Prot.Crash.Desc">Garantierte Wiederherstellung selbst bei unerwartetem PC-Neustart oder Stromausfall</sys:String>
+    <sys:String x:Key="Prot.Crash.P1">Nichtflüchtiges Protokoll: Wiederherstellungspunkt wird sicher auf Datenträger gespeichert.</sys:String>
+    <sys:String x:Key="Prot.Crash.P2">Automatische Fehlererkennung: setzt Einstellungen beim nächsten Boot nach Crash oder BSOD zurück.</sys:String>
+    <sys:String x:Key="Prot.Crash.P3">Null OS-Risiko: schützt Windows-Systemdateien und sichert maximale Stabilität.</sys:String>
+    <sys:String x:Key="Prot.Chips.Title">GEPRÜFT UND KOMPATIBEL MIT ALLEN GÄNGIGEN ANTI-CHEAT-SYSTEMEN</sys:String>
 
 </ResourceDictionary>

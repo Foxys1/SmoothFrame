@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011%20(x64)-informational.svg)]()
 [![.NET](https://img.shields.io/badge/.NET-8.0%20WPF-purple.svg)]()
-[![Release](https://img.shields.io/badge/Release-v2.0.0-8B5CF6.svg)](https://github.com/Foxys1/SmoothFrame/releases/tag/v2.0.0)
+[![Release](https://img.shields.io/badge/Release-v2.1.0-8B5CF6.svg)](https://github.com/Foxys1/SmoothFrame/releases/tag/v2.1.0)
 
 🌐 **English** | **[Русский](README_RU.md)**
 
@@ -15,12 +15,13 @@ Engineered to eliminate micro-stutters, stabilize frame pacing (1% Low FPS), red
 
 ## 🚀 Key Features
 
-### 🖥️ Obsidian & Neon-Violet Minimalist UI (v2.0)
+### 🖥️ Obsidian & Laser Monolith Minimalist UI (v2.1)
 * **Cyber Aesthetic:** Modern deep-obsidian palette (`#08080C`) paired with electric neon-violet accents (`#8B5CF6`).
-* **Bento Grid Layout:** Intuitive modular telemetry cards showing real-time timer status, active power plans, process priority, and OS protection.
+* **Bento Grid Layout & Quick Control Deck:** Modular telemetry cards showing real-time timer status, active power plans, process priority, P-core isolation, background task silencing, and instant Standby RAM cache purge.
 * **Fluid Physics-Based Animations:** Smooth tab transitions, spring-interpolated active navigation pills (`BackEase`), and clean responsive scaling.
-* **First-Launch Onboarding:** Multi-language animated welcome splash screen with instant language selection.
-* **Internationalization (i18n):** English default, with instant live switching across English, Russian, German, Spanish, French, and Chinese.
+* **Staged First-Launch Onboarding:** Orchestrated entrance animations, language indicator badges, and a calibrated 1-second pause before smooth multi-language greeting cycling.
+* **Laser Precision Monolith Installer:** Redesigned setup wizard featuring interactive micro-scale button physics and physical metric verification chips (`NT_TIMER: 0.50 ms`, `UDP_HUD: 127.0.0.1`, `SAFETY: 100% REVERSIBLE`).
+* **Robust Internationalization (i18n):** English default, 100% complete key coverage across English, Russian, German, Spanish, French, and Chinese, with automated English fallback protection.
 
 ### 🎮 Dedicated Minecraft Optimization Suite (NeoForge 1.21.1)
 * **Real-Time UDP Loopback Telemetry HUD:** High-frequency (4 Hz) loopback connection (`127.0.0.1:28511`) directly streaming in-game FPS, 1% Low FPS, frametime, and JVM memory heap usage into the desktop app.

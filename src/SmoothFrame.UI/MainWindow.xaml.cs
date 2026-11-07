@@ -79,9 +79,7 @@ public partial class MainWindow : Window
             _welcomeIndex = 0; // Always start with English "Welcome", followed by "Добро пожаловать" and world languages
 
             OnboardingOverlay.Visibility = Visibility.Visible;
-            OnboardingOverlay.Opacity = 0;
-            Fade(OnboardingOverlay, 0, 1, TimeSpan.FromMilliseconds(320));
-            StartWelcomeCycle();
+            StartWelcomeCycle(playEntrance: true);
         }
 
         // Default page.
@@ -194,15 +192,36 @@ public partial class MainWindow : Window
         element.BeginAnimation(OpacityProperty, animation);
     }
 
+    private static void GlideIn(UIElement element, TranslateTransform? translate, double fromY, TimeSpan duration, ScaleTransform? scale = null, double fromScale = 1.0)
+    {
+        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+        var opacityAnim = new DoubleAnimation(0, 1, duration) { EasingFunction = ease };
+        element.BeginAnimation(OpacityProperty, opacityAnim);
+
+        if (translate != null)
+        {
+            var transAnim = new DoubleAnimation(fromY, 0, duration) { EasingFunction = ease };
+            translate.BeginAnimation(TranslateTransform.YProperty, transAnim);
+        }
+
+        if (scale != null)
+        {
+            var scaleEase = new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.2 };
+            var scaleAnim = new DoubleAnimation(fromScale, 1.0, duration + TimeSpan.FromMilliseconds(80)) { EasingFunction = scaleEase };
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+            scale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
+        }
+    }
+
     // ------------------------------------------------------------------
-    // First-run welcome cycle: fade in, hold 3 s, fade out, next language
+    // First-run welcome cycle: entrance orchestration + 1s pause + cycling greetings
     // ------------------------------------------------------------------
 
-    private void StartWelcomeCycle()
+    private void StartWelcomeCycle(bool playEntrance = true)
     {
         StopWelcomeCycle();
         _welcomeCts = new CancellationTokenSource();
-        _ = CycleWelcomeAsync(_welcomeCts.Token);
+        _ = CycleWelcomeAsync(_welcomeCts.Token, playEntrance);
     }
 
     private void StopWelcomeCycle()
@@ -217,7 +236,7 @@ public partial class MainWindow : Window
         _welcomeCts = null;
     }
 
-    private async Task CycleWelcomeAsync(CancellationToken token)
+    private async Task CycleWelcomeAsync(CancellationToken token, bool playEntrance)
     {
         var phrases = LocalizationManager.WelcomePhrases;
         if (phrases == null || phrases.Count == 0) return;
@@ -252,32 +271,164 @@ public partial class MainWindow : Window
 
         try
         {
+            var initialPhrase = phrases[_welcomeIndex % phrases.Count];
+            _ = Dispatcher.BeginInvoke(new Action(() =>
+            {
+                WelcomeText.Text = initialPhrase.Text;
+                WelcomeLanguage.Text = initialPhrase.NativeName;
+            }));
+
+            if (playEntrance)
+            {
+                // Reset initial state of components (invisible & offset downwards)
+                _ = Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    OnboardingOverlay.Visibility = Visibility.Visible;
+                    OnboardingOverlay.Opacity = 1;
+
+                    OnbAmbientGlow.Opacity = 0;
+                    OnbHudBrackets.Opacity = 0;
+
+                    OnbStatusPill.Opacity = 0;
+                    OnbStatusPillTranslate.Y = 16;
+
+                    OnbHeroIcon.Opacity = 0;
+                    OnbHeroScale.ScaleX = 0.88;
+                    OnbHeroScale.ScaleY = 0.88;
+                    OnbHeroTranslate.Y = 22;
+
+                    OnbHeadingGroup.Opacity = 0;
+                    OnbHeadingTranslate.Y = 18;
+                    WelcomeText.Opacity = 1;
+                    WelcomeLanguageBadge.Opacity = 1;
+                    WelcomeTextTranslate.Y = 0;
+                    WelcomeLanguageTranslate.Y = 0;
+
+                    OnbLangCapsule.Opacity = 0;
+                    OnbLangTranslate.Y = 18;
+
+                    OnbContinueBtn.Opacity = 0;
+                    OnbContinueTranslate.Y = 18;
+                }));
+
+                await Task.Delay(50, token);
+
+                // Step 1: Background radial bloom and cyber corner brackets
+                _ = Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Fade(OnbAmbientGlow, 0, 1, TimeSpan.FromMilliseconds(700));
+                    Fade(OnbHudBrackets, 0, 0.3, TimeSpan.FromMilliseconds(700));
+                }));
+
+                await Task.Delay(110, token);
+
+                // Step 2: Engine status pill
+                _ = Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    GlideIn(OnbStatusPill, OnbStatusPillTranslate, 16, TimeSpan.FromMilliseconds(460));
+                }));
+
+                await Task.Delay(130, token);
+
+                // Step 3: Hero monolith squircle, glowing concentric rings, and lightning bolt
+                _ = Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    GlideIn(OnbHeroIcon, OnbHeroTranslate, 22, TimeSpan.FromMilliseconds(520), OnbHeroScale, 0.88);
+                }));
+
+                await Task.Delay(140, token);
+
+                // Step 4: Heading group (Welcome, Language badge, Tagline)
+                _ = Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    GlideIn(OnbHeadingGroup, OnbHeadingTranslate, 18, TimeSpan.FromMilliseconds(480));
+                }));
+
+                await Task.Delay(130, token);
+
+                // Step 5: Language selector capsule
+                _ = Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    GlideIn(OnbLangCapsule, OnbLangTranslate, 18, TimeSpan.FromMilliseconds(480));
+                }));
+
+                await Task.Delay(130, token);
+
+                // Step 6: Master action button (Continue)
+                _ = Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    GlideIn(OnbContinueBtn, OnbContinueTranslate, 18, TimeSpan.FromMilliseconds(500));
+                }));
+
+                // Step 7: Wait for all entrance animations to finish settling (~640 + 500 = 1140ms)
+                await Task.Delay(550, token);
+
+                // Step 8: User requirement: "после того как все появится, через 1 секунды начиналась анимация приветсвия на разных языках"
+                // Pause for exactly 1000ms while everything is fully visible and stationary
+                await Task.Delay(1000, token);
+            }
+            else
+            {
+                _ = Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Fade(WelcomeText, 0, 1, TimeSpan.FromMilliseconds(350));
+                    Fade(WelcomeLanguageBadge, 0, 1, TimeSpan.FromMilliseconds(350));
+                }));
+
+                await Task.Delay(3000, token);
+            }
+
+            // Continuous greeting animation cycling across languages
             while (!token.IsCancellationRequested && IsLoaded)
             {
+                // Smooth fade out and subtle upward glide (-8px)
+                _ = Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (token.IsCancellationRequested) return;
+                    var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(360))
+                    {
+                        EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
+                    };
+                    var slideOut = new DoubleAnimation(0, -8, TimeSpan.FromMilliseconds(360))
+                    {
+                        EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
+                    };
+                    WelcomeText.BeginAnimation(OpacityProperty, fadeOut);
+                    WelcomeTextTranslate.BeginAnimation(TranslateTransform.YProperty, slideOut);
+                    WelcomeLanguageBadge.BeginAnimation(OpacityProperty, fadeOut);
+                    WelcomeLanguageTranslate.BeginAnimation(TranslateTransform.YProperty, slideOut);
+                }));
+
+                await Task.Delay(380, token);
+                if (token.IsCancellationRequested || !IsLoaded) break;
+
+                // Advance to next language
+                _welcomeIndex++;
                 var phrase = phrases[_welcomeIndex % phrases.Count];
 
+                // Smooth fade in and upward glide from bottom (+8px -> 0)
                 _ = Dispatcher.BeginInvoke(new Action(() =>
                 {
                     if (token.IsCancellationRequested) return;
                     WelcomeText.Text = phrase.Text;
                     WelcomeLanguage.Text = phrase.NativeName;
-                    Fade(WelcomeText, 0, 1, TimeSpan.FromMilliseconds(520));
-                    Fade(WelcomeLanguage, 0, 1, TimeSpan.FromMilliseconds(520));
+
+                    var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(460))
+                    {
+                        EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+                    };
+                    var slideIn = new DoubleAnimation(8, 0, TimeSpan.FromMilliseconds(460))
+                    {
+                        EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+                    };
+                    WelcomeText.BeginAnimation(OpacityProperty, fadeIn);
+                    WelcomeTextTranslate.BeginAnimation(TranslateTransform.YProperty, slideIn);
+                    WelcomeLanguageBadge.BeginAnimation(OpacityProperty, fadeIn);
+                    WelcomeLanguageTranslate.BeginAnimation(TranslateTransform.YProperty, slideIn);
                 }));
 
+                // Hold each language for 3 seconds
                 await Task.Delay(3000, token);
-
-                if (token.IsCancellationRequested || !IsLoaded) break;
-
-                _ = Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    if (token.IsCancellationRequested) return;
-                    Fade(WelcomeText, 1, 0, TimeSpan.FromMilliseconds(420));
-                    Fade(WelcomeLanguage, 1, 0, TimeSpan.FromMilliseconds(420));
-                }));
-
-                await Task.Delay(460, token);
-                _welcomeIndex++;
             }
         }
         catch (OperationCanceledException)
@@ -331,7 +482,7 @@ public partial class MainWindow : Window
             }
         }
 
-        StartWelcomeCycle();
+        StartWelcomeCycle(playEntrance: false);
     }
 
     private void LanguageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

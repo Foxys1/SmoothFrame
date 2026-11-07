@@ -3,23 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Startup="OnStartup">
     <Application.Resources>
-        <!-- Modern Dark Palette matching SmoothFrame black-and-violet aesthetic -->
-        <Color x:Key="ColorBgDark">#08090E</Color>
-        <Color x:Key="ColorSurface">#0D0E17</Color>
-        <Color x:Key="ColorSurfaceCard">#121320</Color>
-        <Color x:Key="ColorSurfaceHover">#1A1B2E</Color>
-        <Color x:Key="ColorBorder">#232238</Color>
+        <!-- ================= Ultra-Minimal Monolith Palette (Linear / Vercel style) ================= -->
+        <Color x:Key="ColorBgDark">#040508</Color>
+        <Color x:Key="ColorSurface">#08090E</Color>
+        <Color x:Key="ColorSurfaceCard">#0C0D15</Color>
+        <Color x:Key="ColorSurfaceCardHover">#12131E</Color>
+        <Color x:Key="ColorSurfaceHover">#151624</Color>
+        <Color x:Key="ColorBorder">#1A1C2B</Color>
+        <Color x:Key="ColorBorderStrong">#282A3E</Color>
         <Color x:Key="ColorAccent">#8B5CF6</Color>
         <Color x:Key="ColorAccentHover">#A855F7</Color>
-        <Color x:Key="ColorTextPrimary">#F8FAFC</Color>
-        <Color x:Key="ColorTextSecondary">#94A3B8</Color>
-        <Color x:Key="ColorTextMuted">#64748B</Color>
+        <Color x:Key="ColorTextPrimary">#FFFFFF</Color>
+        <Color x:Key="ColorTextSecondary">#8E95A8</Color>
+        <Color x:Key="ColorTextMuted">#52586B</Color>
 
         <SolidColorBrush x:Key="BrushBgDark" Color="{StaticResource ColorBgDark}"/>
         <SolidColorBrush x:Key="BrushSurface" Color="{StaticResource ColorSurface}"/>
         <SolidColorBrush x:Key="BrushSurfaceCard" Color="{StaticResource ColorSurfaceCard}"/>
+        <SolidColorBrush x:Key="BrushSurfaceCardHover" Color="{StaticResource ColorSurfaceCardHover}"/>
         <SolidColorBrush x:Key="BrushSurfaceHover" Color="{StaticResource ColorSurfaceHover}"/>
         <SolidColorBrush x:Key="BrushBorder" Color="{StaticResource ColorBorder}"/>
+        <SolidColorBrush x:Key="BrushBorderStrong" Color="{StaticResource ColorBorderStrong}"/>
         <SolidColorBrush x:Key="BrushAccent" Color="{StaticResource ColorAccent}"/>
         <SolidColorBrush x:Key="BrushAccentHover" Color="{StaticResource ColorAccentHover}"/>
         <SolidColorBrush x:Key="BrushTextPrimary" Color="{StaticResource ColorTextPrimary}"/>
@@ -27,18 +31,26 @@
         <SolidColorBrush x:Key="BrushTextMuted" Color="{StaticResource ColorTextMuted}"/>
 
         <LinearGradientBrush x:Key="BrushAccentGradient" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#A855F7" Offset="0"/>
-            <GradientStop Color="#8B5CF6" Offset="0.5"/>
+            <GradientStop Color="#9333EA" Offset="0"/>
+            <GradientStop Color="#7C3AED" Offset="0.5"/>
             <GradientStop Color="#6366F1" Offset="1"/>
         </LinearGradientBrush>
 
-        <LinearGradientBrush x:Key="BrushBorderGradient" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#8B5CF6" Offset="0"/>
-            <GradientStop Color="#4C1D95" Offset="0.5"/>
-            <GradientStop Color="#222038" Offset="1"/>
+        <LinearGradientBrush x:Key="BrushAccentGradientHover" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#A855F7" Offset="0"/>
+            <GradientStop Color="#8B5CF6" Offset="0.5"/>
+            <GradientStop Color="#7C3AED" Offset="1"/>
         </LinearGradientBrush>
 
-        <FontFamily x:Key="DefaultFont">Segoe UI Variable Text, Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif</FontFamily>
+        <LinearGradientBrush x:Key="BrushLaserBorder" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#7C3AED" Offset="0"/>
+            <GradientStop Color="#2B2648" Offset="0.3"/>
+            <GradientStop Color="#141522" Offset="0.7"/>
+            <GradientStop Color="#090A12" Offset="1"/>
+        </LinearGradientBrush>
+
+        <FontFamily x:Key="DefaultFont">Segoe UI Variable Display, Segoe UI, -apple-system, BlinkMacSystemFont, Roboto, sans-serif</FontFamily>
+        <FontFamily x:Key="MonoFont">Consolas, Cascadia Code, SF Mono, Menlo, monospace</FontFamily>
 
         <!-- Vectors -->
         <Geometry x:Key="Icon.BoltFill">M13.1 2.1 4.5 13.5h6.1l-1.1 8.4 8.7-11.4h-6.1z</Geometry>
@@ -46,5 +58,8 @@
         <Geometry x:Key="Icon.Close">M6.4 6.4l11.2 11.2M17.6 6.4 6.4 17.6</Geometry>
         <Geometry x:Key="Icon.Min">M6.4 12h11.2</Geometry>
         <Geometry x:Key="Icon.Folder">M3.6 6.4C3.6 5.5 4.3 4.8 5.2 4.8h4.2c.4 0 .8.2 1.1.5l1.4 1.4c.3.3.7.5 1.1.5h5.8c.9 0 1.6.7 1.6 1.6v8.4c0 .9-.7 1.6-1.6 1.6H5.2c-.9 0-1.6-.7-1.6-1.6V6.4z</Geometry>
+        <Geometry x:Key="Icon.Shield">M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z</Geometry>
+        <Geometry x:Key="Icon.Terminal">M4 6l6 6-6 6M12 18h8</Geometry>
+        <Geometry x:Key="Icon.Cpu">M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2M6 6h12v12H6V6zm3 3h6v6H9V9z</Geometry>
     </Application.Resources>
 </Application>
