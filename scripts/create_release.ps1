@@ -23,7 +23,7 @@ $headers = @{
 }
 
 $releaseNotes = @'
-# SmoothFrame v2.1.1 ⚡
+# SmoothFrame v2.1.1 :zap:
 
 A modern, transparent, safe, and 100% reversible game optimization suite for Windows 10 & 11.
 
