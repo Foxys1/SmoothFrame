@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -66,6 +67,7 @@ public partial class MainWindow : Window
         }
 
         Closing += OnMainWindowClosing;
+        PreviewKeyDown += OnWindowPreviewKeyDown;
 
         // Language pickers (onboarding + settings) share one source of truth.
         OnboardingLanguageCombo.ItemsSource = LocalizationManager.Languages;
@@ -580,13 +582,147 @@ public partial class MainWindow : Window
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
-        if (_viewModel.MinimizeToTrayOnClose)
+        HandleCloseRequest();
+    }
+
+    private void HandleCloseRequest()
+    {
+        if (_viewModel.PromptOnClose)
+        {
+            ShowCloseConfirmation();
+        }
+        else if (_viewModel.MinimizeToTrayOnClose)
         {
             Hide();
         }
         else
         {
             ExitApplication();
+        }
+    }
+
+    private bool _isFadingOutCloseDialog;
+
+    public void ShowCloseConfirmation()
+    {
+        if (CloseConfirmationOverlay == null)
+        {
+            ExitApplication();
+            return;
+        }
+
+        if (CloseConfirmationOverlay.Visibility == Visibility.Visible && !_isFadingOutCloseDialog)
+        {
+            return;
+        }
+
+        _isFadingOutCloseDialog = false;
+        CloseConfirmationOverlay.BeginAnimation(UIElement.OpacityProperty, null);
+        CloseRememberCheckBox.IsChecked = false;
+        CloseConfirmationOverlay.Visibility = Visibility.Visible;
+
+        var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(160))
+        {
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+        };
+        var scaleAnim = new DoubleAnimation(0.96, 1.0, TimeSpan.FromMilliseconds(160))
+        {
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+        };
+        scaleAnim.Completed += (_, _) =>
+        {
+            CloseModalScale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+            CloseModalScale.BeginAnimation(ScaleTransform.ScaleYProperty, null);
+            CloseModalScale.ScaleX = 1.0;
+            CloseModalScale.ScaleY = 1.0;
+        };
+
+        CloseConfirmationOverlay.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+        CloseModalScale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+        CloseModalScale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
+    }
+
+    public void HideCloseConfirmation()
+    {
+        if (CloseConfirmationOverlay == null || CloseConfirmationOverlay.Visibility != Visibility.Visible || _isFadingOutCloseDialog)
+        {
+            return;
+        }
+
+        _isFadingOutCloseDialog = true;
+        var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(120))
+        {
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+        };
+        fadeOut.Completed += (_, _) =>
+        {
+            _isFadingOutCloseDialog = false;
+            CloseConfirmationOverlay.BeginAnimation(UIElement.OpacityProperty, null);
+            CloseConfirmationOverlay.Visibility = Visibility.Collapsed;
+        };
+        CloseConfirmationOverlay.BeginAnimation(UIElement.OpacityProperty, fadeOut);
+    }
+
+    private void CloseDialogTray_Click(object sender, RoutedEventArgs e)
+    {
+        if (CloseRememberCheckBox.IsChecked == true)
+        {
+            _viewModel.PromptOnClose = false;
+            _viewModel.MinimizeToTrayOnClose = true;
+        }
+
+        _isFadingOutCloseDialog = false;
+        CloseConfirmationOverlay.BeginAnimation(UIElement.OpacityProperty, null);
+        CloseConfirmationOverlay.Visibility = Visibility.Collapsed;
+        Hide();
+    }
+
+    private void CloseDialogExit_Click(object sender, RoutedEventArgs e)
+    {
+        if (CloseRememberCheckBox.IsChecked == true)
+        {
+            _viewModel.PromptOnClose = false;
+            _viewModel.MinimizeToTrayOnClose = false;
+        }
+
+        _isFadingOutCloseDialog = false;
+        CloseConfirmationOverlay.BeginAnimation(UIElement.OpacityProperty, null);
+        CloseConfirmationOverlay.Visibility = Visibility.Collapsed;
+        ExitApplication();
+    }
+
+    private void CloseDialogCancel_Click(object sender, RoutedEventArgs e)
+    {
+        HideCloseConfirmation();
+    }
+
+    private void CloseConfirmationOverlay_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.OriginalSource == CloseConfirmationOverlay)
+        {
+            HideCloseConfirmation();
+        }
+    }
+
+    private void CloseModalCard_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        e.Handled = true;
+    }
+
+    private void CloseRememberLabel_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton == MouseButton.Left)
+        {
+            CloseRememberCheckBox.IsChecked = !CloseRememberCheckBox.IsChecked;
+        }
+    }
+
+    private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape && CloseConfirmationOverlay?.Visibility == Visibility.Visible)
+        {
+            HideCloseConfirmation();
+            e.Handled = true;
         }
     }
 
@@ -790,11 +926,21 @@ public partial class MainWindow : Window
     {
         StopWelcomeCycle();
 
-        if (!_isExplicitExit && _viewModel.MinimizeToTrayOnClose)
+        if (!_isExplicitExit)
         {
-            e.Cancel = true;
-            Hide();
-            return;
+            if (_viewModel.PromptOnClose)
+            {
+                e.Cancel = true;
+                ShowCloseConfirmation();
+                return;
+            }
+
+            if (_viewModel.MinimizeToTrayOnClose)
+            {
+                e.Cancel = true;
+                Hide();
+                return;
+            }
         }
 
         try

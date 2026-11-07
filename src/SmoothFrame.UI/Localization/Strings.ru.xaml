@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Настройки</sys:String>
     <sys:String x:Key="Nav.Protect">Защита</sys:String>
     <sys:String x:Key="Side.Language">Язык интерфейса</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.1 — безопасный оптимизатор игрового процесса</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.2 — безопасный оптимизатор игрового процесса</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">ОПТИМИЗАЦИЯ АКТИВНА • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">СИСТЕМА В НОРМЕ • ОЖИДАНИЕ ИГРЫ</sys:String>
@@ -89,11 +89,21 @@
     <sys:String x:Key="Set.Hotkey.Desc">Быстрое включение и выключение оптимизации прямо из игры без сворачивания.</sys:String>
     <sys:String x:Key="Set.Autostart.Title">Автозапуск вместе с Windows</sys:String>
     <sys:String x:Key="Set.Autostart.Desc">Запуск SmoothFrame при старте системы с правами администратора без окон UAC.</sys:String>
+    <sys:String x:Key="Set.ClosePrompt.Title">Запрос действия при закрытии</sys:String>
+    <sys:String x:Key="Set.ClosePrompt.Desc">Показывать диалог с выбором: свернуть в трей или полностью закрыть приложение.</sys:String>
     <sys:String x:Key="Set.Tray.Title">Сворачивать в системный трей при закрытии</sys:String>
     <sys:String x:Key="Set.Tray.Desc">Оставляет оптимизатор активным возле часов при нажатии на кнопку закрытия.</sys:String>
+    <sys:String x:Key="Dialog.Close.Title">Закрытие SmoothFrame</sys:String>
+    <sys:String x:Key="Dialog.Close.Desc">Выберите действие при закрытии главного окна программы:</sys:String>
+    <sys:String x:Key="Dialog.Close.Tray">Свернуть в системный трей</sys:String>
+    <sys:String x:Key="Dialog.Close.TrayDesc">Продолжит фоновую оптимизацию, авто-буст игр и будет доступен в трее у часов.</sys:String>
+    <sys:String x:Key="Dialog.Close.Exit">Закрыть полностью</sys:String>
+    <sys:String x:Key="Dialog.Close.ExitDesc">Безопасно вернёт таймеры и планы питания в норму и завершит работу.</sys:String>
+    <sys:String x:Key="Dialog.Close.Remember">Запомнить мой выбор</sys:String>
+    <sys:String x:Key="Dialog.Close.Cancel">Отмена</sys:String>
     <sys:String x:Key="Set.Lang.Title">Язык интерфейса</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Мгновенное переключение языка программы (English / Русский).</sys:String>
-    <sys:String x:Key="Set.Engine.Title">Фоновая служба SmoothFrame Engine v2.1.1 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">Фоновая служба SmoothFrame Engine v2.1.2 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Безопасный режим Win32 API • 0% инъекций в память • Совместимо со всеми античитами</sys:String>
     <sys:String x:Key="Set.Engine.Badge">АКТИВНО</sys:String>
 

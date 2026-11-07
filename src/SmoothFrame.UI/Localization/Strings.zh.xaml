@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">设置</sys:String>
     <sys:String x:Key="Nav.Protect">防护</sys:String>
     <sys:String x:Key="Side.Language">界面语言</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.1 — 安全的游戏进程优化器</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.2 — 安全的游戏进程优化器</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">优化已启用 • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">系统就绪 • 等待游戏启动</sys:String>
@@ -54,8 +54,18 @@
     <sys:String x:Key="Set.Io.Desc">为活跃游戏分配高 I/O 优先级，后台程序分配低优先级，消除加载地图时的卡顿。</sys:String>
     <sys:String x:Key="Set.Audio.Title">音频延迟与 DPC 隔离</sys:String>
     <sys:String x:Key="Set.Audio.Desc">将 audiodg.exe 绑定到独立 CPU 核心并提高优先级，防止爆音和 DPC 延迟峰值。</sys:String>
+    <sys:String x:Key="Set.ClosePrompt.Title">关闭时确认操作</sys:String>
+    <sys:String x:Key="Set.ClosePrompt.Desc">点击关闭按钮时弹出选择对话框：最小化到托盘或彻底退出程序。</sys:String>
     <sys:String x:Key="Set.Tray.Title">关闭时最小化到系统托盘</sys:String>
     <sys:String x:Key="Set.Tray.Desc">点击关闭按钮时，窗口将最小化到任务栏通知区域，所有已激活的优化将在后台继续生效。</sys:String>
+    <sys:String x:Key="Dialog.Close.Title">关闭 SmoothFrame</sys:String>
+    <sys:String x:Key="Dialog.Close.Desc">请选择关闭主窗口时的操作：</sys:String>
+    <sys:String x:Key="Dialog.Close.Tray">最小化到系统托盘</sys:String>
+    <sys:String x:Key="Dialog.Close.TrayDesc">保持后台游戏优化与自动加速生效，并在托盘区域常驻。</sys:String>
+    <sys:String x:Key="Dialog.Close.Exit">彻底退出程序</sys:String>
+    <sys:String x:Key="Dialog.Close.ExitDesc">安全恢复系统计时器与电源计划，并终止程序所有后台任务。</sys:String>
+    <sys:String x:Key="Dialog.Close.Remember">记住我的选择</sys:String>
+    <sys:String x:Key="Dialog.Close.Cancel">取消</sys:String>
     <sys:String x:Key="Set.AutoBoost.Title">启动游戏时自动加速</sys:String>
     <sys:String x:Key="Set.AutoBoost.Desc">后台监控服务将在启动游戏库中的游戏时自动开启游戏优化模式，并在退出游戏时自动恢复标准模式。</sys:String>
     <sys:String x:Key="Set.Hotkey.Title">全局快捷键 (Ctrl+Shift+B)</sys:String>
@@ -191,7 +201,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">游戏检测规则、Windows 开机自启与全局快捷键</sys:String>
     <sys:String x:Key="Set.Group.App">界面与系统</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">界面语言偏好与 SmoothFrame 后台引擎运行状态</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.1 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.2 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">安全 Win32 API 模式 • 0% 内存注入 • 适配所有主流反作弊系统</sys:String>
     <sys:String x:Key="Set.Engine.Badge">已激活</sys:String>
 

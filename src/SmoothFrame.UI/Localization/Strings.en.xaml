@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Settings</sys:String>
     <sys:String x:Key="Nav.Protect">Protection</sys:String>
     <sys:String x:Key="Side.Language">Interface language</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.1 — safe game-process optimizer</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.2 — safe game-process optimizer</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMIZATION ACTIVE • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SYSTEM READY • STANDBY FOR GAME</sys:String>
@@ -89,11 +89,21 @@
     <sys:String x:Key="Set.Hotkey.Desc">Instantly toggle optimization on or off directly in-game without alt-tabbing.</sys:String>
     <sys:String x:Key="Set.Autostart.Title">Start automatically with Windows</sys:String>
     <sys:String x:Key="Set.Autostart.Desc">Launches SmoothFrame at system boot with administrator rights and no UAC prompts.</sys:String>
+    <sys:String x:Key="Set.ClosePrompt.Title">Confirm action on close</sys:String>
+    <sys:String x:Key="Set.ClosePrompt.Desc">Show confirmation dialog to choose between minimizing to tray or exiting completely.</sys:String>
     <sys:String x:Key="Set.Tray.Title">Minimize to system tray on close</sys:String>
     <sys:String x:Key="Set.Tray.Desc">Keeps optimizations active in the notification area when closing the window.</sys:String>
+    <sys:String x:Key="Dialog.Close.Title">Close SmoothFrame</sys:String>
+    <sys:String x:Key="Dialog.Close.Desc">Choose what happens when closing the window.</sys:String>
+    <sys:String x:Key="Dialog.Close.Tray">Minimize to System Tray</sys:String>
+    <sys:String x:Key="Dialog.Close.TrayDesc">Keep background game optimizations, latency tuning, and auto-boost active in tray.</sys:String>
+    <sys:String x:Key="Dialog.Close.Exit">Exit Completely</sys:String>
+    <sys:String x:Key="Dialog.Close.ExitDesc">Safely restore system timers, power schemes, and terminate all processes.</sys:String>
+    <sys:String x:Key="Dialog.Close.Remember">Remember my choice</sys:String>
+    <sys:String x:Key="Dialog.Close.Cancel">Cancel</sys:String>
     <sys:String x:Key="Set.Lang.Title">Interface language</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Instant language switching across the entire application (English / Russian).</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.1 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.2 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Safe Win32 API mode • 0% memory injection • Safe for all anti-cheats</sys:String>
     <sys:String x:Key="Set.Engine.Badge">ACTIVE</sys:String>
 

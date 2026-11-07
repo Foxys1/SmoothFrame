@@ -26,6 +26,9 @@ public sealed class UiSettings
     [JsonPropertyName("minimizeToTrayOnClose")]
     public bool MinimizeToTrayOnClose { get; set; } = true;
 
+    [JsonPropertyName("promptOnClose")]
+    public bool PromptOnClose { get; set; } = true;
+
     [JsonPropertyName("autoBoostOnGameLaunch")]
     public bool AutoBoostOnGameLaunch { get; set; } = true;
 

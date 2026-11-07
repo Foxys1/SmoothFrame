@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Einstellungen</sys:String>
     <sys:String x:Key="Nav.Protect">Schutz</sys:String>
     <sys:String x:Key="Side.Language">Oberflächensprache</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.1 — sicherer Optimierer für Spielprozesse</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.2 — sicherer Optimierer für Spielprozesse</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMIERUNG AKTIV • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SYSTEM BEREIT • WARTE AUF SPIEL</sys:String>
@@ -54,8 +54,18 @@
     <sys:String x:Key="Set.Io.Desc">Weist dem aktiven Spiel hohe I/O-Priorität zu, um Ruckler beim Nachladen von Spielwelten zu verhindern.</sys:String>
     <sys:String x:Key="Set.Audio.Title">Audio-Latenz- &amp; DPC-Isolation</sys:String>
     <sys:String x:Key="Set.Audio.Desc">Weist audiodg.exe einen dedizierten CPU-Kern mit erhöhter Priorität zu, um Tonaussetzer und DPC-Spitzen zu verhindern.</sys:String>
+    <sys:String x:Key="Set.ClosePrompt.Title">Aktion beim Schließen bestätigen</sys:String>
+    <sys:String x:Key="Set.ClosePrompt.Desc">Bestätigungsdialog anzeigen: ins System-Tray minimieren oder vollständig beenden.</sys:String>
     <sys:String x:Key="Set.Tray.Title">Beim Schließen ins System-Tray minimieren</sys:String>
     <sys:String x:Key="Set.Tray.Desc">Beim Klick auf das Kreuz minimiert sich das Fenster in den Infobereich, während aktive Optimierungen im Hintergrund weiterlaufen.</sys:String>
+    <sys:String x:Key="Dialog.Close.Title">SmoothFrame schließen</sys:String>
+    <sys:String x:Key="Dialog.Close.Desc">Wählen Sie die gewünschte Aktion beim Schließen des Fensters:</sys:String>
+    <sys:String x:Key="Dialog.Close.Tray">In den Infobereich minimieren</sys:String>
+    <sys:String x:Key="Dialog.Close.TrayDesc">Hintergrund-Optimierungen, Latenz-Tuning und Auto-Boost aktiv halten.</sys:String>
+    <sys:String x:Key="Dialog.Close.Exit">Vollständig beenden</sys:String>
+    <sys:String x:Key="Dialog.Close.ExitDesc">System-Timer und Energiepläne sicher zurücksetzen und Programm beenden.</sys:String>
+    <sys:String x:Key="Dialog.Close.Remember">Auswahl merken</sys:String>
+    <sys:String x:Key="Dialog.Close.Cancel">Abbrechen</sys:String>
     <sys:String x:Key="Set.AutoBoost.Title">Automatischer Boost beim Spielstart</sys:String>
     <sys:String x:Key="Set.AutoBoost.Desc">Hintergrund-Überwachung aktiviert automatisch den Spielmodus, wenn ein Spiel aus der Bibliothek gestartet wird, und stellt den Normalmodus beim Beenden wieder her.</sys:String>
     <sys:String x:Key="Set.Hotkey.Title">Globaler Hotkey (Strg+Umschalt+B)</sys:String>
@@ -191,7 +201,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">Spielerkennung, Windows-Autostart und globale Hotkeys</sys:String>
     <sys:String x:Key="Set.Group.App">Oberfläche &amp; System</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">Spracheinstellungen und Status des SmoothFrame-Hintergrunddienstes</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.1 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.2 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Sicherer Win32-API-Modus • 0% Speicherinjektion • Sicher für alle Anti-Cheats</sys:String>
     <sys:String x:Key="Set.Engine.Badge">AKTIV</sys:String>
 

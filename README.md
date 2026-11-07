@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011%20(x64)-informational.svg)]()
 [![.NET](https://img.shields.io/badge/.NET-8.0%20WPF-purple.svg)]()
-[![Release](https://img.shields.io/badge/Release-v2.1.1-8B5CF6.svg)](https://github.com/Foxys1/SmoothFrame/releases/tag/v2.1.1)
+[![Release](https://img.shields.io/badge/Release-v2.1.2-8B5CF6.svg)](https://github.com/Foxys1/SmoothFrame/releases/tag/v2.1.2)
 
 🌐 **English** | **[Русский](README_RU.md)**
 

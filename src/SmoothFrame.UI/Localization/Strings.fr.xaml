@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Paramètres</sys:String>
     <sys:String x:Key="Nav.Protect">Protection</sys:String>
     <sys:String x:Key="Side.Language">Langue de l'interface</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.1 — optimiseur sûr de processus de jeu</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.2 — optimiseur sûr de processus de jeu</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMISATION ACTIVE • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SYSTÈME PRÊT • EN ATTENTE DU JEU</sys:String>
@@ -54,8 +54,18 @@
     <sys:String x:Key="Set.Io.Desc">Accorde une priorité d'E/S élevée au jeu actif et basse aux applications de fond pour supprimer les saccades.</sys:String>
     <sys:String x:Key="Set.Audio.Title">Isolation de la latence audio et DPC</sys:String>
     <sys:String x:Key="Set.Audio.Desc">Assigne audiodg.exe à un cœur dédié avec priorité élevée pour éliminer les micro-coupures sonores.</sys:String>
+    <sys:String x:Key="Set.ClosePrompt.Title">Confirmer l'action à la fermeture</sys:String>
+    <sys:String x:Key="Set.ClosePrompt.Desc">Afficher une boîte de dialogue pour choisir entre réduire dans la barre d'état ou quitter complètement.</sys:String>
     <sys:String x:Key="Set.Tray.Title">Réduire dans la zone de notification</sys:String>
     <sys:String x:Key="Set.Tray.Desc">En cliquant sur fermer, la fenêtre se réduit dans la barre d'état tandis que les optimisations restent actives.</sys:String>
+    <sys:String x:Key="Dialog.Close.Title">Fermer SmoothFrame</sys:String>
+    <sys:String x:Key="Dialog.Close.Desc">Choisissez l'action à effectuer lors de la fermeture de la fenêtre :</sys:String>
+    <sys:String x:Key="Dialog.Close.Tray">Réduire dans la zone de notification</sys:String>
+    <sys:String x:Key="Dialog.Close.TrayDesc">Conserve les optimisations en arrière-plan, l'auto-boost et reste accessible dans la barre d'état.</sys:String>
+    <sys:String x:Key="Dialog.Close.Exit">Quitter complètement</sys:String>
+    <sys:String x:Key="Dialog.Close.ExitDesc">Restaure en toute sécurité les minuteurs et modes d'alimentation et ferme le programme.</sys:String>
+    <sys:String x:Key="Dialog.Close.Remember">Mémoriser mon choix</sys:String>
+    <sys:String x:Key="Dialog.Close.Cancel">Annuler</sys:String>
     <sys:String x:Key="Set.AutoBoost.Title">Boost automatique au lancement du jeu</sys:String>
     <sys:String x:Key="Set.AutoBoost.Desc">La surveillance active automatiquement le mode jeu au lancement d'un titre de la bibliothèque et le désactive à la fermeture.</sys:String>
     <sys:String x:Key="Set.Hotkey.Title">Raccourci global (Ctrl+Maj+B)</sys:String>
@@ -191,7 +201,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">Détection de jeux, démarrage Windows et raccourcis globaux</sys:String>
     <sys:String x:Key="Set.Group.App">Interface &amp; Système</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">Préférences de langue et statut du service d'arrière-plan SmoothFrame</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.1 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.2 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Mode API Win32 sécurisé • 0% injection mémoire • Compatible avec tous les anti-triches</sys:String>
     <sys:String x:Key="Set.Engine.Badge">ACTIF</sys:String>
 

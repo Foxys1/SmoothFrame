@@ -129,7 +129,7 @@ public class SystemTrayManager : IDisposable
             uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP,
             uCallbackMessage = WM_TRAYICON,
             hIcon = _hIcon,
-            szTip = "SmoothFrame v2.1.1"
+            szTip = "SmoothFrame v2.1.2"
         };
 
         _isIconCreated = Shell_NotifyIcon(NIM_ADD, ref _notifyData);

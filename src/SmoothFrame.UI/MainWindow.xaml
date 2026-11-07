@@ -225,6 +225,94 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Close Confirmation Dialog Option Button (Tray) -->
+        <Style x:Key="CloseDialogTrayButton" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="UseLayoutRounding" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+            <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid SnapsToDevicePixels="True" UseLayoutRounding="True">
+                            <!-- Background glow layer (contains no text, so text is never rasterized/blurred) -->
+                            <Border x:Name="GlowBd" Background="{StaticResource BrushAccent}" CornerRadius="12" Opacity="0">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#8B5CF6" BlurRadius="18" ShadowDepth="0" Opacity="0.5"/>
+                                </Border.Effect>
+                            </Border>
+
+                            <!-- Sharp card surface -->
+                            <Border x:Name="Bd" Background="#171228" BorderBrush="#3D2968" BorderThickness="1.5" CornerRadius="12"
+                                    SnapsToDevicePixels="True" UseLayoutRounding="True"
+                                    RenderOptions.ClearTypeHint="Enabled">
+                                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="GlowBd" Property="Opacity" Value="0.25"/>
+                                <Setter TargetName="Bd" Property="Background" Value="#251B42"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource BrushAccentHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="GlowBd" Property="Opacity" Value="0.1"/>
+                                <Setter TargetName="Bd" Property="Background" Value="#130E20"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource BrushAccent}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Close Confirmation Dialog Option Button (Exit) -->
+        <Style x:Key="CloseDialogExitButton" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="UseLayoutRounding" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+            <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid SnapsToDevicePixels="True" UseLayoutRounding="True">
+                            <!-- Background glow layer (contains no text, so text is never rasterized/blurred) -->
+                            <Border x:Name="GlowBd" Background="#EF4444" CornerRadius="12" Opacity="0">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#EF4444" BlurRadius="18" ShadowDepth="0" Opacity="0.5"/>
+                                </Border.Effect>
+                            </Border>
+
+                            <!-- Sharp card surface -->
+                            <Border x:Name="Bd" Background="#1C1117" BorderBrush="#4A1E29" BorderThickness="1.5" CornerRadius="12"
+                                    SnapsToDevicePixels="True" UseLayoutRounding="True"
+                                    RenderOptions.ClearTypeHint="Enabled">
+                                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="GlowBd" Property="Opacity" Value="0.25"/>
+                                <Setter TargetName="Bd" Property="Background" Value="#29131D"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#F87171"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="GlowBd" Property="Opacity" Value="0.1"/>
+                                <Setter TargetName="Bd" Property="Background" Value="#140D11"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#DC2626"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <!-- Outer window border with 16px CornerRadius, vibrant border gradient, and soft drop shadow -->
@@ -1628,7 +1716,31 @@
 
                                         <Border Height="1" Background="{StaticResource BrushBorder}" Margin="66,0,16,0" Opacity="0.5"/>
 
-                                        <!-- Row 4: Minimize to Tray on Close -->
+                                        <!-- Row 4: Confirm Action on Close -->
+                                        <Grid Margin="16,12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="10" 
+                                                    Background="{StaticResource BrushAccentSoft}" 
+                                                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="1"
+                                                    Margin="0,0,14,0" VerticalAlignment="Center">
+                                                <controls:AppIcon Data="{StaticResource Icon.ShieldCheck}" Size="17"
+                                                                  Foreground="{StaticResource BrushAccentHover}"
+                                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
+                                                <TextBlock Text="{DynamicResource Set.ClosePrompt.Title}" FontSize="13.5" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
+                                                <TextBlock Text="{DynamicResource Set.ClosePrompt.Desc}" Style="{StaticResource TextBody}" FontSize="11.5" Foreground="{StaticResource BrushTextMuted}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                            <CheckBox Grid.Column="2" Style="{StaticResource SwitchStyle}" IsChecked="{Binding PromptOnClose, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                        </Grid>
+
+                                        <Border Height="1" Background="{StaticResource BrushBorder}" Margin="66,0,16,0" Opacity="0.5"/>
+
+                                        <!-- Row 5: Minimize to Tray on Close -->
                                         <Grid Margin="16,12">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -2095,6 +2207,124 @@
                     </Button>
 
                 </StackPanel>
+            </Grid>
+
+            <!-- ===================== CLOSE CONFIRMATION MODAL OVERLAY ===================== -->
+            <Grid Grid.Row="0" Grid.RowSpan="3" x:Name="CloseConfirmationOverlay" Visibility="Collapsed"
+                  Background="#D608080C" Panel.ZIndex="1000" Opacity="0"
+                  MouseDown="CloseConfirmationOverlay_MouseDown">
+
+                <!-- Ambient Glow behind modal card -->
+                <Ellipse Width="560" Height="380" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                            <GradientStop Color="#2A184D" Offset="0"/>
+                            <GradientStop Color="#120D22" Offset="0.55"/>
+                            <GradientStop Color="#00000000" Offset="1"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+
+                <!-- Modal Dialog Card Container -->
+                <Grid Width="490" HorizontalAlignment="Center" VerticalAlignment="Center"
+                      RenderTransformOrigin="0.5,0.5" UseLayoutRounding="True" SnapsToDevicePixels="True">
+                    <Grid.RenderTransform>
+                        <ScaleTransform x:Name="CloseModalScale" ScaleX="1" ScaleY="1"/>
+                    </Grid.RenderTransform>
+
+                    <!-- Pure Shadow Layer (isolated from text to prevent rasterization blur) -->
+                    <Border Background="#12101C" CornerRadius="16">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#8B5CF6" BlurRadius="36" ShadowDepth="4" Opacity="0.35"/>
+                        </Border.Effect>
+                    </Border>
+
+                    <!-- Pure Content Surface (no effects, crisp native ClearType text) -->
+                    <Border Background="#12101C" BorderBrush="#35265E" BorderThickness="1.5" CornerRadius="16"
+                            Padding="26,24" MouseDown="CloseModalCard_MouseDown"
+                            UseLayoutRounding="True" SnapsToDevicePixels="True"
+                            TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType"
+                            RenderOptions.ClearTypeHint="Enabled">
+
+                        <StackPanel>
+                            <!-- Top Tag & Brand Header -->
+                            <Grid Margin="0,0,0,16">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Background="{StaticResource BrushAccentGradient}" CornerRadius="6" Width="22" Height="22" Margin="0,0,8,0">
+                                        <Path Data="{StaticResource Icon.BoltFill}" Fill="#FFFFFF" Stretch="Uniform" Width="8" Height="11"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="SMOOTHFRAME // WINDOW ACTION" Foreground="#A78BFA" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <!-- Close / Dismiss (X) in corner -->
+                                <Button Style="{StaticResource TitleBarButton}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                        Width="26" Height="26" Padding="0" Click="CloseDialogCancel_Click" ToolTip="{DynamicResource Dialog.Close.Cancel}">
+                                    <controls:AppIcon Data="{StaticResource Icon.Close}" Size="11" Foreground="{StaticResource BrushTextMuted}"/>
+                                </Button>
+                            </Grid>
+
+                            <!-- Dialog Title & Description -->
+                            <TextBlock Text="{DynamicResource Dialog.Close.Title}" FontSize="18" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,0,6"/>
+                            <TextBlock Text="{DynamicResource Dialog.Close.Desc}" Style="{StaticResource TextBody}" FontSize="12.5" Foreground="{StaticResource BrushTextMuted}" TextWrapping="Wrap" Margin="0,0,0,18"/>
+
+                            <!-- Choice 1: Minimize to System Tray -->
+                            <Button Style="{StaticResource CloseDialogTrayButton}" Click="CloseDialogTray_Click" Margin="0,0,0,10">
+                                <Grid Margin="14,11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10"
+                                            Background="{StaticResource BrushAccentSoft}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1"
+                                            Margin="0,0,14,0" VerticalAlignment="Center">
+                                        <controls:AppIcon Data="{StaticResource Icon.RestoreWindow}" Size="17"
+                                                          Foreground="{StaticResource BrushAccentHover}"
+                                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource Dialog.Close.Tray}" FontSize="13.5" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                        <TextBlock Text="{DynamicResource Dialog.Close.TrayDesc}" FontSize="11" Foreground="{StaticResource BrushTextMuted}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+
+                            <!-- Choice 2: Exit Completely -->
+                            <Button Style="{StaticResource CloseDialogExitButton}" Click="CloseDialogExit_Click" Margin="0,0,0,18">
+                                <Grid Margin="14,11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10"
+                                            Background="#28131B" BorderBrush="#501822" BorderThickness="1"
+                                            Margin="0,0,14,0" VerticalAlignment="Center">
+                                        <controls:AppIcon Data="{StaticResource Icon.Power}" Size="17"
+                                                          Foreground="#EF4444"
+                                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource Dialog.Close.Exit}" FontSize="13.5" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                        <TextBlock Text="{DynamicResource Dialog.Close.ExitDesc}" FontSize="11" Foreground="{StaticResource BrushTextMuted}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+
+                            <!-- Bottom Footer: Remember Choice Toggle & Cancel Button -->
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <CheckBox x:Name="CloseRememberCheckBox" Style="{StaticResource SwitchStyle}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                    <TextBlock Text="{DynamicResource Dialog.Close.Remember}" VerticalAlignment="Center"
+                                               Foreground="{StaticResource BrushTextMuted}" FontSize="12" Cursor="Hand"
+                                               MouseDown="CloseRememberLabel_MouseDown"/>
+                                </StackPanel>
+
+                                <Button Content="{DynamicResource Dialog.Close.Cancel}" Style="{StaticResource SecondaryButton}"
+                                        HorizontalAlignment="Right" Padding="18,6" FontSize="12" Click="CloseDialogCancel_Click"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Grid>
         </Grid>
     </Border>

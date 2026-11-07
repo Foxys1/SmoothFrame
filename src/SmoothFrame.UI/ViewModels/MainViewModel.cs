@@ -44,6 +44,7 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
     private bool _highPerformancePlan = true;
     private bool _deprioritizeBackground = true;
     private bool _minimizeToTrayOnClose = true;
+    private bool _promptOnClose = true;
     private bool _autoBoostOnGameLaunch = true;
     private bool _globalHotkeyEnabled = true;
     private bool _isToggling;
@@ -322,6 +323,21 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         }
     }
 
+    public bool PromptOnClose
+    {
+        get => _promptOnClose;
+        set
+        {
+            if (_promptOnClose != value)
+            {
+                _promptOnClose = value;
+                OnPropertyChanged();
+                _uiSettings.PromptOnClose = value;
+                _uiSettings.Save();
+            }
+        }
+    }
+
     public bool AutoBoostOnGameLaunch
     {
         get => _autoBoostOnGameLaunch;
@@ -385,6 +401,7 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         _optimizeIoPriority = _uiSettings.OptimizeIoPriority;
         _optimizeAudioDg = _uiSettings.OptimizeAudioDg;
         _minimizeToTrayOnClose = _uiSettings.MinimizeToTrayOnClose;
+        _promptOnClose = _uiSettings.PromptOnClose;
         _autoBoostOnGameLaunch = _uiSettings.AutoBoostOnGameLaunch;
         _globalHotkeyEnabled = _uiSettings.GlobalHotkeyEnabled;
 

@@ -23,38 +23,32 @@ $headers = @{
 }
 
 $releaseNotes = @'
-# SmoothFrame v2.1.1 :zap:
+# SmoothFrame v2.1.2 :zap:
 
 A modern, transparent, safe, and 100% reversible game optimization suite for Windows 10 & 11.
 
-## What's New in v2.1.1:
-- **Universal Game I/O Priority Streaming**:
-  - Native `ntdll!NtSetInformationProcess` (`IoPriorityHigh`) prioritizes real-time texture and asset streaming for active games.
-  - Automatically deprioritizes background disk activity (`IoPriorityVeryLow`) to eliminate asset-load hitching.
-  - 100% reversible in-memory tuning with zero permanent registry modifications.
-- **Zero-Ping Network Low-Latency Stack**:
-  - Disables Windows Multimedia Network Throttling during gameplay.
-  - Activates `TcpAckFrequency = 1` and `TCPNoDelay = 1` on active gaming network interfaces for instantaneous packet response.
-  - Safely restores original registry network state via WAL snapshot on exit.
-- **AudioDG Core Isolation & DPC Latency Shield**:
-  - Automatically shields Windows Audio Device Graph (`audiodg.exe`) from DPC spikes and thread starvation.
-  - Pins audio processing to a dedicated CPU core and elevates scheduling priority to eliminate micro-crackles and audio dropouts.
-- **Multi-Vendor Shader Cache Cleaner**:
-  - One-click safe cleanup for DirectX, NVIDIA, AMD, and Intel shader caches with locked-file skip protection.
-- **Multi-Launcher Auto-Detection**:
-  - Automatic game detection expanded to Steam, Epic Games, GOG Galaxy, Ubisoft Connect, EA Desktop / Origin, and Riot Games.
-- **Code Quality & Memory Hardening**:
-  - Resolved process handle lifetimes in audio management services.
-  - Dynamic multi-language localization for shader cleanup metrics across all 6 languages.
+## What's New in v2.1.2:
+- **Interactive Close Confirmation Modal**:
+  - Clicking the close button (`X`) or `Alt+F4` now presents an elegant Obsidian modal dialog rather than silently vanishing.
+  - Choose between **"Minimize to System Tray"** (maintaining active low-latency tuning & auto-boost) or **"Exit Completely"** (safely restoring all OS settings and terminating).
+  - Includes a "Remember my choice" option and a dedicated toggle in Settings (`PromptOnClose`).
+- **Subpixel Text Rendering & ClearType Fidelity**:
+  - Completely resolved hover text blur by decoupling drop shadows onto dedicated non-text layers and eliminating fractional scale transforms.
+- **Universal Game Optimization Suite**:
+  - Native NT I/O Priority streaming (`IoPriorityHigh` for game assets, `IoPriorityVeryLow` for background apps).
+  - Zero-Ping network stack (`TCPNoDelay = 1`, `TcpAckFrequency = 1`, and disabled multimedia throttling).
+  - AudioDG CPU core isolation and DPC latency shield for glitch-free audio.
+  - Safe multi-vendor DirectX, NVIDIA, AMD, and Intel shader cache cleaner.
+  - Auto-discovery for Steam, Epic, GOG, Ubisoft, EA, and Riot games.
 
 ## Download:
 Download **SmoothFrame_Setup.exe** below and run the installer.
 '@
 
 $bodyObj = @{
-    tag_name = "v2.1.1"
+    tag_name = "v2.1.2"
     target_commitish = "main"
-    name = "SmoothFrame v2.1.1 - Universal Game Engine, Zero-Ping & I/O Priority"
+    name = "SmoothFrame v2.1.2 - Close Action Dialog & ClearType Fidelity"
     body = $releaseNotes
     draft = $false
     prerelease = $false
@@ -63,13 +57,13 @@ $bodyObj = @{
 $bodyJson = $bodyObj | ConvertTo-Json -Depth 5
 $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($bodyJson)
 
-Write-Host "Creating GitHub Release for v2.1.1..."
+Write-Host "Creating GitHub Release for v2.1.2..."
 try {
     $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases" -Method Post -Headers $headers -Body $bodyBytes -ContentType "application/json; charset=utf-8"
     Write-Host "Created release: $($release.html_url)"
 } catch {
     Write-Host "Checking if release already exists..."
-    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases/tags/v2.1.1" -Method Get -Headers $headers
+    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases/tags/v2.1.2" -Method Get -Headers $headers
     Write-Host "Found existing release: $($release.html_url)"
 }
 
