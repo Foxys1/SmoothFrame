@@ -22,6 +22,23 @@ $headers = @{
     "X-GitHub-Api-Version" = "2022-11-28"
 }
 
+# Fix corrupted emoji artifacts (вљЎ -> :zap:) in previous releases
+foreach ($prevTag in @("v2.1.0", "v2.1.1")) {
+    try {
+        $oldRel = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases/tags/$prevTag" -Method Get -Headers $headers
+        if ($oldRel.body -match 'вљЎ' -or $oldRel.body -match '\u0432\u0459\u040E') {
+            Write-Host "Fixing encoding artifact in $prevTag..."
+            $fixedBody = $oldRel.body -replace 'вљЎ', ':zap:' -replace '\u0432\u0459\u040E', ':zap:'
+            $patchJson = @{ body = $fixedBody } | ConvertTo-Json
+            $patchBytes = [System.Text.Encoding]::UTF8.GetBytes($patchJson)
+            Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases/$($oldRel.id)" -Method Patch -Headers $headers -Body $patchBytes -ContentType "application/json; charset=utf-8" | Out-Null
+            Write-Host "Successfully fixed release notes for $prevTag"
+        }
+    } catch {
+        Write-Warning "Could not update $prevTag: $_"
+    }
+}
+
 $releaseNotes = @'
 # SmoothFrame v2.1.2 :zap:
 
