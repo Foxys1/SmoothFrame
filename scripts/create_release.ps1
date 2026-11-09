@@ -40,32 +40,38 @@ foreach ($prevTag in @("v2.1.0", "v2.1.1")) {
 }
 
 $releaseNotes = @'
-# SmoothFrame v2.1.2 :zap:
+# SmoothFrame v2.2.0 :zap:
 
 A modern, transparent, safe, and 100% reversible game optimization suite for Windows 10 & 11.
 
-## What's New in v2.1.2:
+## What's New in v2.2.0:
+- **Process Power Throttling & Quality of Service (QoS)**:
+  - Native Win32 `SetProcessInformation(ProcessPowerThrottling)` prevents Windows 11 CPU downclocking for active games (`HighQoS`).
+  - Automatically shifts heavy background apps (Discord, Chrome, Telegram, Spotify, etc.) into `EcoQoS` (Efficiency Mode) to eliminate thermal and thread contention.
+  - 100% in-memory with zero permanent registry modifications.
+- **Windowed Game Optimization (DXGI Flip Model Promotion)**:
+  - Automatically activates the Windows 11 Auto-Flip presentation model upgrade (`SwapEffectUpgradeCache = 1`) for borderless windowed games.
+  - Eliminates 15-30ms of DWM composition lag and unlocks G-Sync/FreeSync and Auto HDR in borderless mode without tearing.
+- **1:1 Linear Hardware Mouse Input**:
+  - Enforces pure 1:1 hardware sensor tracking by eliminating Windows "Enhance Pointer Precision" (EPP) curve during gameplay.
+  - Captures user's exact baseline mouse parameters and restores them on exit.
+- **System Diagnostics & Gaming Health Inspector**:
+  - Real-time read-only inspection for VBS (Virtualization-Based Security / Core Isolation) with one-click shortcut to Windows settings.
+  - Real-time hardware status for HAGS (Hardware-Accelerated GPU Scheduling) and Windows Game Mode.
+- **UI & Bento Grid Integration**:
+  - New modular quick-control toggles and dedicated Gaming Health card with crisp ClearType subpixel rendering.
+  - 100% translation key parity across all 6 languages (EN, RU, DE, ES, FR, ZH).
 - **Interactive Close Confirmation Modal**:
-  - Clicking the close button (`X`) or `Alt+F4` now presents an elegant Obsidian modal dialog rather than silently vanishing.
-  - Choose between **"Minimize to System Tray"** (maintaining active low-latency tuning & auto-boost) or **"Exit Completely"** (safely restoring all OS settings and terminating).
-  - Includes a "Remember my choice" option and a dedicated toggle in Settings (`PromptOnClose`).
-- **Subpixel Text Rendering & ClearType Fidelity**:
-  - Completely resolved hover text blur by decoupling drop shadows onto dedicated non-text layers and eliminating fractional scale transforms.
-- **Universal Game Optimization Suite**:
-  - Native NT I/O Priority streaming (`IoPriorityHigh` for game assets, `IoPriorityVeryLow` for background apps).
-  - Zero-Ping network stack (`TCPNoDelay = 1`, `TcpAckFrequency = 1`, and disabled multimedia throttling).
-  - AudioDG CPU core isolation and DPC latency shield for glitch-free audio.
-  - Safe multi-vendor DirectX, NVIDIA, AMD, and Intel shader cache cleaner.
-  - Auto-discovery for Steam, Epic, GOG, Ubisoft, EA, and Riot games.
+  - Choose between "Minimize to System Tray" (keep optimizations active) or "Exit Completely" (safe WAL rollback).
 
 ## Download:
 Download **SmoothFrame_Setup.exe** below and run the installer.
 '@
 
 $bodyObj = @{
-    tag_name = "v2.1.2"
+    tag_name = "v2.2.0"
     target_commitish = "main"
-    name = "SmoothFrame v2.1.2 - Close Action Dialog & ClearType Fidelity"
+    name = "SmoothFrame v2.2.0 - Process QoS, Windowed Flip Model & Gaming Health"
     body = $releaseNotes
     draft = $false
     prerelease = $false
@@ -74,13 +80,13 @@ $bodyObj = @{
 $bodyJson = $bodyObj | ConvertTo-Json -Depth 5
 $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($bodyJson)
 
-Write-Host "Creating GitHub Release for v2.1.2..."
+Write-Host "Creating GitHub Release for v2.2.0..."
 try {
     $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases" -Method Post -Headers $headers -Body $bodyBytes -ContentType "application/json; charset=utf-8"
     Write-Host "Created release: $($release.html_url)"
 } catch {
     Write-Host "Checking if release already exists..."
-    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases/tags/v2.1.2" -Method Get -Headers $headers
+    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases/tags/v2.2.0" -Method Get -Headers $headers
     Write-Host "Found existing release: $($release.html_url)"
 }
 

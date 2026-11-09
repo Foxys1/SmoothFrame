@@ -13,6 +13,11 @@ public class ProcessState
     public ulong OriginalAffinityMask { get; set; }
     public int OriginalIoPriority { get; set; } = 2;
     public bool HasIoPriorityChanged { get; set; }
+
+    // --- Process QoS State ---
+    public uint OriginalQosControlMask { get; set; }
+    public uint OriginalQosStateMask { get; set; }
+    public bool HasQosChanged { get; set; }
 }
 
 public class SystemStateSnapshot
@@ -36,4 +41,13 @@ public class SystemStateSnapshot
     public bool HasAudioDgOptimized { get; set; }
     public uint OriginalAudioDgPriority { get; set; }
     public ulong OriginalAudioDgAffinity { get; set; }
+
+    // --- Windowed Game Optimization (Auto-Flip Presentation Model) ---
+    public bool HasSwapEffectUpgradeChanged { get; set; }
+    public int? OriginalSwapEffectUpgradeCache { get; set; }
+
+    // --- 1:1 Linear Hardware Mouse Input State ---
+    public bool HasMouseOptimizationChanged { get; set; }
+    public int[]? OriginalMouseThresholds { get; set; }
+    public int? OriginalMouseSpeed { get; set; }
 }

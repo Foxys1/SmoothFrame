@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Ajustes</sys:String>
     <sys:String x:Key="Nav.Protect">Protección</sys:String>
     <sys:String x:Key="Side.Language">Idioma de la interfaz</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.2 — optimizador seguro de procesos de juego</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.2.0 — optimizador seguro de procesos de juego</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMIZACIÓN ACTIVA • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SISTEMA LISTO • EN ESPERA DE JUEGO</sys:String>
@@ -201,7 +201,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">Detección de juegos, inicio con Windows y atajos globales</sys:String>
     <sys:String x:Key="Set.Group.App">Interfaz y Sistema</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">Preferencias de idioma y estado del servicio SmoothFrame</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.2 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.2.0 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Modo API Win32 seguro • 0% inyecciones en memoria • Seguro para anti-cheats</sys:String>
     <sys:String x:Key="Set.Engine.Badge">ACTIVO</sys:String>
 
@@ -219,5 +219,38 @@
     <sys:String x:Key="Prot.Crash.P2">Detección automática: restablece ajustes en el siguiente arranque tras caídas o BSOD.</sys:String>
     <sys:String x:Key="Prot.Crash.P3">Cero riesgo para el SO: protege los archivos del sistema Windows y asegura estabilidad.</sys:String>
     <sys:String x:Key="Prot.Chips.Title">VERIFICADO Y COMPATIBLE CON LOS PRINCIPALES SISTEMAS ANTI-CHEAT</sys:String>
+
+    <!-- Process QoS & Throttling (R1) -->
+    <sys:String x:Key="Deck.Qos.Title">QoS de procesos y limitación de energía</sys:String>
+    <sys:String x:Key="Deck.Qos.Desc">HighQoS en juego, modo EcoQoS en segundo plano</sys:String>
+    <sys:String x:Key="Set.Qos.Title">QoS de procesos y limitación EcoQoS</sys:String>
+    <sys:String x:Key="Set.Qos.Desc">Aplica HighQoS nativo Win32 al juego activo y modo de eficiencia EcoQoS a las aplicaciones en segundo plano.</sys:String>
+
+    <!-- Windowed Game Optimization (R2) -->
+    <sys:String x:Key="Deck.WinGame.Title">Optimización de juegos en ventana</sys:String>
+    <sys:String x:Key="Deck.WinGame.Desc">Activa el modelo de presentación Auto-Flip de Windows 11 (DXGI)</sys:String>
+    <sys:String x:Key="Set.WinGame.Title">Optimización de juegos en ventana (Auto-Flip)</sys:String>
+    <sys:String x:Key="Set.WinGame.Desc">Actualiza el modo de ventana sin bordes al moderno modelo DXGI Flip para reducir la latencia y evitar desgarros.</sys:String>
+
+    <!-- 1:1 Linear Hardware Mouse Input (R3) -->
+    <sys:String x:Key="Deck.Mouse.Title">Entrada de ratón lineal 1:1</sys:String>
+    <sys:String x:Key="Deck.Mouse.Desc">Elimina la curva de aceleración del puntero durante la partida</sys:String>
+    <sys:String x:Key="Set.Mouse.Title">Entrada de ratón de hardware lineal 1:1</sys:String>
+    <sys:String x:Key="Set.Mouse.Desc">Desactiva la precisión mejorada del puntero y garantiza una respuesta lineal 1:1 pura del sensor en juegos.</sys:String>
+
+    <!-- System Diagnostics & Gaming Health Inspector (R4) -->
+    <sys:String x:Key="Diag.Title">Salud del sistema y preparación para juegos</sys:String>
+    <sys:String x:Key="Diag.Subtitle">Seguridad de hardware, programación de GPU y configuración de juegos del SO</sys:String>
+    <sys:String x:Key="Diag.RefreshBtn">Actualizar</sys:String>
+    <sys:String x:Key="Diag.Vbs.Title">VBS / Integridad de memoria</sys:String>
+    <sys:String x:Key="Diag.Vbs.Desc">Estado de seguridad basada en virtualización (HVCI)</sys:String>
+    <sys:String x:Key="Diag.Vbs.Btn">Aislamiento del núcleo</sys:String>
+    <sys:String x:Key="Diag.Hags.Title">HAGS (Programación de GPU)</sys:String>
+    <sys:String x:Key="Diag.Hags.Desc">Programación de GPU acelerada por hardware</sys:String>
+    <sys:String x:Key="Diag.GameMode.Title">Modo de juego de Windows</sys:String>
+    <sys:String x:Key="Diag.GameMode.Desc">Planificación de subprocesos y priorización del juego del SO</sys:String>
+    <sys:String x:Key="Diag.Status.Active">Activado</sys:String>
+    <sys:String x:Key="Diag.Status.Disabled">Desactivado</sys:String>
+    <sys:String x:Key="Diag.Status.Unknown">Desconocido</sys:String>
 
 </ResourceDictionary>

@@ -47,6 +47,17 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
     private bool _promptOnClose = true;
     private bool _autoBoostOnGameLaunch = true;
     private bool _globalHotkeyEnabled = true;
+    private bool _processQosEnabled = true;
+    private bool _windowedGameOptimization = true;
+    private bool _linearMouseInput = true;
+    private bool _isVbsActive;
+    private string _vbsStatusText = string.Empty;
+    private bool _isHagsActive;
+    private string _hagsStatusText = string.Empty;
+    private bool _isGameModeActive;
+    private string _gameModeStatusText = string.Empty;
+    private string _windowsVersionText = string.Empty;
+    private bool _isLoadingDiagnostics;
     private bool _isToggling;
     private bool _isLoadingGames;
     private bool _isMutatingCustomGame;
@@ -368,6 +379,96 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         }
     }
 
+    public bool ProcessQosEnabled
+    {
+        get => _processQosEnabled;
+        set
+        {
+            if (_processQosEnabled != value)
+            {
+                _processQosEnabled = value;
+                OnPropertyChanged();
+                _uiSettings.ProcessQosEnabled = value;
+                _uiSettings.Save();
+            }
+        }
+    }
+
+    public bool WindowedGameOptimization
+    {
+        get => _windowedGameOptimization;
+        set
+        {
+            if (_windowedGameOptimization != value)
+            {
+                _windowedGameOptimization = value;
+                OnPropertyChanged();
+                _uiSettings.WindowedGameOptimization = value;
+                _uiSettings.Save();
+            }
+        }
+    }
+
+    public bool LinearMouseInput
+    {
+        get => _linearMouseInput;
+        set
+        {
+            if (_linearMouseInput != value)
+            {
+                _linearMouseInput = value;
+                OnPropertyChanged();
+                _uiSettings.LinearMouseInput = value;
+                _uiSettings.Save();
+            }
+        }
+    }
+
+    public bool IsVbsActive
+    {
+        get => _isVbsActive;
+        private set { _isVbsActive = value; OnPropertyChanged(); }
+    }
+
+    public string VbsStatusText
+    {
+        get => _vbsStatusText;
+        private set { _vbsStatusText = value; OnPropertyChanged(); }
+    }
+
+    public bool IsHagsActive
+    {
+        get => _isHagsActive;
+        private set { _isHagsActive = value; OnPropertyChanged(); }
+    }
+
+    public string HagsStatusText
+    {
+        get => _hagsStatusText;
+        private set { _hagsStatusText = value; OnPropertyChanged(); }
+    }
+
+    public bool IsGameModeActive
+    {
+        get => _isGameModeActive;
+        private set { _isGameModeActive = value; OnPropertyChanged(); }
+    }
+
+    public string GameModeStatusText
+    {
+        get => _gameModeStatusText;
+        private set { _gameModeStatusText = value; OnPropertyChanged(); }
+    }
+
+    public string WindowsVersionText
+    {
+        get => _windowsVersionText;
+        private set { _windowsVersionText = value; OnPropertyChanged(); }
+    }
+
+    public ICommand OpenCoreIsolationCommand { get; }
+    public ICommand RefreshDiagnosticsCommand { get; }
+
     public ICommand ToggleOptimizationCommand { get; }
     public ICommand ToggleMinecraftOptimizationCommand { get; }
     public ICommand RollbackMinecraftCommand { get; }
@@ -404,6 +505,9 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         _promptOnClose = _uiSettings.PromptOnClose;
         _autoBoostOnGameLaunch = _uiSettings.AutoBoostOnGameLaunch;
         _globalHotkeyEnabled = _uiSettings.GlobalHotkeyEnabled;
+        _processQosEnabled = _uiSettings.ProcessQosEnabled;
+        _windowedGameOptimization = _uiSettings.WindowedGameOptimization;
+        _linearMouseInput = _uiSettings.LinearMouseInput;
 
         // Check autostart asynchronously on background thread to avoid blocking the UI thread (SF-09)
         Task.Run(() =>
@@ -456,6 +560,8 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         });
         InstallSmoothFrameModCommand = new RelayCommand(InstallSmoothFrameMod);
         UninstallSmoothFrameModCommand = new RelayCommand(UninstallSmoothFrameMod);
+        OpenCoreIsolationCommand = new RelayCommand(OpenCoreIsolation);
+        RefreshDiagnosticsCommand = new RelayCommand(async () => await LoadDiagnosticsAsync());
 
         try
         {
@@ -544,6 +650,7 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         RefreshLocalizedStrings();
 
         _ = LoadGamesAsync();
+        _ = LoadDiagnosticsAsync();
         UpdateTelemetry();
         StartAutoWatcher();
     }
@@ -691,6 +798,9 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
     {
         UpdateStatus();
         UpdateTelemetry();
+        VbsStatusText = IsVbsActive ? Loc.T("Diag.Status.Active") : Loc.T("Diag.Status.Disabled");
+        HagsStatusText = IsHagsActive ? Loc.T("Diag.Status.Active") : Loc.T("Diag.Status.Disabled");
+        GameModeStatusText = IsGameModeActive ? Loc.T("Diag.Status.Active") : Loc.T("Diag.Status.Disabled");
         OnPropertyChanged(nameof(ActionButtonText));
         OnPropertyChanged(nameof(MinecraftActionButtonText));
         OnPropertyChanged(nameof(MinecraftHeroBadgeText));
@@ -700,6 +810,56 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         OnPropertyChanged(nameof(SmoothFrameModStatusText));
         OnPropertyChanged(nameof(InGameStatusTitle));
         OnPropertyChanged(nameof(InGameStatusBadgeText));
+    }
+
+    public async Task LoadDiagnosticsAsync()
+    {
+        if (_isLoadingDiagnostics) return;
+        _isLoadingDiagnostics = true;
+
+        try
+        {
+            var report = await Task.Run(() => SystemDiagnosticsService.GetReadinessReport());
+            if (Application.Current?.Dispatcher != null && !Application.Current.Dispatcher.CheckAccess())
+            {
+                await Application.Current.Dispatcher.InvokeAsync(() => ApplyDiagnosticsReport(report));
+            }
+            else
+            {
+                ApplyDiagnosticsReport(report);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading diagnostics: {ex.Message}");
+        }
+        finally
+        {
+            _isLoadingDiagnostics = false;
+        }
+    }
+
+    private void ApplyDiagnosticsReport(SystemReadinessReport report)
+    {
+        IsVbsActive = report.IsVbsActive;
+        VbsStatusText = report.IsVbsActive ? Loc.T("Diag.Status.Active") : Loc.T("Diag.Status.Disabled");
+        IsHagsActive = report.IsHagsActive;
+        HagsStatusText = report.IsHagsActive ? Loc.T("Diag.Status.Active") : Loc.T("Diag.Status.Disabled");
+        IsGameModeActive = report.IsGameModeActive;
+        GameModeStatusText = report.IsGameModeActive ? Loc.T("Diag.Status.Active") : Loc.T("Diag.Status.Disabled");
+        WindowsVersionText = report.WindowsVersionText;
+    }
+
+    private void OpenCoreIsolation()
+    {
+        try
+        {
+            SystemDiagnosticsService.OpenCoreIsolationSettings();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to open Core Isolation: {ex.Message}");
+        }
     }
 
     public void LoadGames()
@@ -834,7 +994,10 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
                     IsolatePCores = IsolatePCores,
                     OptimizeNetwork = OptimizeNetwork,
                     OptimizeIoPriority = OptimizeIoPriority,
-                    OptimizeAudioDg = OptimizeAudioDg
+                    OptimizeAudioDg = OptimizeAudioDg,
+                    ProcessQosEnabled = ProcessQosEnabled,
+                    WindowedGameOptimization = WindowedGameOptimization,
+                    LinearMouseInput = LinearMouseInput
                 };
 
                 var result = await _coordinator.ActivateAsync(SelectedGame, options);
@@ -1344,7 +1507,10 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
                     IsolatePCores = IsolatePCores,
                     OptimizeNetwork = OptimizeNetwork,
                     OptimizeIoPriority = OptimizeIoPriority,
-                    OptimizeAudioDg = OptimizeAudioDg
+                    OptimizeAudioDg = OptimizeAudioDg,
+                    ProcessQosEnabled = ProcessQosEnabled,
+                    WindowedGameOptimization = WindowedGameOptimization,
+                    LinearMouseInput = LinearMouseInput
                 };
 
                 var result = await _coordinator.ActivateMinecraftAsync(options);

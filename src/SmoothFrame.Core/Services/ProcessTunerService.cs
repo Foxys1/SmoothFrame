@@ -69,7 +69,7 @@ public class ProcessTunerService
         return null;
     }
 
-    public ProcessState? OptimizeGameProcess(Process gameProcess, bool isolatePCores = false, bool optimizeIoPriority = true)
+    public ProcessState? OptimizeGameProcess(Process gameProcess, bool isolatePCores = false, bool optimizeIoPriority = true, bool enableQos = true)
     {
         try
         {
@@ -158,8 +158,17 @@ public class ProcessTunerService
                     ioPrioritySet = ProcessIoPriorityService.SetProcessIoPriority(hProcess, NativeMethods.IoPriorityHigh);
                 }
 
-                // Only record into AlteredProcesses if priority/affinity/IO change actually succeeded
-                if (prioritySet || affinitySet || ioPrioritySet)
+                bool qosSet = false;
+                uint origQosControl = 0;
+                uint origQosState = 0;
+                if (enableQos)
+                {
+                    ProcessQosService.GetQoS(hProcess, out origQosControl, out origQosState);
+                    qosSet = ProcessQosService.SetHighQoS(hProcess);
+                }
+
+                // Only record into AlteredProcesses if priority/affinity/IO/QoS change actually succeeded
+                if (prioritySet || affinitySet || ioPrioritySet || qosSet)
                 {
                     var state = new ProcessState
                     {
@@ -170,7 +179,10 @@ public class ProcessTunerService
                         OriginalPriorityClass = prioritySet ? origPriority : 0,
                         OriginalAffinityMask = affinitySet ? origAffinityMask : 0,
                         OriginalIoPriority = origIoPriority,
-                        HasIoPriorityChanged = ioPrioritySet
+                        HasIoPriorityChanged = ioPrioritySet,
+                        OriginalQosControlMask = origQosControl,
+                        OriginalQosStateMask = origQosState,
+                        HasQosChanged = qosSet
                     };
 
                     lock (_lock)
@@ -194,7 +206,7 @@ public class ProcessTunerService
         }
     }
 
-    public List<ProcessState> DeprioritizeBackgroundApps(bool optimizeIoPriority = true)
+    public List<ProcessState> DeprioritizeBackgroundApps(bool optimizeIoPriority = true, bool enableQos = true)
     {
         var deprioritized = new List<ProcessState>();
 
@@ -257,7 +269,16 @@ public class ProcessTunerService
                                 ioPrioritySet = ProcessIoPriorityService.SetProcessIoPriority(hProcess, NativeMethods.IoPriorityVeryLow);
                             }
 
-                            if (prioritySet || ioPrioritySet)
+                            bool qosSet = false;
+                            uint origQosControl = 0;
+                            uint origQosState = 0;
+                            if (enableQos)
+                            {
+                                ProcessQosService.GetQoS(hProcess, out origQosControl, out origQosState);
+                                qosSet = ProcessQosService.SetEcoQoS(hProcess);
+                            }
+
+                            if (prioritySet || ioPrioritySet || qosSet)
                             {
                                 var state = new ProcessState
                                 {
@@ -268,7 +289,10 @@ public class ProcessTunerService
                                     OriginalPriorityClass = prioritySet ? origPriority : 0,
                                     OriginalAffinityMask = 0,
                                     OriginalIoPriority = origIoPriority,
-                                    HasIoPriorityChanged = ioPrioritySet
+                                    HasIoPriorityChanged = ioPrioritySet,
+                                    OriginalQosControlMask = origQosControl,
+                                    OriginalQosStateMask = origQosState,
+                                    HasQosChanged = qosSet
                                 };
 
                                 lock (_lock)
@@ -434,6 +458,18 @@ public class ProcessTunerService
                     if (state.HasIoPriorityChanged)
                     {
                         ProcessIoPriorityService.SetProcessIoPriority(hProcess, state.OriginalIoPriority);
+                    }
+
+                    if (state.HasQosChanged)
+                    {
+                        if (state.OriginalQosControlMask != 0 || state.OriginalQosStateMask != 0)
+                        {
+                            ProcessQosService.RestoreQoS(hProcess, state.OriginalQosControlMask, state.OriginalQosStateMask);
+                        }
+                        else
+                        {
+                            ProcessQosService.ResetQoS(hProcess);
+                        }
                     }
                 }
                 finally

@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Settings</sys:String>
     <sys:String x:Key="Nav.Protect">Protection</sys:String>
     <sys:String x:Key="Side.Language">Interface language</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.2 — safe game-process optimizer</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.2.0 — safe game-process optimizer</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMIZATION ACTIVE • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SYSTEM READY • STANDBY FOR GAME</sys:String>
@@ -103,7 +103,7 @@
     <sys:String x:Key="Dialog.Close.Cancel">Cancel</sys:String>
     <sys:String x:Key="Set.Lang.Title">Interface language</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Instant language switching across the entire application (English / Russian).</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.2 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.2.0 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Safe Win32 API mode • 0% memory injection • Safe for all anti-cheats</sys:String>
     <sys:String x:Key="Set.Engine.Badge">ACTIVE</sys:String>
 
@@ -111,16 +111,19 @@
     <sys:String x:Key="Prot.Subtitle">Hardware guarantees for system integrity and account safety</sys:String>
     <sys:String x:Key="Prot.Badge">100% ANTI-CHEAT SAFE</sys:String>
     <sys:String x:Key="Prot.Zero.Title">Zero-Injection Principle (0% Ban Risk)</sys:String>
+    <sys:String x:Key="Prot.Zero.Body">SmoothFrame does not inject dynamic-link libraries (DLLs), install hooks into DirectX or Vulkan pipelines, or touch active game process virtual memory. Optimization is performed strictly through official Windows scheduler Win32 APIs, ensuring complete safety and zero detection by Vanguard, Easy Anti-Cheat, BattlEye, and VAC.</sys:String>
     <sys:String x:Key="Prot.Zero.Desc">Absolute zero interference with game memory and executable binaries</sys:String>
     <sys:String x:Key="Prot.Zero.P1">0% injections: does not inject DLLs into active game process memory.</sys:String>
     <sys:String x:Key="Prot.Zero.P2">No DirectX or Vulkan hooks: rendering pipelines and shaders remain untouched.</sys:String>
     <sys:String x:Key="Prot.Zero.P3">Official Win32 APIs: optimizations use only native OS scheduler interfaces.</sys:String>
     <sys:String x:Key="Prot.Rev.Title">Strict Reversibility</sys:String>
+    <sys:String x:Key="Prot.Rev.Body">A comprehensive snapshot of system parameters is captured prior to applying optimizations. Disabling optimization or closing SmoothFrame instantly restores timer resolution, power plans, and background application priorities to their exact original states.</sys:String>
     <sys:String x:Key="Prot.Rev.Desc">Instant restoration of all Windows settings to their exact prior state</sys:String>
     <sys:String x:Key="Prot.Rev.P1">System snapshot: timer resolutions and power plans are captured before optimization.</sys:String>
     <sys:String x:Key="Prot.Rev.P2">1-click rollback: closing the app or disabling boost immediately reverts all values.</sys:String>
     <sys:String x:Key="Prot.Rev.P3">Clean footprint: leaves zero background services, lingering daemons, or registry bloat.</sys:String>
     <sys:String x:Key="Prot.Crash.Title">Crash Recovery Engine</sys:String>
+    <sys:String x:Key="Prot.Crash.Body">The system state snapshot is safely committed to physical disk storage. In the event of an unexpected power loss, system crash, or BSOD during gameplay, SmoothFrame detects the pending session upon next launch and automatically recovers all original Windows settings.</sys:String>
     <sys:String x:Key="Prot.Crash.Desc">Guaranteed recovery even during unexpected PC restarts or power loss</sys:String>
     <sys:String x:Key="Prot.Crash.P1">Non-volatile log: recovery restore point is safely committed to physical storage.</sys:String>
     <sys:String x:Key="Prot.Crash.P2">Auto fault-detection: resets settings on next boot if a crash or BSOD occurs.</sys:String>
@@ -213,5 +216,38 @@
     <sys:String x:Key="Mc.Aio.Badge">BUILT-IN</sys:String>
     <sys:String x:Key="Mc.Aio.Title">SmoothFrame Built-in Acceleration Suite (All-In-One):</sys:String>
     <sys:String x:Key="Mc.Aio.Subtitle">Proprietary hardware and system-level optimization suite by SmoothFrame</sys:String>
+
+    <!-- Process QoS & Throttling (R1) -->
+    <sys:String x:Key="Deck.Qos.Title">Process QoS &amp; Power Throttling</sys:String>
+    <sys:String x:Key="Deck.Qos.Desc">HighQoS on game, EcoQoS Efficiency Mode on background apps</sys:String>
+    <sys:String x:Key="Set.Qos.Title">Process QoS &amp; EcoQoS throttling</sys:String>
+    <sys:String x:Key="Set.Qos.Desc">Applies native Win32 HighQoS to the active game and EcoQoS efficiency mode to background applications.</sys:String>
+
+    <!-- Windowed Game Optimization (R2) -->
+    <sys:String x:Key="Deck.WinGame.Title">Windowed Game Optimization</sys:String>
+    <sys:String x:Key="Deck.WinGame.Desc">Enables Windows 11 Auto-Flip DXGI presentation model</sys:String>
+    <sys:String x:Key="Set.WinGame.Title">Windowed game optimization (Auto-Flip)</sys:String>
+    <sys:String x:Key="Set.WinGame.Desc">Upgrades borderless windowed presentation model to modern DXGI Flip Model for lower latency and tear-free frames.</sys:String>
+
+    <!-- 1:1 Linear Hardware Mouse Input (R3) -->
+    <sys:String x:Key="Deck.Mouse.Title">1:1 Linear Mouse Input</sys:String>
+    <sys:String x:Key="Deck.Mouse.Desc">Eliminates pointer acceleration curve during gameplay</sys:String>
+    <sys:String x:Key="Set.Mouse.Title">1:1 linear hardware mouse input</sys:String>
+    <sys:String x:Key="Set.Mouse.Desc">Disables Enhanced Pointer Precision and enforces a true 1:1 linear sensor-to-cursor response during gaming.</sys:String>
+
+    <!-- System Diagnostics & Gaming Health Inspector (R4) -->
+    <sys:String x:Key="Diag.Title">Gaming Health &amp; System Readiness</sys:String>
+    <sys:String x:Key="Diag.Subtitle">Hardware security, GPU scheduling, and OS gaming configurations</sys:String>
+    <sys:String x:Key="Diag.RefreshBtn">Refresh</sys:String>
+    <sys:String x:Key="Diag.Vbs.Title">VBS / Memory Integrity</sys:String>
+    <sys:String x:Key="Diag.Vbs.Desc">Virtualization-Based Security (HVCI) status</sys:String>
+    <sys:String x:Key="Diag.Vbs.Btn">Core Isolation</sys:String>
+    <sys:String x:Key="Diag.Hags.Title">HAGS (GPU Scheduling)</sys:String>
+    <sys:String x:Key="Diag.Hags.Desc">Hardware-Accelerated GPU Scheduling</sys:String>
+    <sys:String x:Key="Diag.GameMode.Title">Windows Game Mode</sys:String>
+    <sys:String x:Key="Diag.GameMode.Desc">OS thread scheduling and game prioritization</sys:String>
+    <sys:String x:Key="Diag.Status.Active">Enabled</sys:String>
+    <sys:String x:Key="Diag.Status.Disabled">Disabled</sys:String>
+    <sys:String x:Key="Diag.Status.Unknown">Unknown</sys:String>
 
 </ResourceDictionary>

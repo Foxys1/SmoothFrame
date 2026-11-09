@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Настройки</sys:String>
     <sys:String x:Key="Nav.Protect">Защита</sys:String>
     <sys:String x:Key="Side.Language">Язык интерфейса</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.2 — безопасный оптимизатор игрового процесса</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.2.0 — безопасный оптимизатор игрового процесса</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">ОПТИМИЗАЦИЯ АКТИВНА • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">СИСТЕМА В НОРМЕ • ОЖИДАНИЕ ИГРЫ</sys:String>
@@ -103,7 +103,7 @@
     <sys:String x:Key="Dialog.Close.Cancel">Отмена</sys:String>
     <sys:String x:Key="Set.Lang.Title">Язык интерфейса</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Мгновенное переключение языка программы (English / Русский).</sys:String>
-    <sys:String x:Key="Set.Engine.Title">Фоновая служба SmoothFrame Engine v2.1.2 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">Фоновая служба SmoothFrame Engine v2.2.0 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Безопасный режим Win32 API • 0% инъекций в память • Совместимо со всеми античитами</sys:String>
     <sys:String x:Key="Set.Engine.Badge">АКТИВНО</sys:String>
 
@@ -111,16 +111,19 @@
     <sys:String x:Key="Prot.Subtitle">Аппаратные гарантии целостности системы и безопасности аккаунта</sys:String>
     <sys:String x:Key="Prot.Badge">100% БЕЗОПАСНО ДЛЯ АНТИЧИТОВ</sys:String>
     <sys:String x:Key="Prot.Zero.Title">Принцип Zero-Injection (0% риска бана)</sys:String>
+    <sys:String x:Key="Prot.Zero.Body">SmoothFrame не внедряет динамические библиотеки (DLL), не ставит перехватчиков (hooks) в графические конвейеры DirectX/Vulkan и не вмешивается в виртуальную память игрового процесса. Оптимизация выполняется исключительно через официальные Win32 API планировщика Windows. Это делает программу абсолютно невидимой и безопасной для Vanguard, Easy Anti-Cheat, BattlEye и VAC.</sys:String>
     <sys:String x:Key="Prot.Zero.Desc">Полное отсутствие вмешательства в память и исполняемые файлы игр</sys:String>
     <sys:String x:Key="Prot.Zero.P1">0% инъекций: программа не внедряет DLL-библиотеки в память игрового процесса.</sys:String>
     <sys:String x:Key="Prot.Zero.P2">Без хуков DirectX и Vulkan: графические конвейеры и шейдеры остаются нетронутыми.</sys:String>
     <sys:String x:Key="Prot.Zero.P3">Официальные Win32 API: ускорение работает только через штатные интерфейсы планировщика Windows.</sys:String>
     <sys:String x:Key="Prot.Rev.Title">Полная обратимость (Strict Reversibility)</sys:String>
+    <sys:String x:Key="Prot.Rev.Body">Перед внесением любых изменений создается снимок параметров системы. При нажатии «Деактивировать оптимизацию» или штатном закрытии окна SmoothFrame схема питания, системный таймер и исходные приоритеты фоновых приложений мгновенно возвращаются в первоначальное состояние.</sys:String>
     <sys:String x:Key="Prot.Rev.Desc">Мгновенный возврат всех настроек Windows в исходное состояние</sys:String>
     <sys:String x:Key="Prot.Rev.P1">Снимок системы: текущие таймеры и схемы питания фиксируются перед началом оптимизации.</sys:String>
     <sys:String x:Key="Prot.Rev.P2">Откат в один клик: при закрытии приложения или отключении буста параметры мгновенно сбрасываются.</sys:String>
     <sys:String x:Key="Prot.Rev.P3">Чистая система: приложение не оставляет скрытых служб, фоновых демонов и мусора в реестре.</sys:String>
     <sys:String x:Key="Prot.Crash.Title">Защита от сбоев (Crash Recovery Engine)</sys:String>
+    <sys:String x:Key="Prot.Crash.Body">Снимок состояния сохраняется на диск. Если в разгар игры ПК неожиданно выключится или процесс аварийно завершится, при следующем запуске SmoothFrame обнаружит незавершенную сессию и самостоятельно восстановит все исходные настройки Windows.</sys:String>
     <sys:String x:Key="Prot.Crash.Desc">Гарантированное восстановление даже при внезапной перезагрузке ПК</sys:String>
     <sys:String x:Key="Prot.Crash.P1">Энергонезависимый лог: точка восстановления записывается на физический накопитель.</sys:String>
     <sys:String x:Key="Prot.Crash.P2">Авто-детект сбоев: при BSOD или вылете игры параметры сбрасываются при следующем старте ОС.</sys:String>
@@ -213,5 +216,38 @@
     <sys:String x:Key="Mc.Aio.Badge">ВСТРОЕНО</sys:String>
     <sys:String x:Key="Mc.Aio.Title">Встроенные технологии ускорения SmoothFrame (All-In-One):</sys:String>
     <sys:String x:Key="Mc.Aio.Subtitle">Фирменный комплекс технологий аппаратной и системной оптимизации SmoothFrame</sys:String>
+
+    <!-- Process QoS & Throttling (R1) -->
+    <sys:String x:Key="Deck.Qos.Title">Process QoS и Power Throttling</sys:String>
+    <sys:String x:Key="Deck.Qos.Desc">Режим HighQoS для игры, EcoQoS Efficiency Mode для фоновых приложений</sys:String>
+    <sys:String x:Key="Set.Qos.Title">Process QoS и троттлинг EcoQoS</sys:String>
+    <sys:String x:Key="Set.Qos.Desc">Применяет нативный Win32 HighQoS к активной игре и EcoQoS (режим эффективности) к фоновым приложениям.</sys:String>
+
+    <!-- Windowed Game Optimization (R2) -->
+    <sys:String x:Key="Deck.WinGame.Title">Оптимизация оконных игр</sys:String>
+    <sys:String x:Key="Deck.WinGame.Desc">Включает модель представления Windows 11 Auto-Flip (DXGI Flip Model)</sys:String>
+    <sys:String x:Key="Set.WinGame.Title">Оптимизация оконных игр (Auto-Flip)</sys:String>
+    <sys:String x:Key="Set.WinGame.Desc">Переводит оконный режим без рамок на современный DXGI Flip Model для минимальной задержки и устранения разрывов.</sys:String>
+
+    <!-- 1:1 Linear Hardware Mouse Input (R3) -->
+    <sys:String x:Key="Deck.Mouse.Title">1:1 линейный ввод мыши</sys:String>
+    <sys:String x:Key="Deck.Mouse.Desc">Отключает кривую ускорения указателя мыши во время игры</sys:String>
+    <sys:String x:Key="Set.Mouse.Title">1:1 линейный аппаратный ввод мыши</sys:String>
+    <sys:String x:Key="Set.Mouse.Desc">Отключает повышенную точность указателя (акселерацию) и обеспечивает строго линейный отклик 1:1 сенсора мыши в играх.</sys:String>
+
+    <!-- System Diagnostics & Gaming Health Inspector (R4) -->
+    <sys:String x:Key="Diag.Title">Готовность системы и игровое здоровье</sys:String>
+    <sys:String x:Key="Diag.Subtitle">Аппаратная безопасность, планирование GPU и игровые службы ОС</sys:String>
+    <sys:String x:Key="Diag.RefreshBtn">Обновить</sys:String>
+    <sys:String x:Key="Diag.Vbs.Title">VBS / Целостность памяти</sys:String>
+    <sys:String x:Key="Diag.Vbs.Desc">Статус изоляции на основе виртуализации (HVCI)</sys:String>
+    <sys:String x:Key="Diag.Vbs.Btn">Изоляция ядра</sys:String>
+    <sys:String x:Key="Diag.Hags.Title">HAGS (Планирование GPU)</sys:String>
+    <sys:String x:Key="Diag.Hags.Desc">Аппаратно-ускоренное планирование GPU</sys:String>
+    <sys:String x:Key="Diag.GameMode.Title">Игровой режим Windows</sys:String>
+    <sys:String x:Key="Diag.GameMode.Desc">Приоритезация игровых потоков операционной системой</sys:String>
+    <sys:String x:Key="Diag.Status.Active">Включено</sys:String>
+    <sys:String x:Key="Diag.Status.Disabled">Отключено</sys:String>
+    <sys:String x:Key="Diag.Status.Unknown">Неизвестно</sys:String>
 
 </ResourceDictionary>

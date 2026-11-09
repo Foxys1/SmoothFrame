@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">设置</sys:String>
     <sys:String x:Key="Nav.Protect">防护</sys:String>
     <sys:String x:Key="Side.Language">界面语言</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.1.2 — 安全的游戏进程优化器</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.2.0 — 安全的游戏进程优化器</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">优化已启用 • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">系统就绪 • 等待游戏启动</sys:String>
@@ -201,7 +201,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">游戏检测规则、Windows 开机自启与全局快捷键</sys:String>
     <sys:String x:Key="Set.Group.App">界面与系统</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">界面语言偏好与 SmoothFrame 后台引擎运行状态</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.1.2 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.2.0 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">安全 Win32 API 模式 • 0% 内存注入 • 适配所有主流反作弊系统</sys:String>
     <sys:String x:Key="Set.Engine.Badge">已激活</sys:String>
 
@@ -219,5 +219,38 @@
     <sys:String x:Key="Prot.Crash.P2">故障自动检测：发生蓝屏或异常关机后，下次开机自动复原系统配置。</sys:String>
     <sys:String x:Key="Prot.Crash.P3">零系统风险：完全不破坏 Windows 核心系统文件，保障系统极致稳定。</sys:String>
     <sys:String x:Key="Prot.Chips.Title">经严格测试兼容所有主流反作弊系统</sys:String>
+
+    <!-- Process QoS & Throttling (R1) -->
+    <sys:String x:Key="Deck.Qos.Title">进程 QoS 与能耗节流</sys:String>
+    <sys:String x:Key="Deck.Qos.Desc">游戏采用 HighQoS，后台应用启用 EcoQoS 效率模式</sys:String>
+    <sys:String x:Key="Set.Qos.Title">进程 QoS 与 EcoQoS 节流</sys:String>
+    <sys:String x:Key="Set.Qos.Desc">对当前游戏应用原生 Win32 HighQoS，对后台应用程序启用 EcoQoS 效率模式。</sys:String>
+
+    <!-- Windowed Game Optimization (R2) -->
+    <sys:String x:Key="Deck.WinGame.Title">窗口化游戏优化</sys:String>
+    <sys:String x:Key="Deck.WinGame.Desc">启用 Windows 11 Auto-Flip DXGI 演示模型</sys:String>
+    <sys:String x:Key="Set.WinGame.Title">窗口化游戏优化 (Auto-Flip)</sys:String>
+    <sys:String x:Key="Set.WinGame.Desc">将无边框窗口模式升级至现代 DXGI Flip 模型，降低延迟并消除画面撕裂。</sys:String>
+
+    <!-- 1:1 Linear Hardware Mouse Input (R3) -->
+    <sys:String x:Key="Deck.Mouse.Title">1:1 线性鼠标输入</sys:String>
+    <sys:String x:Key="Deck.Mouse.Desc">在游戏过程中消除指针加速曲线</sys:String>
+    <sys:String x:Key="Set.Mouse.Title">1:1 硬件级线性鼠标输入</sys:String>
+    <sys:String x:Key="Set.Mouse.Desc">禁用提高指针精确度（加速），在游戏中强制执行真正的 1:1 线性传感器到光标响应。</sys:String>
+
+    <!-- System Diagnostics & Gaming Health Inspector (R4) -->
+    <sys:String x:Key="Diag.Title">系统就绪状态与游戏健康度</sys:String>
+    <sys:String x:Key="Diag.Subtitle">硬件安全、GPU 调度与操作系统游戏设置</sys:String>
+    <sys:String x:Key="Diag.RefreshBtn">刷新</sys:String>
+    <sys:String x:Key="Diag.Vbs.Title">VBS / 内存完整性</sys:String>
+    <sys:String x:Key="Diag.Vbs.Desc">基于虚拟化的安全性 (HVCI) 状态</sys:String>
+    <sys:String x:Key="Diag.Vbs.Btn">内核隔离</sys:String>
+    <sys:String x:Key="Diag.Hags.Title">HAGS (硬件加速 GPU 调度)</sys:String>
+    <sys:String x:Key="Diag.Hags.Desc">硬件加速 GPU 计划</sys:String>
+    <sys:String x:Key="Diag.GameMode.Title">Windows 游戏模式</sys:String>
+    <sys:String x:Key="Diag.GameMode.Desc">操作系统线程调度与游戏优先权</sys:String>
+    <sys:String x:Key="Diag.Status.Active">已启用</sys:String>
+    <sys:String x:Key="Diag.Status.Disabled">已禁用</sys:String>
+    <sys:String x:Key="Diag.Status.Unknown">未知</sys:String>
 
 </ResourceDictionary>

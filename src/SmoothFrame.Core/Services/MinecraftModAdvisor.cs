@@ -126,6 +126,47 @@ public static class MinecraftModAdvisor
             report.HasIris = report.DetectedPerformanceMods.Any(m => m.Name.Contains("Iris"));
             report.HasDistantHorizons = report.DetectedPerformanceMods.Any(m => m.Name.Contains("Distant Horizons"));
             report.HasSmoothFrameMod = report.DetectedPerformanceMods.Any(m => m.Name.Contains("SmoothFrame"));
+
+            report.HasFerriteCore = jarNames.Any(n => n != null && n.Contains("ferritecore", StringComparison.OrdinalIgnoreCase));
+            report.HasImmediatelyFast = jarNames.Any(n => n != null && n.Contains("immediatelyfast", StringComparison.OrdinalIgnoreCase));
+            report.HasModernFix = jarNames.Any(n => n != null && n.Contains("modernfix", StringComparison.OrdinalIgnoreCase));
+            report.HasEntityCulling = jarNames.Any(n => n != null && (n.Contains("entityculling", StringComparison.OrdinalIgnoreCase) || n.Contains("entity-culling", StringComparison.OrdinalIgnoreCase)));
+
+            if (!report.HasFerriteCore)
+            {
+                report.RecommendedMods.Add(new MinecraftModInfo
+                {
+                    Name = "FerriteCore",
+                    Category = "Память (RAM)",
+                    Description = "Оптимизация структур данных Minecraft в памяти (сокращает потребление ОЗУ на 30-50%).",
+                    IsInstalled = false,
+                    RecommendationReason = "Рекомендуется для сокращения расхода оперативной памяти."
+                });
+            }
+
+            if (!report.HasImmediatelyFast)
+            {
+                report.RecommendedMods.Add(new MinecraftModInfo
+                {
+                    Name = "ImmediatelyFast",
+                    Category = "Рендеринг / UI",
+                    Description = "Оптимизация рендеринга GUI, текста и сущностей.",
+                    IsInstalled = false,
+                    RecommendationReason = "Увеличивает FPS при открытом интерфейсе и рендеринге текста/HUD."
+                });
+            }
+
+            if (!report.HasModernFix)
+            {
+                report.RecommendedMods.Add(new MinecraftModInfo
+                {
+                    Name = "ModernFix",
+                    Category = "Комплексная оптимизация",
+                    Description = "Ускорение загрузки игры и исправление утечек памяти.",
+                    IsInstalled = false,
+                    RecommendationReason = "Значительно сокращает время запуска и исправляет утечки ресурсов."
+                });
+            }
         }
         catch { }
 

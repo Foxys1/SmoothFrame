@@ -56,6 +56,15 @@ public sealed class UiSettings
     [JsonPropertyName("optimizeAudioDg")]
     public bool OptimizeAudioDg { get; set; } = true;
 
+    [JsonPropertyName("processQosEnabled")]
+    public bool ProcessQosEnabled { get; set; } = true;
+
+    [JsonPropertyName("windowedGameOptimization")]
+    public bool WindowedGameOptimization { get; set; } = true;
+
+    [JsonPropertyName("linearMouseInput")]
+    public bool LinearMouseInput { get; set; } = true;
+
     public static UiSettings Load()
     {
         try

@@ -19,6 +19,9 @@ public class OptimizationOptions
     public bool OptimizeNetwork { get; set; } = true;
     public bool OptimizeIoPriority { get; set; } = true;
     public bool OptimizeAudioDg { get; set; } = true;
+    public bool ProcessQosEnabled { get; set; } = true;
+    public bool WindowedGameOptimization { get; set; } = true;
+    public bool LinearMouseInput { get; set; } = true;
 
     public OptimizationOptions Clone() => new()
     {
@@ -29,7 +32,10 @@ public class OptimizationOptions
         IsolatePCores = IsolatePCores,
         OptimizeNetwork = OptimizeNetwork,
         OptimizeIoPriority = OptimizeIoPriority,
-        OptimizeAudioDg = OptimizeAudioDg
+        OptimizeAudioDg = OptimizeAudioDg,
+        ProcessQosEnabled = ProcessQosEnabled,
+        WindowedGameOptimization = WindowedGameOptimization,
+        LinearMouseInput = LinearMouseInput
     };
 }
 
@@ -130,6 +136,18 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                     if (!audioRestored) allRestored = false;
                 }
 
+                if (snapshot.HasSwapEffectUpgradeChanged)
+                {
+                    bool swapRestored = WindowedGameOptimizerService.Revert(snapshot);
+                    if (!swapRestored) allRestored = false;
+                }
+
+                if (snapshot.HasMouseOptimizationChanged)
+                {
+                    bool mouseRestored = MouseOptimizerService.Revert(snapshot);
+                    if (!mouseRestored) allRestored = false;
+                }
+
                 if (snapshot.AlteredProcesses.Any())
                 {
                     _processTuner.RestoreProcesses(snapshot.AlteredProcesses);
@@ -166,7 +184,10 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
             HighPerformancePowerPlan = true,
             ElevateGamePriority = true,
             DeprioritizeBackgroundApps = true,
-            IsolatePCores = true
+            IsolatePCores = true,
+            ProcessQosEnabled = true,
+            WindowedGameOptimization = true,
+            LinearMouseInput = true
         };
         return await ActivateAsync(minecraftGame, opt).ConfigureAwait(false);
     }
@@ -276,10 +297,22 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                 AudioOptimizerService.Apply(_currentSnapshot);
             }
 
-            // 5. Deprioritize background non-critical apps (CPU & I/O Priority)
+            // 5. Windowed Game Optimization (Auto-Flip Presentation Model)
+            if (opt.WindowedGameOptimization)
+            {
+                WindowedGameOptimizerService.Apply(_currentSnapshot);
+            }
+
+            // 6. 1:1 Linear Hardware Mouse Input
+            if (opt.LinearMouseInput)
+            {
+                MouseOptimizerService.Apply(_currentSnapshot);
+            }
+
+            // 7. Deprioritize background non-critical apps (CPU & I/O Priority & EcoQoS)
             if (opt.DeprioritizeBackgroundApps)
             {
-                var deprioritized = _processTuner.DeprioritizeBackgroundApps(opt.OptimizeIoPriority);
+                var deprioritized = _processTuner.DeprioritizeBackgroundApps(opt.OptimizeIoPriority, opt.ProcessQosEnabled);
                 _currentSnapshot.AlteredProcesses.AddRange(deprioritized);
             }
 
@@ -379,7 +412,19 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                     NetworkOptimizerService.Revert(_currentSnapshot);
                 }
 
-                // 4. Revert power scheme
+                // 4. Revert Windowed Game Optimization (Auto-Flip)
+                if (_currentSnapshot != null)
+                {
+                    WindowedGameOptimizerService.Revert(_currentSnapshot);
+                }
+
+                // 5. Revert Mouse Optimization (1:1 linear curve)
+                if (_currentSnapshot != null)
+                {
+                    MouseOptimizerService.Revert(_currentSnapshot);
+                }
+
+                // 6. Revert power scheme
                 _powerPlanService.RestoreOriginalPlan();
 
                 // 3. Revert timer resolution
@@ -485,9 +530,9 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                             currentTargetProc = targetProc;
 
                             ProcessState? state = null;
-                            if (!gameOptimized && opt.ElevateGamePriority)
+                            if (!gameOptimized && (opt.ElevateGamePriority || opt.ProcessQosEnabled))
                             {
-                                state = _processTuner.OptimizeGameProcess(currentTargetProc, opt.IsolatePCores, opt.OptimizeIoPriority);
+                                state = _processTuner.OptimizeGameProcess(currentTargetProc, opt.IsolatePCores, opt.OptimizeIoPriority, opt.ProcessQosEnabled);
                                 if (state != null && _currentSnapshot != null)
                                 {
                                     _currentSnapshot.AlteredProcesses.Add(state);
@@ -615,6 +660,8 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                     {
                         AudioOptimizerService.Revert(_currentSnapshot);
                         NetworkOptimizerService.Revert(_currentSnapshot);
+                        WindowedGameOptimizerService.Revert(_currentSnapshot);
+                        MouseOptimizerService.Revert(_currentSnapshot);
                     }
                     _powerPlanService.RestoreOriginalPlan();
                     _timerService.Revert();
@@ -722,6 +769,8 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                     {
                         AudioOptimizerService.Revert(_currentSnapshot);
                         NetworkOptimizerService.Revert(_currentSnapshot);
+                        WindowedGameOptimizerService.Revert(_currentSnapshot);
+                        MouseOptimizerService.Revert(_currentSnapshot);
                     }
                     _powerPlanService.RestoreOriginalPlan();
                     _timerService.Revert();
