@@ -35,7 +35,7 @@ foreach ($prevTag in @("v2.1.0", "v2.1.1")) {
             Write-Host "Successfully fixed release notes for $prevTag"
         }
     } catch {
-        Write-Warning "Could not update $prevTag: $_"
+        Write-Warning "Could not update $($prevTag): $_"
     }
 }
 
