@@ -2,13 +2,17 @@
 
 Set-Location (Join-Path $PSScriptRoot "..")
 
-$credInput = @"
-protocol=https
-host=github.com
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+$credInFile = [System.IO.Path]::GetTempFileName()
+$credOutFile = [System.IO.Path]::GetTempFileName()
+try {
+    [System.IO.File]::WriteAllText($credInFile, "protocol=https`nhost=github.com`n`n", $utf8NoBom)
+    $credProc = Start-Process -FilePath "git" -ArgumentList "credential", "fill" -RedirectStandardInput $credInFile -RedirectStandardOutput $credOutFile -NoNewWindow -Wait -PassThru
+    $credOutput = Get-Content -Path $credOutFile -ErrorAction SilentlyContinue
+} finally {
+    Remove-Item -Path $credInFile, $credOutFile -Force -ErrorAction SilentlyContinue
+}
 
-"@
-
-$credOutput = $credInput | git credential fill
 $tokenMatch = $credOutput | Select-String '^password=(.+)$'
 if (-not $tokenMatch) {
     throw "GitHub token not found in git credentials"
