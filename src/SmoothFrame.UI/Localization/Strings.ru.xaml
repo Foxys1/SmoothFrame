@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Настройки</sys:String>
     <sys:String x:Key="Nav.Protect">Защита</sys:String>
     <sys:String x:Key="Side.Language">Язык интерфейса</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.2.0 — безопасный оптимизатор игрового процесса</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.3.0 — безопасный оптимизатор игрового процесса</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">ОПТИМИЗАЦИЯ АКТИВНА • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">СИСТЕМА В НОРМЕ • ОЖИДАНИЕ ИГРЫ</sys:String>
@@ -103,7 +103,7 @@
     <sys:String x:Key="Dialog.Close.Cancel">Отмена</sys:String>
     <sys:String x:Key="Set.Lang.Title">Язык интерфейса</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Мгновенное переключение языка программы (English / Русский).</sys:String>
-    <sys:String x:Key="Set.Engine.Title">Фоновая служба SmoothFrame Engine v2.2.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">Фоновая служба SmoothFrame Engine v2.3.0 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Безопасный режим Win32 API • 0% инъекций в память • Совместимо со всеми античитами</sys:String>
     <sys:String x:Key="Set.Engine.Badge">АКТИВНО</sys:String>
 
@@ -249,5 +249,32 @@
     <sys:String x:Key="Diag.Status.Active">Включено</sys:String>
     <sys:String x:Key="Diag.Status.Disabled">Отключено</sys:String>
     <sys:String x:Key="Diag.Status.Unknown">Неизвестно</sys:String>
+
+    <!-- Game RAM Memory Priority (R1) -->
+    <sys:String x:Key="Deck.MemPrio.Title">Защита RAM игры</sys:String>
+    <sys:String x:Key="Deck.MemPrio.Desc">Защита от сброса в файл подкачки</sys:String>
+    <sys:String x:Key="Set.MemPrio.Title">Защита оперативной памяти игры (ProcessMemoryPriority)</sys:String>
+    <sys:String x:Key="Set.MemPrio.Desc">Удерживает память игры в RAM (MEMORY_PRIORITY_NORMAL) и понижает приоритет фоновых программ для устранения задержек подкачки.</sys:String>
+
+    <!-- Smart Window Focus & Alt+Tab (R2) -->
+    <sys:String x:Key="Deck.SmartFocus.Title">Умный фокус Alt+Tab</sys:String>
+    <sys:String x:Key="Deck.SmartFocus.Desc">Ослабление буста при переключении</sys:String>
+    <sys:String x:Key="Set.SmartFocus.Title">Умный фокус окна и плавный Alt+Tab</sys:String>
+    <sys:String x:Key="Set.SmartFocus.Desc">Отслеживает окно через WinEventHook. Максимальный буст в игре; плавное ослабление ограничений при переключении на браузер или мессенджер.</sys:String>
+
+    <!-- Gaming Health Inspector New Diagnostics (R3) -->
+    <sys:String x:Key="Diag.DisplayHz.Title">Частота экрана</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Desc">Контроль герцовки и сброса на 60 Гц</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Btn">Настройки экрана</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Warn">Сброшено на 60 Гц!</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Ok">Оптимальная частота</sys:String>
+    <sys:String x:Key="Diag.Vram.Title">Переполнение VRAM</sys:String>
+    <sys:String x:Key="Diag.Vram.Desc">Контроль видеопамяти и бюджета DXGI</sys:String>
+    <sys:String x:Key="Diag.Vram.Ok">В пределах бюджета</sys:String>
+    <sys:String x:Key="Diag.Vram.Warn">Риск переполнения VRAM</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Title">Троттлинг CPU</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Desc">Детектор перегрева и лимитов питания</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Ok">Номинальная частота</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Warn">Обнаружен троттлинг!</sys:String>
 
 </ResourceDictionary>

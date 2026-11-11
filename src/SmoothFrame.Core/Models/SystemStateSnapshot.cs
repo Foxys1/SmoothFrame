@@ -18,6 +18,10 @@ public class ProcessState
     public uint OriginalQosControlMask { get; set; }
     public uint OriginalQosStateMask { get; set; }
     public bool HasQosChanged { get; set; }
+
+    // --- Process Memory Priority (R1) ---
+    public uint OriginalMemoryPriority { get; set; } = 5;
+    public bool HasMemoryPriorityChanged { get; set; }
 }
 
 public class SystemStateSnapshot

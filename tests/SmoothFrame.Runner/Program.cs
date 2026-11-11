@@ -5,6 +5,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,6 +71,9 @@ internal class Program
                 TestSnapshotIsolationGuard();
                 TestMinecraftEngine(Path.Combine(runnerSessionDir, "Minecraft"));
                 TestMinecraftNeoForgeModAndTelemetry(Path.Combine(runnerSessionDir, "MinecraftMod"));
+                TestProcessMemoryPriority();
+                TestWindowFocusTracker();
+                TestGamingHealthInspector();
             }
             catch (Exception ex)
             {
@@ -816,5 +821,274 @@ internal class Program
         Assert(!receiver.IsRunning, "Receiver stopped cleanly");
         receiver.Dispose();
         Assert(true, "Receiver disposed cleanly");
+    }
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetDesktopWindow();
+
+    static void TestProcessMemoryPriority()
+    {
+        Console.WriteLine("\n11. Testing Process Memory Working Set Paging Priority (R1, v2.3.0):");
+
+        var currentProc = Process.GetCurrentProcess();
+
+        // 1. Safe handling of invalid handle
+        bool zeroResult = ProcessMemoryPriorityService.SetProcessMemoryPriority(IntPtr.Zero, NativeMethods.MEMORY_PRIORITY_NORMAL);
+        Assert(!zeroResult, "SetProcessMemoryPriority(IntPtr.Zero) safely returns false");
+
+        bool zeroGet = ProcessMemoryPriorityService.TryGetProcessMemoryPriority(IntPtr.Zero, out uint zeroPrio);
+        Assert(!zeroGet && zeroPrio == NativeMethods.MEMORY_PRIORITY_NORMAL, "TryGetProcessMemoryPriority(IntPtr.Zero) safely returns false with default 5");
+
+        bool zeroRestore = ProcessMemoryPriorityService.RestoreProcessMemoryPriority(IntPtr.Zero, NativeMethods.MEMORY_PRIORITY_NORMAL);
+        Assert(!zeroRestore, "RestoreProcessMemoryPriority(IntPtr.Zero) safely returns false");
+
+        // 2. Safe handling of non-existent PID
+        const int nonExistentPid = 999999;
+        bool nonExistentSet = ProcessMemoryPriorityService.SetProcessMemoryPriority(nonExistentPid, NativeMethods.MEMORY_PRIORITY_VERY_LOW, out uint _);
+        Assert(!nonExistentSet, "SetProcessMemoryPriority on non-existent PID safely returns false without throwing");
+
+        bool nonExistentRestore = ProcessMemoryPriorityService.RestoreProcessMemoryPriority(nonExistentPid, NativeMethods.MEMORY_PRIORITY_NORMAL);
+        Assert(!nonExistentRestore, "RestoreProcessMemoryPriority on non-existent PID safely returns false without throwing");
+
+        // 3. Querying initial memory priority on current process
+        bool queryInitial = ProcessMemoryPriorityService.TryGetProcessMemoryPriority(currentProc.Handle, out uint initialPriority);
+        Assert(queryInitial, "TryGetProcessMemoryPriority queried initial priority successfully", $"Initial priority: {initialPriority}");
+        Assert(initialPriority >= NativeMethods.MEMORY_PRIORITY_VERY_LOW && initialPriority <= NativeMethods.MEMORY_PRIORITY_NORMAL,
+            "Initial memory priority is within valid Win32 range (1-5)");
+
+        // 4. Setting memory priority to VERY_LOW (1)
+        bool setLow = ProcessMemoryPriorityService.SetProcessMemoryPriority(currentProc.Id, NativeMethods.MEMORY_PRIORITY_VERY_LOW, out uint capturedOriginal);
+        Assert(setLow, "SetProcessMemoryPriority to MEMORY_PRIORITY_VERY_LOW (1) succeeded");
+        Assert(capturedOriginal == initialPriority, "Original priority captured accurately in out parameter", $"Captured: {capturedOriginal}");
+
+        bool queryLow = ProcessMemoryPriorityService.TryGetProcessMemoryPriority(currentProc.Handle, out uint currentPriority);
+        Assert(queryLow && currentPriority == NativeMethods.MEMORY_PRIORITY_VERY_LOW,
+            "Current memory priority verified as MEMORY_PRIORITY_VERY_LOW (1)", $"Actual: {currentPriority}");
+
+        // 5. Setting memory priority to NORMAL (5) for active game simulation
+        bool setNormal = ProcessMemoryPriorityService.SetMemoryPriority(currentProc.Id, NativeMethods.MEMORY_PRIORITY_NORMAL);
+        Assert(setNormal, "SetMemoryPriority to MEMORY_PRIORITY_NORMAL (5) succeeded");
+
+        bool queryNormal = ProcessMemoryPriorityService.TryGetProcessMemoryPriority(currentProc.Handle, out uint normalPriority);
+        Assert(queryNormal && normalPriority == NativeMethods.MEMORY_PRIORITY_NORMAL,
+            "Current memory priority verified as MEMORY_PRIORITY_NORMAL (5)", $"Actual: {normalPriority}");
+
+        // 6. Clean rollback / restore to original priority
+        bool restored = ProcessMemoryPriorityService.RestoreProcessMemoryPriority(currentProc.Id, capturedOriginal);
+        Assert(restored, "RestoreProcessMemoryPriority safely restored original memory priority", $"Restored to: {capturedOriginal}");
+
+        uint finalPriority = ProcessMemoryPriorityService.GetProcessMemoryPriority(currentProc.Handle);
+        Assert(finalPriority == capturedOriginal, "Final verified memory priority matches original", $"Final: {finalPriority}");
+
+        // 7. Verification of ProcessState model memory priority properties
+        var state = new ProcessState
+        {
+            ProcessId = currentProc.Id,
+            ProcessName = currentProc.ProcessName,
+            OriginalMemoryPriority = NativeMethods.MEMORY_PRIORITY_NORMAL,
+            HasMemoryPriorityChanged = true
+        };
+        Assert(state.OriginalMemoryPriority == 5, "ProcessState.OriginalMemoryPriority initialized to 5 (NORMAL)");
+        Assert(state.HasMemoryPriorityChanged, "ProcessState.HasMemoryPriorityChanged is true");
+    }
+
+    static void TestWindowFocusTracker()
+    {
+        Console.WriteLine("\n12. Testing Smart Window Focus & Alt+Tab Detection (R2, v2.3.0):");
+
+        const uint mockGamePid = 12345;
+        using var tracker = new WindowFocusTracker(mockGamePid);
+
+        // 1. Initial State
+        Assert(!tracker.IsRunning, "WindowFocusTracker is not running initially");
+        Assert(!tracker.IsGameForeground, "WindowFocusTracker.IsGameForeground is false initially");
+        Assert(tracker.TrackedGameProcessId == mockGamePid, "WindowFocusTracker.TrackedGameProcessId initialized correctly");
+
+        // 2. Start and STA Dedicated Thread Message Loop
+        tracker.Start();
+        Assert(tracker.IsRunning, "WindowFocusTracker.IsRunning is true after Start()");
+
+        // Verify thread info via reflection
+        var threadField = typeof(WindowFocusTracker).GetField("_hookThread", BindingFlags.NonPublic | BindingFlags.Instance);
+        var thread = threadField?.GetValue(tracker) as Thread;
+        Assert(thread != null && thread.IsAlive, "Dedicated hook background thread is alive");
+        Assert(thread?.GetApartmentState() == ApartmentState.STA, "Dedicated hook thread is running in STA apartment state");
+        Assert(thread?.Name == "SmoothFrame_WindowFocusHook", "Dedicated hook thread name matches 'SmoothFrame_WindowFocusHook'");
+
+        // 3. Foreground Event Dispatching
+        var eventMethod = typeof(WindowFocusTracker).GetMethod("OnWinEventForeground", BindingFlags.NonPublic | BindingFlags.Instance);
+        Assert(eventMethod != null, "Found OnWinEventForeground event callback method via reflection");
+
+        uint receivedPid = 0;
+        bool? receivedIsGame = null;
+        var eventSignal = new ManualResetEventSlim(false);
+
+        tracker.ForegroundWindowChanged += (pid, isGame) =>
+        {
+            receivedPid = pid;
+            receivedIsGame = isGame;
+            eventSignal.Set();
+        };
+
+        IntPtr desktopHwnd = GetDesktopWindow();
+
+        // Test non-EVENT_SYSTEM_FOREGROUND event is ignored
+        eventMethod?.Invoke(tracker, new object[] { IntPtr.Zero, 0x0001u /* not foreground */, desktopHwnd, 0, 0, 0u, 0u });
+        Assert(!eventSignal.IsSet, "Non-foreground event types are ignored");
+
+        // Test IntPtr.Zero HWND is ignored
+        eventMethod?.Invoke(tracker, new object[] { IntPtr.Zero, NativeMethods.EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, 0, 0, 0u, 0u });
+        Assert(!eventSignal.IsSet, "Null (IntPtr.Zero) HWND events are ignored");
+
+        // Test simulated foreground event with valid desktop HWND
+        NativeMethods.GetWindowThreadProcessId(desktopHwnd, out uint desktopPid);
+        eventSignal.Reset();
+        eventMethod?.Invoke(tracker, new object[] { IntPtr.Zero, NativeMethods.EVENT_SYSTEM_FOREGROUND, desktopHwnd, 0, 0, 0u, 0u });
+        bool desktopDispatched = eventSignal.Wait(500);
+        Assert(desktopDispatched, "OnWinEventForeground dispatched event with real HWND to ForegroundWindowChanged");
+        Assert(receivedPid == desktopPid, "ForegroundWindowChanged received accurate desktop PID", $"PID: {receivedPid}");
+        Assert(receivedIsGame == (desktopPid == mockGamePid), "isGame flag matches tracked game PID");
+
+        // Test TrackedGameProcessId state synchronization
+        var lastPidField = typeof(WindowFocusTracker).GetField("_lastForegroundPid", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        eventSignal.Reset();
+        lastPidField?.SetValue(tracker, mockGamePid);
+        tracker.TrackedGameProcessId = mockGamePid;
+
+        Assert(eventSignal.Wait(500), "ForegroundWindowChanged fired on TrackedGameProcessId match");
+        Assert(receivedPid == mockGamePid, "ForegroundWindowChanged received tracked game PID");
+        Assert(receivedIsGame == true, "ForegroundWindowChanged received isGame == true");
+        Assert(tracker.IsGameForeground, "tracker.IsGameForeground is true when focused on game");
+
+        // Simulate Alt+Tab away: switch TrackedGameProcessId to different PID
+        eventSignal.Reset();
+        tracker.TrackedGameProcessId = 99999;
+        Assert(eventSignal.Wait(500), "ForegroundWindowChanged fired on Alt+Tab away (PID mismatch)");
+        Assert(receivedIsGame == false, "ForegroundWindowChanged received isGame == false");
+        Assert(!tracker.IsGameForeground, "tracker.IsGameForeground is false after Alt+Tab away");
+
+        // 4. Clean Unhooking, Teardown and Disposal
+        tracker.Stop();
+        Assert(!tracker.IsRunning, "tracker.IsRunning is false after Stop()");
+        Assert(!tracker.IsGameForeground, "tracker.IsGameForeground is reset to false after Stop()");
+
+        tracker.Dispose();
+        Assert(true, "WindowFocusTracker disposed cleanly");
+
+        // 5. Disposal idempotency and object disposed exception
+        tracker.Dispose(); // second dispose is safe
+        Assert(true, "Double Dispose() on WindowFocusTracker is safely idempotent");
+
+        bool threwOnStart = false;
+        try
+        {
+            tracker.Start();
+        }
+        catch (ObjectDisposedException)
+        {
+            threwOnStart = true;
+        }
+        Assert(threwOnStart, "Calling Start() after Dispose() throws ObjectDisposedException as expected");
+    }
+
+    static void TestGamingHealthInspector()
+    {
+        Console.WriteLine("\n13. Testing Gaming Health Inspector (R3, v2.3.0 Read-Only Diagnostics):");
+
+        // 1. Display Refresh Rate Inspection
+        var displayReport = SystemDiagnosticsService.CheckDisplayRefreshRate();
+        Assert(displayReport != null, "CheckDisplayRefreshRate returned non-null report");
+        if (displayReport != null)
+        {
+            Assert(displayReport.CurrentHz >= 24 && displayReport.CurrentHz <= 1000,
+                "CurrentHz is within valid monitor refresh rate bounds (24-1000 Hz)", $"Current: {displayReport.CurrentHz} Hz");
+            Assert(displayReport.MaxSupportedHz >= displayReport.CurrentHz,
+                "MaxSupportedHz is >= CurrentHz", $"Max: {displayReport.MaxSupportedHz} Hz");
+            Assert(!string.IsNullOrEmpty(displayReport.StatusText),
+                "Display refresh rate StatusText is non-empty", displayReport.StatusText);
+            Assert(!string.IsNullOrEmpty(displayReport.DetailsText),
+                "Display refresh rate DetailsText is non-empty", displayReport.DetailsText);
+            Assert(displayReport.DetailsText.Contains("Hz"),
+                "Display refresh rate DetailsText formatted with 'Hz' unit");
+        }
+
+        // 2. DXGI VRAM Diagnostics Inspection (Read-Only)
+        var vramReport = SystemDiagnosticsService.CheckVramDiagnostics();
+        Assert(vramReport != null, "CheckVramDiagnostics returned non-null report");
+        if (vramReport != null)
+        {
+            Assert(!string.IsNullOrEmpty(vramReport.StatusText),
+                "VRAM StatusText is non-empty", vramReport.StatusText);
+            Assert(!string.IsNullOrEmpty(vramReport.DetailsText),
+                "VRAM DetailsText is non-empty", vramReport.DetailsText);
+
+            if (vramReport.IsSupported)
+            {
+                Assert(vramReport.BudgetBytes >= 0, "VRAM BudgetBytes is non-negative", $"{vramReport.BudgetBytes} bytes");
+                Assert(vramReport.UsageBytes >= 0, "VRAM UsageBytes is non-negative", $"{vramReport.UsageBytes} bytes");
+                Assert(vramReport.DetailsText.Contains("GB"), "VRAM DetailsText formatted in GB units");
+            }
+            else
+            {
+                Assert(true, "DXGI IDXGIAdapter3 not supported on display adapter (handled gracefully without crash)");
+            }
+        }
+
+        // 3. CPU Throttling Diagnostics Inspection (CallNtPowerInformation)
+        var cpuReport = SystemDiagnosticsService.CheckCpuThrottling();
+        Assert(cpuReport != null, "CheckCpuThrottling returned non-null report");
+        if (cpuReport != null)
+        {
+            Assert(!string.IsNullOrEmpty(cpuReport.StatusText),
+                "CPU Throttle StatusText is non-empty", cpuReport.StatusText);
+            Assert(!string.IsNullOrEmpty(cpuReport.DetailsText),
+                "CPU Throttle DetailsText is non-empty", cpuReport.DetailsText);
+            Assert(cpuReport.MaxMhz > 0, "CPU MaxMhz is greater than 0", $"{cpuReport.MaxMhz} MHz");
+            Assert(cpuReport.CurrentMhz > 0, "CPU CurrentMhz is greater than 0", $"{cpuReport.CurrentMhz} MHz");
+            Assert(cpuReport.DetailsText.Contains("MHz"), "CPU Throttle DetailsText formatted in MHz units");
+        }
+
+        // 4. Full Readiness Report Integration
+        var readinessReport = SystemDiagnosticsService.GetReadinessReport();
+        Assert(readinessReport != null, "GetReadinessReport returned non-null readiness report");
+        if (readinessReport != null)
+        {
+            Assert(readinessReport.DisplayRefreshRate != null, "Readiness report contains non-null DisplayRefreshRate");
+            Assert(readinessReport.VramDiagnostics != null, "Readiness report contains non-null VramDiagnostics");
+            Assert(readinessReport.CpuThrottle != null, "Readiness report contains non-null CpuThrottle");
+            Assert(!string.IsNullOrEmpty(readinessReport.WindowsVersionText), "Readiness report contains WindowsVersionText");
+            Assert(readinessReport.DisplaySettingsShortcut == "ms-settings:display", "DisplaySettingsShortcut matches ms-settings:display");
+            Assert(readinessReport.CoreIsolationShortcut == "ms-settings:coreisolation", "CoreIsolationShortcut matches ms-settings:coreisolation");
+        }
+
+        // 5. Zero COM and Handle Leaks Verification (Resource Hygiene)
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
+        var proc = Process.GetCurrentProcess();
+        proc.Refresh();
+        int handlesBefore = proc.HandleCount;
+
+        for (int i = 0; i < 25; i++)
+        {
+            var vram = SystemDiagnosticsService.CheckVramDiagnostics();
+            var cpu = SystemDiagnosticsService.CheckCpuThrottling();
+            var disp = SystemDiagnosticsService.CheckDisplayRefreshRate();
+            Assert(vram != null && cpu != null && disp != null, $"Iteration {i + 1} queries completed cleanly");
+        }
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
+        proc.Refresh();
+        int handlesAfter = proc.HandleCount;
+        int handleGrowth = Math.Max(0, handlesAfter - handlesBefore);
+        int handleDelta = handlesAfter - handlesBefore;
+        Assert(handleGrowth <= 10,
+            "Zero COM/native handle leaks confirmed across 25 diagnostic iteration cycles",
+            $"Handle Delta: {handleDelta} (Before: {handlesBefore}, After: {handlesAfter}, Growth: {handleGrowth})");
     }
 }

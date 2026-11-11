@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011%20(x64)-informational.svg)]()
 [![.NET](https://img.shields.io/badge/.NET-8.0%20WPF-purple.svg)]()
-[![Release](https://img.shields.io/badge/Release-v2.2.0-8B5CF6.svg)](https://github.com/Foxys1/SmoothFrame/releases/tag/v2.2.0)
+[![Release](https://img.shields.io/badge/Release-v2.3.0-8B5CF6.svg)](https://github.com/Foxys1/SmoothFrame/releases/tag/v2.3.0)
 
 🌐 **English** | **[Русский](README_RU.md)**
 
@@ -15,9 +15,9 @@ Engineered to eliminate micro-stutters, stabilize frame pacing (1% Low FPS), red
 
 ## 🚀 Key Features
 
-### 🖥️ Obsidian & Laser Monolith Minimalist UI (v2.2)
+### 🖥️ Obsidian & Laser Monolith Minimalist UI (v2.3)
 * **Cyber Aesthetic:** Modern deep-obsidian palette (`#08080C`) paired with electric neon-violet accents (`#8B5CF6`).
-* **Bento Grid Layout & Quick Control Deck:** Modular telemetry and toggle cards for real-time timer status, active power plans, process priority, P-core isolation, background task silencing, Standby RAM cache purge, Power Throttling QoS, Windowed Flip Model, 1:1 Mouse Input, and Gaming Health.
+* **Bento Grid 3x2 Layout & Quick Control Deck:** Modular telemetry and toggle cards for real-time timer status, active power plans, process priority, P-core isolation, background task silencing, Standby RAM cache purge, Power Throttling QoS, Windowed Flip Model, 1:1 Mouse Input, and Gaming Health (expanded 3x2 grid with monitor refresh rate drop alerts, DXGI VRAM budget inspection, and CPU throttling detection).
 * **Subpixel ClearType Preservation:** Decoupled drop-shadow layer architecture isolating effect transforms from visual text tree, preventing WPF text blurs and maintaining razor-sharp ClearType readability.
 * **Interactive Close Dialog:** Smart exit prompt allowing instant selection between minimizing to the System Tray (retaining active gameplay optimizations) or completely exiting (triggering full, safe WAL state restoration).
 * **Fluid Physics-Based Animations:** Smooth tab transitions, spring-interpolated active navigation pills (`BackEase`), and clean responsive scaling.
@@ -36,11 +36,14 @@ Engineered to eliminate micro-stutters, stabilize frame pacing (1% Low FPS), red
 * **Universal Launcher Auto-Detection:** Automatically discovers profiles and mods directories for CurseForge, Prism Launcher, Modrinth, Modded Launchers, and the standard Minecraft Launcher.
 * **Hardware GPU Binding & RAM Purge:** Enforces high-performance discrete GPU binding (NVIDIA/AMD) for `javaw.exe` via Windows Settings registry and provides instantaneous Standby List memory clearing.
 
-### ⚡ System-Level Kernel & OS Optimizations (v2.2)
+### ⚡ System-Level Kernel & OS Optimizations (v2.3)
+* **Process Memory Priority Protection (RAM Protection):** Enforces `MEMORY_PRIORITY_NORMAL (5)` for the active game process via native `SetProcessInformation(ProcessMemoryPriority)` to prevent Windows Memory Manager from paging the game working set into the disk pagefile (swap), while setting `MEMORY_PRIORITY_VERY_LOW (1)` for background applications. Fully reversible with guaranteed rollback to default priority upon game exit.
+* **Smart Window Focus & Smooth Alt+Tab:** Tracks foreground window transitions via unmanaged `SetWinEventHook(EVENT_SYSTEM_FOREGROUND)` in a dedicated STA message pump with zero DLL injection. Unleashes maximum boost when inside the game, automatically relaxes background limitations when the user switches to browser or messenger, and instantly re-applies full boost upon returning to the game.
+* **Gaming Health Inspector (100% Read-Only):** Real-time non-invasive hardware inspection: displays current and maximum monitor refresh rate with automatic warning on 60 Hz drops and a 1-click shortcut to `ms-settings:display`; tracks dedicated GPU VRAM budget and current usage via DXGI (`IDXGIAdapter3`) to alert on overflow risk with zero COM leaks; and inspects per-core CPU thermal and power limits via `CallNtPowerInformation` to detect hardware throttling.
 * **Process Power Throttling & Quality of Service (QoS):** Enforces `HighQoS` on the active game process via native `SetProcessInformation(ProcessPowerThrottling)` preventing Windows 11 CPU downclocking, while shifting non-critical background apps (Discord, Chrome, Telegram, Spotify) into `EcoQoS` (Efficiency Mode) — 100% in-memory with zero registry modifications.
 * **Windowed Game Optimization (DXGI Flip Model):** Activates the Windows 11 presentation model auto-upgrade (`SwapEffectUpgradeCache = 1`), reducing 15–30 ms of Desktop Window Manager (DWM) composition latency in borderless windowed mode and unlocking G-Sync/FreeSync without screen tearing.
 * **1:1 Linear Hardware Mouse Input:** Dynamically removes the Windows "Enhance Pointer Precision" acceleration curve (`SPI_SETMOUSE`) during gameplay, guaranteeing authentic 1:1 hardware sensor tracking without permanent registry corruption, and cleanly restores original curve and speed on exit.
-* **System Diagnostics & Gaming Health Inspector:** Real-time read-only inspection for VBS (Virtualization-Based Security / Core Isolation) with one-click shortcut to Windows Settings, Hardware-Accelerated GPU Scheduling (HAGS), and Windows Game Mode.
+* **System Diagnostics & Platform Readiness:** Real-time read-only inspection for VBS (Virtualization-Based Security / Core Isolation) with one-click shortcut to Windows Settings, Hardware-Accelerated GPU Scheduling (HAGS), and Windows Game Mode.
 * **High-Precision System Timer:** Dynamically scales Windows scheduler timer resolution down to **0.50 ms** via the native `NtSetTimerResolution` API for lowest input latency and mouse response.
 * **Intelligent Power Scheme Switching:** Activates Windows Ultimate Performance plan during gameplay (preventing CPU core parking) and cleanly restores your default plan on exit.
 * **Process Priority & Affinity Optimization:** Elevates active game process priority while gently deprioritizing non-critical background services.

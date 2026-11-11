@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Paramètres</sys:String>
     <sys:String x:Key="Nav.Protect">Protection</sys:String>
     <sys:String x:Key="Side.Language">Langue de l'interface</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.2.0 — optimiseur sûr de processus de jeu</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.3.0 — optimiseur sûr de processus de jeu</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMISATION ACTIVE • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SYSTÈME PRÊT • EN ATTENTE DU JEU</sys:String>
@@ -201,7 +201,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">Détection de jeux, démarrage Windows et raccourcis globaux</sys:String>
     <sys:String x:Key="Set.Group.App">Interface &amp; Système</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">Préférences de langue et statut du service d'arrière-plan SmoothFrame</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.2.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.3.0 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Mode API Win32 sécurisé • 0% injection mémoire • Compatible avec tous les anti-triches</sys:String>
     <sys:String x:Key="Set.Engine.Badge">ACTIF</sys:String>
 
@@ -252,5 +252,32 @@
     <sys:String x:Key="Diag.Status.Active">Activé</sys:String>
     <sys:String x:Key="Diag.Status.Disabled">Désactivé</sys:String>
     <sys:String x:Key="Diag.Status.Unknown">Inconnu</sys:String>
+
+    <!-- Game RAM Memory Priority (R1) -->
+    <sys:String x:Key="Deck.MemPrio.Title">Protection RAM</sys:String>
+    <sys:String x:Key="Deck.MemPrio.Desc">Éviter le swap sur disque</sys:String>
+    <sys:String x:Key="Set.MemPrio.Title">Priorité RAM du jeu (SetProcessInformation)</sys:String>
+    <sys:String x:Key="Set.MemPrio.Desc">Maintient la mémoire du jeu en RAM (MEMORY_PRIORITY_NORMAL) et réduit les processus d'arrière-plan.</sys:String>
+
+    <!-- Smart Window Focus & Alt+Tab (R2) -->
+    <sys:String x:Key="Deck.SmartFocus.Title">Focus intelligent Alt+Tab</sys:String>
+    <sys:String x:Key="Deck.SmartFocus.Desc">Relâcher le boost lors du switch</sys:String>
+    <sys:String x:Key="Set.SmartFocus.Title">Focus intelligent et Alt+Tab fluide</sys:String>
+    <sys:String x:Key="Set.SmartFocus.Desc">Surveille la fenêtre via WinEventHook. Boost maximal en jeu; assouplit lors du basculement vers le navigateur.</sys:String>
+
+    <!-- Gaming Health Inspector New Diagnostics (R3) -->
+    <sys:String x:Key="Diag.DisplayHz.Title">Taux de rafraîchissement</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Desc">Contrôle de fréquence et chute à 60 Hz</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Btn">Paramètres d'affichage</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Warn">Chute à 60 Hz détectée !</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Ok">Fréquence optimale</sys:String>
+    <sys:String x:Key="Diag.Vram.Title">Débordement VRAM</sys:String>
+    <sys:String x:Key="Diag.Vram.Desc">Budget mémoire vidéo DXGI</sys:String>
+    <sys:String x:Key="Diag.Vram.Ok">Budget respecté</sys:String>
+    <sys:String x:Key="Diag.Vram.Warn">Risque de saturation VRAM</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Title">Throttling processeur</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Desc">Limite thermique/d'alimentation</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Ok">Pleine vitesse</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Warn">Throttling détecté !</sys:String>
 
 </ResourceDictionary>

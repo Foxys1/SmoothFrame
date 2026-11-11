@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">设置</sys:String>
     <sys:String x:Key="Nav.Protect">防护</sys:String>
     <sys:String x:Key="Side.Language">界面语言</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.2.0 — 安全的游戏进程优化器</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.3.0 — 安全的游戏进程优化器</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">优化已启用 • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">系统就绪 • 等待游戏启动</sys:String>
@@ -201,7 +201,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">游戏检测规则、Windows 开机自启与全局快捷键</sys:String>
     <sys:String x:Key="Set.Group.App">界面与系统</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">界面语言偏好与 SmoothFrame 后台引擎运行状态</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.2.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.3.0 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">安全 Win32 API 模式 • 0% 内存注入 • 适配所有主流反作弊系统</sys:String>
     <sys:String x:Key="Set.Engine.Badge">已激活</sys:String>
 
@@ -252,5 +252,32 @@
     <sys:String x:Key="Diag.Status.Active">已启用</sys:String>
     <sys:String x:Key="Diag.Status.Disabled">已禁用</sys:String>
     <sys:String x:Key="Diag.Status.Unknown">未知</sys:String>
+
+    <!-- Game RAM Memory Priority (R1) -->
+    <sys:String x:Key="Deck.MemPrio.Title">游戏内存保护</sys:String>
+    <sys:String x:Key="Deck.MemPrio.Desc">防止游戏内存分页到磁盘</sys:String>
+    <sys:String x:Key="Set.MemPrio.Title">游戏内存优先级保护 (SetProcessInformation)</sys:String>
+    <sys:String x:Key="Set.MemPrio.Desc">将游戏常驻内存设为 NORMAL，后台进程设为 VERY_LOW，杜绝虚拟内存颠簸。</sys:String>
+
+    <!-- Smart Window Focus & Alt+Tab (R2) -->
+    <sys:String x:Key="Deck.SmartFocus.Title">智能 Alt+Tab 焦点</sys:String>
+    <sys:String x:Key="Deck.SmartFocus.Desc">切出窗口时自动降载</sys:String>
+    <sys:String x:Key="Set.SmartFocus.Title">智能窗口焦点与平滑 Alt+Tab</sys:String>
+    <sys:String x:Key="Set.SmartFocus.Desc">通过 WinEventHook 无侵入追踪焦点；切入游戏全速加速，切出聊天时释放系统响应。</sys:String>
+
+    <!-- Gaming Health Inspector New Diagnostics (R3) -->
+    <sys:String x:Key="Diag.DisplayHz.Title">显示器刷新率</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Desc">刷新率监控与 60Hz 降频检测</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Btn">显示设置</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Warn">检测到异常重置为 60Hz！</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Ok">刷新率正常</sys:String>
+    <sys:String x:Key="Diag.Vram.Title">显存溢出检测</sys:String>
+    <sys:String x:Key="Diag.Vram.Desc">DXGI 显存预算检测</sys:String>
+    <sys:String x:Key="Diag.Vram.Ok">显存充裕</sys:String>
+    <sys:String x:Key="Diag.Vram.Warn">显存超额风险</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Title">CPU 降频/功耗墙检测</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Desc">功耗与散热频率检测</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Ok">频率正常</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Warn">触发降频！</sys:String>
 
 </ResourceDictionary>

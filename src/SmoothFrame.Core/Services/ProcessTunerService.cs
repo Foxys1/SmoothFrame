@@ -167,8 +167,13 @@ public class ProcessTunerService
                     qosSet = ProcessQosService.SetHighQoS(hProcess);
                 }
 
-                // Only record into AlteredProcesses if priority/affinity/IO/QoS change actually succeeded
-                if (prioritySet || affinitySet || ioPrioritySet || qosSet)
+                bool memoryPrioritySet = false;
+                uint origMemoryPriority = NativeMethods.MEMORY_PRIORITY_NORMAL;
+                ProcessMemoryPriorityService.TryGetProcessMemoryPriority(hProcess, out origMemoryPriority);
+                memoryPrioritySet = ProcessMemoryPriorityService.SetProcessMemoryPriority(hProcess, NativeMethods.MEMORY_PRIORITY_NORMAL);
+
+                // Only record into AlteredProcesses if priority/affinity/IO/QoS/MemoryPriority change actually succeeded
+                if (prioritySet || affinitySet || ioPrioritySet || qosSet || memoryPrioritySet)
                 {
                     var state = new ProcessState
                     {
@@ -182,7 +187,9 @@ public class ProcessTunerService
                         HasIoPriorityChanged = ioPrioritySet,
                         OriginalQosControlMask = origQosControl,
                         OriginalQosStateMask = origQosState,
-                        HasQosChanged = qosSet
+                        HasQosChanged = qosSet,
+                        OriginalMemoryPriority = origMemoryPriority,
+                        HasMemoryPriorityChanged = memoryPrioritySet
                     };
 
                     lock (_lock)
@@ -278,7 +285,12 @@ public class ProcessTunerService
                                 qosSet = ProcessQosService.SetEcoQoS(hProcess);
                             }
 
-                            if (prioritySet || ioPrioritySet || qosSet)
+                            bool memoryPrioritySet = false;
+                            uint origMemoryPriority = NativeMethods.MEMORY_PRIORITY_NORMAL;
+                            ProcessMemoryPriorityService.TryGetProcessMemoryPriority(hProcess, out origMemoryPriority);
+                            memoryPrioritySet = ProcessMemoryPriorityService.SetProcessMemoryPriority(hProcess, NativeMethods.MEMORY_PRIORITY_VERY_LOW);
+
+                            if (prioritySet || ioPrioritySet || qosSet || memoryPrioritySet)
                             {
                                 var state = new ProcessState
                                 {
@@ -292,7 +304,9 @@ public class ProcessTunerService
                                     HasIoPriorityChanged = ioPrioritySet,
                                     OriginalQosControlMask = origQosControl,
                                     OriginalQosStateMask = origQosState,
-                                    HasQosChanged = qosSet
+                                    HasQosChanged = qosSet,
+                                    OriginalMemoryPriority = origMemoryPriority,
+                                    HasMemoryPriorityChanged = memoryPrioritySet
                                 };
 
                                 lock (_lock)
@@ -471,6 +485,11 @@ public class ProcessTunerService
                             ProcessQosService.ResetQoS(hProcess);
                         }
                     }
+
+                    if (state.HasMemoryPriorityChanged)
+                    {
+                        ProcessMemoryPriorityService.RestoreProcessMemoryPriority(hProcess, state.OriginalMemoryPriority);
+                    }
                 }
                 finally
                 {
@@ -489,6 +508,147 @@ public class ProcessTunerService
             {
                 var restoredPids = list.Select(p => p.ProcessId).ToHashSet();
                 AlteredProcesses.RemoveAll(p => restoredPids.Contains(p.ProcessId));
+            }
+        }
+    }
+
+    /// <summary>
+    /// R2 Alt+Tab: Temporarily relaxes background app throttling when user switches away from the game.
+    /// Elevates priority back to Normal, resets EcoQoS throttling, and restores normal memory priority.
+    /// </summary>
+    public void RelaxBackgroundThrottling(int? gameProcessId = null)
+    {
+        List<ProcessState> list;
+        lock (_lock)
+        {
+            list = AlteredProcesses.Where(p => !gameProcessId.HasValue || p.ProcessId != gameProcessId.Value).ToList();
+        }
+
+        foreach (var state in list)
+        {
+            if (ProcessBlacklist.IsProtected(state.ProcessName))
+                continue;
+
+            Process proc;
+            try
+            {
+                proc = Process.GetProcessById(state.ProcessId);
+            }
+            catch
+            {
+                continue;
+            }
+
+            using (proc)
+            {
+                try
+                {
+                    if (proc.HasExited) continue;
+                    if (!string.Equals(proc.ProcessName, state.ProcessName, StringComparison.OrdinalIgnoreCase)) continue;
+
+                    uint access = NativeMethods.PROCESS_SET_INFORMATION | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
+                    var hProcess = NativeMethods.OpenProcess(access, false, state.ProcessId);
+                    if (hProcess == IntPtr.Zero)
+                    {
+                        hProcess = NativeMethods.OpenProcess(NativeMethods.PROCESS_SET_INFORMATION, false, state.ProcessId);
+                    }
+
+                    if (hProcess == IntPtr.Zero) continue;
+
+                    try
+                    {
+                        // Relax CPU priority to Normal for fluid desktop experience
+                        NativeMethods.SetPriorityClass(hProcess, NativeMethods.NORMAL_PRIORITY_CLASS);
+
+                        // Reset EcoQoS
+                        ProcessQosService.ResetQoS(hProcess);
+
+                        // Restore normal memory priority
+                        ProcessMemoryPriorityService.SetProcessMemoryPriority(hProcess, NativeMethods.MEMORY_PRIORITY_NORMAL);
+                    }
+                    finally
+                    {
+                        NativeMethods.CloseHandle(hProcess);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ProcessTuner] RelaxBackgroundThrottling exception on PID {state.ProcessId}: {ex.Message}");
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// R2 Alt+Tab: Instantly re-applies full throttling to background apps and verifies max boost for active game
+    /// when user returns focus to the game window.
+    /// </summary>
+    public void RestoreBackgroundThrottling(int? gameProcessId = null)
+    {
+        List<ProcessState> list;
+        lock (_lock)
+        {
+            list = AlteredProcesses.ToList();
+        }
+
+        foreach (var state in list)
+        {
+            if (ProcessBlacklist.IsProtected(state.ProcessName))
+                continue;
+
+            Process proc;
+            try
+            {
+                proc = Process.GetProcessById(state.ProcessId);
+            }
+            catch
+            {
+                continue;
+            }
+
+            using (proc)
+            {
+                try
+                {
+                    if (proc.HasExited) continue;
+                    if (!string.Equals(proc.ProcessName, state.ProcessName, StringComparison.OrdinalIgnoreCase)) continue;
+
+                    uint access = NativeMethods.PROCESS_SET_INFORMATION | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
+                    var hProcess = NativeMethods.OpenProcess(access, false, state.ProcessId);
+                    if (hProcess == IntPtr.Zero)
+                    {
+                        hProcess = NativeMethods.OpenProcess(NativeMethods.PROCESS_SET_INFORMATION, false, state.ProcessId);
+                    }
+
+                    if (hProcess == IntPtr.Zero) continue;
+
+                    try
+                    {
+                        bool isGame = gameProcessId.HasValue && state.ProcessId == gameProcessId.Value;
+                        if (isGame)
+                        {
+                            // Maximum boost for active game
+                            NativeMethods.SetPriorityClass(hProcess, NativeMethods.HIGH_PRIORITY_CLASS);
+                            ProcessQosService.SetHighQoS(hProcess);
+                            ProcessMemoryPriorityService.SetProcessMemoryPriority(hProcess, NativeMethods.MEMORY_PRIORITY_NORMAL);
+                        }
+                        else
+                        {
+                            // Full throttling for background apps
+                            NativeMethods.SetPriorityClass(hProcess, NativeMethods.BELOW_NORMAL_PRIORITY_CLASS);
+                            ProcessQosService.SetEcoQoS(hProcess);
+                            ProcessMemoryPriorityService.SetProcessMemoryPriority(hProcess, NativeMethods.MEMORY_PRIORITY_VERY_LOW);
+                        }
+                    }
+                    finally
+                    {
+                        NativeMethods.CloseHandle(hProcess);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ProcessTuner] RestoreBackgroundThrottling exception on PID {state.ProcessId}: {ex.Message}");
+                }
             }
         }
     }

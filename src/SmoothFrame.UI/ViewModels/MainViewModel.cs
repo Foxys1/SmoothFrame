@@ -57,6 +57,24 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
     private bool _isGameModeActive;
     private string _gameModeStatusText = string.Empty;
     private string _windowsVersionText = string.Empty;
+    private uint _displayHz = 60;
+    private uint _displayMaxHz = 60;
+    private bool _isDisplayHzResetWarning;
+    private string _displayHzStatusText = string.Empty;
+    private string _displayHzDetails = string.Empty;
+    private string _displayHzBadgeText = "60 Hz";
+    private ulong _vramBudgetBytes;
+    private ulong _vramUsageBytes;
+    private bool _isVramOverflowWarning;
+    private string _vramStatusText = string.Empty;
+    private string _vramUsageDetails = string.Empty;
+    private uint _cpuMaxMhz;
+    private uint _cpuCurrentMhz;
+    private uint _cpuLimitMhz;
+    private bool _isCpuThrottlingWarning;
+    private string _cpuThrottleStatusText = string.Empty;
+    private string _cpuThrottleDetails = string.Empty;
+    private int _diagLoopTick;
     private bool _isLoadingDiagnostics;
     private bool _isToggling;
     private bool _isLoadingGames;
@@ -466,7 +484,110 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         private set { _windowsVersionText = value; OnPropertyChanged(); }
     }
 
+    public uint DisplayHz
+    {
+        get => _displayHz;
+        private set { _displayHz = value; OnPropertyChanged(); }
+    }
+
+    public uint DisplayMaxHz
+    {
+        get => _displayMaxHz;
+        private set { _displayMaxHz = value; OnPropertyChanged(); }
+    }
+
+    public bool IsDisplayHzResetWarning
+    {
+        get => _isDisplayHzResetWarning;
+        private set { _isDisplayHzResetWarning = value; OnPropertyChanged(); }
+    }
+
+    public string DisplayHzStatusText
+    {
+        get => _displayHzStatusText;
+        private set { _displayHzStatusText = value; OnPropertyChanged(); }
+    }
+
+    public string DisplayHzDetails
+    {
+        get => _displayHzDetails;
+        private set { _displayHzDetails = value; OnPropertyChanged(); }
+    }
+
+    public string DisplayHzBadgeText
+    {
+        get => _displayHzBadgeText;
+        private set { _displayHzBadgeText = value; OnPropertyChanged(); }
+    }
+
+    public ulong VramBudgetBytes
+    {
+        get => _vramBudgetBytes;
+        private set { _vramBudgetBytes = value; OnPropertyChanged(); }
+    }
+
+    public ulong VramUsageBytes
+    {
+        get => _vramUsageBytes;
+        private set { _vramUsageBytes = value; OnPropertyChanged(); }
+    }
+
+    public bool IsVramOverflowWarning
+    {
+        get => _isVramOverflowWarning;
+        private set { _isVramOverflowWarning = value; OnPropertyChanged(); }
+    }
+
+    public string VramStatusText
+    {
+        get => _vramStatusText;
+        private set { _vramStatusText = value; OnPropertyChanged(); }
+    }
+
+    public string VramUsageDetails
+    {
+        get => _vramUsageDetails;
+        private set { _vramUsageDetails = value; OnPropertyChanged(); }
+    }
+
+    public uint CpuMaxMhz
+    {
+        get => _cpuMaxMhz;
+        private set { _cpuMaxMhz = value; OnPropertyChanged(); }
+    }
+
+    public uint CpuCurrentMhz
+    {
+        get => _cpuCurrentMhz;
+        private set { _cpuCurrentMhz = value; OnPropertyChanged(); }
+    }
+
+    public uint CpuLimitMhz
+    {
+        get => _cpuLimitMhz;
+        private set { _cpuLimitMhz = value; OnPropertyChanged(); }
+    }
+
+    public bool IsCpuThrottlingWarning
+    {
+        get => _isCpuThrottlingWarning;
+        private set { _isCpuThrottlingWarning = value; OnPropertyChanged(); }
+    }
+
+    public string CpuThrottleStatusText
+    {
+        get => _cpuThrottleStatusText;
+        private set { _cpuThrottleStatusText = value; OnPropertyChanged(); }
+    }
+
+    public string CpuThrottleDetails
+    {
+        get => _cpuThrottleDetails;
+        private set { _cpuThrottleDetails = value; OnPropertyChanged(); }
+    }
+
     public ICommand OpenCoreIsolationCommand { get; }
+    public ICommand OpenDisplaySettingsCommand { get; }
     public ICommand RefreshDiagnosticsCommand { get; }
 
     public ICommand ToggleOptimizationCommand { get; }
@@ -561,6 +682,7 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         InstallSmoothFrameModCommand = new RelayCommand(InstallSmoothFrameMod);
         UninstallSmoothFrameModCommand = new RelayCommand(UninstallSmoothFrameMod);
         OpenCoreIsolationCommand = new RelayCommand(OpenCoreIsolation);
+        OpenDisplaySettingsCommand = new RelayCommand(OpenDisplaySettings);
         RefreshDiagnosticsCommand = new RelayCommand(async () => await LoadDiagnosticsAsync());
 
         try
@@ -669,6 +791,13 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
             {
                 await Task.Delay(2500, token);
                 if (token.IsCancellationRequested || _disposed) break;
+
+                _diagLoopTick++;
+                if (_diagLoopTick >= 8) // ~20s periodic health check
+                {
+                    _diagLoopTick = 0;
+                    _ = LoadDiagnosticsAsync();
+                }
 
                 if (!AutoBoostOnGameLaunch) continue;
 
@@ -801,6 +930,9 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         VbsStatusText = IsVbsActive ? Loc.T("Diag.Status.Active") : Loc.T("Diag.Status.Disabled");
         HagsStatusText = IsHagsActive ? Loc.T("Diag.Status.Active") : Loc.T("Diag.Status.Disabled");
         GameModeStatusText = IsGameModeActive ? Loc.T("Diag.Status.Active") : Loc.T("Diag.Status.Disabled");
+        DisplayHzStatusText = IsDisplayHzResetWarning ? Loc.T("Diag.DisplayHz.Warn") : Loc.T("Diag.DisplayHz.Ok");
+        VramStatusText = IsVramOverflowWarning ? Loc.T("Diag.Vram.Warn") : Loc.T("Diag.Vram.Ok");
+        CpuThrottleStatusText = IsCpuThrottlingWarning ? Loc.T("Diag.CpuThrottle.Warn") : Loc.T("Diag.CpuThrottle.Ok");
         OnPropertyChanged(nameof(ActionButtonText));
         OnPropertyChanged(nameof(MinecraftActionButtonText));
         OnPropertyChanged(nameof(MinecraftHeroBadgeText));
@@ -810,6 +942,11 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         OnPropertyChanged(nameof(SmoothFrameModStatusText));
         OnPropertyChanged(nameof(InGameStatusTitle));
         OnPropertyChanged(nameof(InGameStatusBadgeText));
+    }
+
+    public async Task RefreshDiagnostics()
+    {
+        await LoadDiagnosticsAsync();
     }
 
     public async Task LoadDiagnosticsAsync()
@@ -848,6 +985,32 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         IsGameModeActive = report.IsGameModeActive;
         GameModeStatusText = report.IsGameModeActive ? Loc.T("Diag.Status.Active") : Loc.T("Diag.Status.Disabled");
         WindowsVersionText = report.WindowsVersionText;
+
+        // Display Refresh Rate
+        DisplayHz = report.DisplayRefreshRate.CurrentHz;
+        DisplayMaxHz = report.DisplayRefreshRate.MaxSupportedHz;
+        IsDisplayHzResetWarning = report.DisplayRefreshRate.IsDroppedTo60Warning;
+        DisplayHzStatusText = IsDisplayHzResetWarning ? Loc.T("Diag.DisplayHz.Warn") : Loc.T("Diag.DisplayHz.Ok");
+        DisplayHzBadgeText = $"{DisplayHz} Hz";
+        DisplayHzDetails = $"{DisplayHz} Hz / Max: {DisplayMaxHz} Hz";
+
+        // VRAM Diagnostics
+        VramBudgetBytes = report.VramDiagnostics.BudgetBytes;
+        VramUsageBytes = report.VramDiagnostics.UsageBytes;
+        IsVramOverflowWarning = report.VramDiagnostics.IsOverflowDetected;
+        VramStatusText = IsVramOverflowWarning ? Loc.T("Diag.Vram.Warn") : Loc.T("Diag.Vram.Ok");
+        double usedGb = Math.Round((double)VramUsageBytes / (1024 * 1024 * 1024), 1);
+        double budgetGb = Math.Round((double)VramBudgetBytes / (1024 * 1024 * 1024), 1);
+        VramUsageDetails = $"{usedGb:F1} GB / {budgetGb:F1} GB";
+
+        // CPU Throttling
+        CpuMaxMhz = report.CpuThrottle.MaxMhz;
+        CpuCurrentMhz = report.CpuThrottle.CurrentMhz;
+        CpuLimitMhz = report.CpuThrottle.LimitMhz;
+        IsCpuThrottlingWarning = report.CpuThrottle.IsThrottlingDetected;
+        CpuThrottleStatusText = IsCpuThrottlingWarning ? Loc.T("Diag.CpuThrottle.Warn") : Loc.T("Diag.CpuThrottle.Ok");
+        int pct = CpuMaxMhz > 0 ? (int)((CpuCurrentMhz * 100) / CpuMaxMhz) : 100;
+        CpuThrottleDetails = $"{CpuCurrentMhz} MHz / {CpuMaxMhz} MHz ({pct}%)";
     }
 
     private void OpenCoreIsolation()
@@ -859,6 +1022,18 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Failed to open Core Isolation: {ex.Message}");
+        }
+    }
+
+    private void OpenDisplaySettings()
+    {
+        try
+        {
+            SystemDiagnosticsService.OpenDisplaySettings();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to open Display Settings: {ex.Message}");
         }
     }
 

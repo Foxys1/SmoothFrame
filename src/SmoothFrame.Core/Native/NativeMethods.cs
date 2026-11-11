@@ -209,6 +209,197 @@ public static class NativeMethods
         ref PROCESS_POWER_THROTTLING_STATE ProcessInformation,
         uint ProcessInformationSize);
 
+    // --- Process Memory Priority (kernel32.dll) ---
+    public const int ProcessMemoryPriority = 0;
+    public const uint MEMORY_PRIORITY_VERY_LOW = 1;
+    public const uint MEMORY_PRIORITY_LOW = 2;
+    public const uint MEMORY_PRIORITY_MEDIUM = 3;
+    public const uint MEMORY_PRIORITY_BELOW_NORMAL = 4;
+    public const uint MEMORY_PRIORITY_NORMAL = 5;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MEMORY_PRIORITY_INFORMATION
+    {
+        public uint MemoryPriority;
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool SetProcessInformation(
+        IntPtr hProcess,
+        int ProcessInformationClass,
+        ref MEMORY_PRIORITY_INFORMATION ProcessInformation,
+        uint ProcessInformationSize);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetProcessInformation(
+        IntPtr hProcess,
+        int ProcessInformationClass,
+        ref MEMORY_PRIORITY_INFORMATION ProcessInformation,
+        uint ProcessInformationSize);
+
+    // --- WinEventHook & Window Focus (user32.dll) ---
+    public const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
+    public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
+    public const uint WINEVENT_SKIPOWNPROCESS = 0x0002;
+    public const uint WM_QUIT = 0x0012;
+
+    public delegate void WinEventProc(
+        IntPtr hWinEventHook,
+        uint eventType,
+        IntPtr hwnd,
+        int idObject,
+        int idChild,
+        uint dwEventThread,
+        uint dwmsEventTime);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern IntPtr SetWinEventHook(
+        uint eventMin,
+        uint eventMax,
+        IntPtr hmodWinEventProc,
+        WinEventProc lpfnWinEventProc,
+        uint idProcess,
+        uint idThread,
+        uint dwFlags);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+    [DllImport("kernel32.dll")]
+    public static extern uint GetCurrentThreadId();
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool PostThreadMessage(uint idThread, uint msg, IntPtr wParam, IntPtr lParam);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public int x;
+        public int y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MSG
+    {
+        public IntPtr hwnd;
+        public uint message;
+        public IntPtr wParam;
+        public IntPtr lParam;
+        public uint time;
+        public POINT pt;
+    }
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern int GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool TranslateMessage(ref MSG lpMsg);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr DispatchMessage(ref MSG lpMsg);
+
+    // --- Monitor Refresh Rate Inspection (user32.dll) ---
+    public const int ENUM_CURRENT_SETTINGS = -1;
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public struct DEVMODE
+    {
+        private const int CCHDEVICENAME = 32;
+        private const int CCHFORMNAME = 32;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHDEVICENAME)]
+        public string dmDeviceName;
+        public ushort dmSpecVersion;
+        public ushort dmDriverVersion;
+        public ushort dmSize;
+        public ushort dmDriverExtra;
+        public uint dmFields;
+
+        public int dmPositionX;
+        public int dmPositionY;
+        public uint dmDisplayOrientation;
+        public uint dmDisplayFixedOutput;
+
+        public short dmColor;
+        public short dmDuplex;
+        public short dmYResolution;
+        public short dmTTOption;
+        public short dmCollate;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHFORMNAME)]
+        public string dmFormName;
+        public ushort dmLogPixels;
+        public uint dmBitsPerPel;
+        public uint dmPelsWidth;
+        public uint dmPelsHeight;
+        public uint dmDisplayFlags;
+        public uint dmDisplayFrequency;
+        public uint dmICMMethod;
+        public uint dmICMIntent;
+        public uint dmMediaType;
+        public uint dmDitherType;
+        public uint dmReserved1;
+        public uint dmReserved2;
+        public uint dmPanningWidth;
+        public uint dmPanningHeight;
+    }
+
+    [DllImport("user32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool EnumDisplaySettingsEx(
+        string? lpszDeviceName,
+        int iModeNum,
+        ref DEVMODE lpDevMode,
+        uint dwFlags);
+
+    // --- DXGI VRAM Inspection (dxgi.dll) ---
+    public const uint DXGI_MEMORY_SEGMENT_GROUP_LOCAL = 0;
+    public const uint DXGI_MEMORY_SEGMENT_GROUP_NON_LOCAL = 1;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct DXGI_QUERY_VIDEO_MEMORY_INFO
+    {
+        public ulong Budget;
+        public ulong CurrentUsage;
+        public ulong AvailableForReservation;
+        public ulong CurrentReservation;
+    }
+
+    public static readonly Guid IID_IDXGIFactory4 = new("1bc6ea02-ef36-464f-bf0c-21ca39e5168a");
+    public static readonly Guid IID_IDXGIAdapter3 = new("645967a4-1392-4310-a798-8053ce3e93fd");
+
+    [DllImport("dxgi.dll", SetLastError = true)]
+    public static extern int CreateDXGIFactory1(in Guid riid, out IntPtr ppFactory);
+
+    // --- Processor Power Information (powrprof.dll) ---
+    public const int ProcessorInformation = 11;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PROCESSOR_POWER_INFORMATION
+    {
+        public uint Number;
+        public uint MaxMhz;
+        public uint CurrentMhz;
+        public uint MhzLimit;
+        public uint MaxIdleState;
+        public uint CurrentIdleState;
+    }
+
+    [DllImport("powrprof.dll", SetLastError = true)]
+    public static extern uint CallNtPowerInformation(
+        int InformationLevel,
+        IntPtr lpInputBuffer,
+        uint nInputBufferSize,
+        IntPtr lpOutputBuffer,
+        uint nOutputBufferSize);
+
     // --- SystemParametersInfo Mouse APIs (user32.dll) ---
     public const uint SPI_GETMOUSE = 0x0003;
     public const uint SPI_SETMOUSE = 0x0004;

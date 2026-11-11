@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 Set-Location (Join-Path $PSScriptRoot "..")
 
@@ -40,38 +40,32 @@ foreach ($prevTag in @("v2.1.0", "v2.1.1")) {
 }
 
 $releaseNotes = @'
-# SmoothFrame v2.2.0 :zap:
+# SmoothFrame v2.3.0 :zap:
 
 A modern, transparent, safe, and 100% reversible game optimization suite for Windows 10 & 11.
 
-## What's New in v2.2.0:
-- **Process Power Throttling & Quality of Service (QoS)**:
-  - Native Win32 `SetProcessInformation(ProcessPowerThrottling)` prevents Windows 11 CPU downclocking for active games (`HighQoS`).
-  - Automatically shifts heavy background apps (Discord, Chrome, Telegram, Spotify, etc.) into `EcoQoS` (Efficiency Mode) to eliminate thermal and thread contention.
-  - 100% in-memory with zero permanent registry modifications.
-- **Windowed Game Optimization (DXGI Flip Model Promotion)**:
-  - Automatically activates the Windows 11 Auto-Flip presentation model upgrade (`SwapEffectUpgradeCache = 1`) for borderless windowed games.
-  - Eliminates 15-30ms of DWM composition lag and unlocks G-Sync/FreeSync and Auto HDR in borderless mode without tearing.
-- **1:1 Linear Hardware Mouse Input**:
-  - Enforces pure 1:1 hardware sensor tracking by eliminating Windows "Enhance Pointer Precision" (EPP) curve during gameplay.
-  - Captures user's exact baseline mouse parameters and restores them on exit.
-- **System Diagnostics & Gaming Health Inspector**:
-  - Real-time read-only inspection for VBS (Virtualization-Based Security / Core Isolation) with one-click shortcut to Windows settings.
-  - Real-time hardware status for HAGS (Hardware-Accelerated GPU Scheduling) and Windows Game Mode.
-- **UI & Bento Grid Integration**:
-  - New modular quick-control toggles and dedicated Gaming Health card with crisp ClearType subpixel rendering.
-  - 100% translation key parity across all 6 languages (EN, RU, DE, ES, FR, ZH).
-- **Interactive Close Confirmation Modal**:
-  - Choose between "Minimize to System Tray" (keep optimizations active) or "Exit Completely" (safe WAL rollback).
+## What's New in v2.3.0:
+- **Process Memory Priority Optimization (RAM Paging Protection)**:
+  - Native Win32 `SetProcessInformation(ProcessMemoryPriority)` prioritizes active game RAM pages (`MEMORY_PRIORITY_NORMAL = 5`) and shifts noisy background apps to `MEMORY_PRIORITY_VERY_LOW (1)`.
+  - Zero registry edits and 100% in-memory WAL-backed rollback on game exit or crash recovery.
+- **Smart Alt+Tab Focus Tracking**:
+  - Lightweight out-of-context Win32 `SetWinEventHook` (`EVENT_SYSTEM_FOREGROUND`) detects when you Alt+Tab out of the game.
+  - Automatically restores background apps while you browse and re-applies full prioritization the moment you return to the game window.
+- **Extended System Diagnostics & Gaming Health Bento Inspector**:
+  - **Display Refresh Rate Check**: Uses `EnumDisplaySettingsEx` to detect when a high-refresh monitor drops to 60 Hz, with a one-click button to open Windows Display Settings (`ms-settings:display`).
+  - **DXGI Video Memory (VRAM) Budget Check**: Queries `IDXGIAdapter3::QueryVideoMemoryInfo` in real time to flag VRAM overcommit before frame-time spikes happen.
+  - **CPU Frequency Throttling Check**: Reads `CallNtPowerInformation(ProcessorInformation)` across cores to detect active firmware or thermal throttling.
+- **UI & Stability**:
+  - Expanded Overview Gaming Health section into a balanced 3x2 Bento Grid across all 6 languages (`246` keys each) with crisp ClearType rendering and safe OneWay binding fixes.
 
 ## Download:
 Download **SmoothFrame_Setup.exe** below and run the installer.
 '@
 
 $bodyObj = @{
-    tag_name = "v2.2.0"
+    tag_name = "v2.3.0"
     target_commitish = "main"
-    name = "SmoothFrame v2.2.0 - Process QoS, Windowed Flip Model & Gaming Health"
+    name = "SmoothFrame v2.3.0 - Process Memory Priority, Smart Focus & Hardware Inspector"
     body = $releaseNotes
     draft = $false
     prerelease = $false
@@ -80,13 +74,13 @@ $bodyObj = @{
 $bodyJson = $bodyObj | ConvertTo-Json -Depth 5
 $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($bodyJson)
 
-Write-Host "Creating GitHub Release for v2.2.0..."
+Write-Host "Creating GitHub Release for v2.3.0..."
 try {
     $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases" -Method Post -Headers $headers -Body $bodyBytes -ContentType "application/json; charset=utf-8"
     Write-Host "Created release: $($release.html_url)"
 } catch {
     Write-Host "Checking if release already exists..."
-    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases/tags/v2.2.0" -Method Get -Headers $headers
+    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/Foxys1/SmoothFrame/releases/tags/v2.3.0" -Method Get -Headers $headers
     Write-Host "Found existing release: $($release.html_url)"
 }
 

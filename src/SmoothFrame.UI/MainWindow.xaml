@@ -727,16 +727,21 @@
                                                 </Button>
                                             </Grid>
 
-                                            <!-- 3 Diagnostics Status Bento Tiles -->
+                                            <!-- 6 Diagnostics Status Bento Tiles (3x2 Grid) -->
                                             <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
 
+                                                <!-- ROW 0: OS & Platform Security -->
                                                 <!-- Tile 1: VBS / Memory Integrity -->
-                                                <Border Grid.Column="0" Style="{StaticResource CardInset}" Padding="14,12" Margin="0,0,6,0">
+                                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource CardInset}" Padding="14,12" Margin="0,0,6,10">
                                                     <Grid>
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="Auto"/>
@@ -795,7 +800,7 @@
                                                 </Border>
 
                                                 <!-- Tile 2: HAGS (Hardware Accelerated GPU Scheduling) -->
-                                                <Border Grid.Column="1" Style="{StaticResource CardInset}" Padding="14,12" Margin="3,0,3,0">
+                                                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource CardInset}" Padding="14,12" Margin="3,0,3,10">
                                                     <Grid>
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="Auto"/>
@@ -875,7 +880,7 @@
                                                 </Border>
 
                                                 <!-- Tile 3: Windows Game Mode -->
-                                                <Border Grid.Column="2" Style="{StaticResource CardInset}" Padding="14,12" Margin="6,0,0,0">
+                                                <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource CardInset}" Padding="14,12" Margin="6,0,0,10">
                                                     <Grid>
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="Auto"/>
@@ -888,7 +893,7 @@
                                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                                                                 <controls:AppIcon Data="{StaticResource Icon.Game}" Size="14" Foreground="#10B981" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                                                 <TextBlock Text="{DynamicResource Diag.GameMode.Title}" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center"/>
-                            </StackPanel>
+                                                            </StackPanel>
                                                             <!-- Status Badge -->
                                                             <Border HorizontalAlignment="Right" CornerRadius="4" Padding="6,2">
                                                                 <Border.Style>
@@ -944,6 +949,236 @@
                                                                             <Style.Triggers>
                                                                                 <DataTrigger Binding="{Binding IsGameModeActive}" Value="True">
                                                                                     <Setter Property="Text" Value="Windows Game Priority Engaged"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Grid>
+                                                </Border>
+
+                                                <!-- ROW 1: Hardware & Gaming Health Diagnostics (v2.3.0) -->
+                                                <!-- Tile 4: Display Refresh Rate -->
+                                                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource CardInset}" Padding="14,12" Margin="0,0,6,0">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                        </Grid.RowDefinitions>
+
+                                                        <!-- Header: Icon + Title + Status Badge -->
+                                                        <Grid Grid.Row="0" Margin="0,0,0,6">
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                <controls:AppIcon Data="{StaticResource Icon.Activity}" Size="14" Foreground="#38BDF8" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                                <TextBlock Text="{DynamicResource Diag.DisplayHz.Title}" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <!-- Status Badge -->
+                                                            <Border HorizontalAlignment="Right" CornerRadius="4" Padding="6,2">
+                                                                <Border.Style>
+                                                                    <Style TargetType="Border">
+                                                                        <Setter Property="Background" Value="#0D2E20"/>
+                                                                        <Setter Property="BorderBrush" Value="{StaticResource BrushSuccess}"/>
+                                                                        <Setter Property="BorderThickness" Value="1"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsDisplayHzResetWarning}" Value="True">
+                                                                                <Setter Property="Background" Value="#2D1117"/>
+                                                                                <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Border.Style>
+                                                                <TextBlock Text="{Binding DisplayHzStatusText}" FontSize="10" FontWeight="Bold">
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsDisplayHzResetWarning}" Value="True">
+                                                                                    <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+                                                            </Border>
+                                                        </Grid>
+
+                                                        <!-- Description with detected Hz details -->
+                                                        <TextBlock Grid.Row="1" FontSize="10.5" Foreground="{StaticResource BrushTextMuted}" Margin="0,0,0,10" TextTrimming="CharacterEllipsis">
+                                                            <Run Text="{DynamicResource Diag.DisplayHz.Desc}"/>
+                                                            <Run Text=" • "/>
+                                                            <Run Text="{Binding DisplayHzDetails, Mode=OneWay, FallbackValue='60 Hz'}" FontWeight="SemiBold" Foreground="{StaticResource BrushTextSecondary}"/>
+                                                        </TextBlock>
+
+                                                        <!-- 1-Click Display Settings Button -->
+                                                        <Button Grid.Row="2" Style="{StaticResource SecondaryButton}" Command="{Binding OpenDisplaySettingsCommand}"
+                                                                Padding="0,6" HorizontalAlignment="Stretch" ToolTip="ms-settings:display">
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                                <controls:AppIcon Data="{StaticResource Icon.Settings}" Size="12" Margin="0,0,6,0" Foreground="{StaticResource BrushAccentHover}"/>
+                                                                <TextBlock Text="{DynamicResource Diag.DisplayHz.Btn}" FontSize="11" FontWeight="SemiBold"/>
+                                                            </StackPanel>
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+
+                                                <!-- Tile 5: VRAM Video Memory Budget -->
+                                                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource CardInset}" Padding="14,12" Margin="3,0,3,0">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                        </Grid.RowDefinitions>
+
+                                                        <!-- Header: Icon + Title + Status Badge -->
+                                                        <Grid Grid.Row="0" Margin="0,0,0,6">
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                <controls:AppIcon Data="{StaticResource Icon.Gauge}" Size="14" Foreground="{StaticResource BrushAccentHover}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                                <TextBlock Text="{DynamicResource Diag.Vram.Title}" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <!-- Status Badge -->
+                                                            <Border HorizontalAlignment="Right" CornerRadius="4" Padding="6,2">
+                                                                <Border.Style>
+                                                                    <Style TargetType="Border">
+                                                                        <Setter Property="Background" Value="#0D2E20"/>
+                                                                        <Setter Property="BorderBrush" Value="{StaticResource BrushSuccess}"/>
+                                                                        <Setter Property="BorderThickness" Value="1"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsVramOverflowWarning}" Value="True">
+                                                                                <Setter Property="Background" Value="#2D1117"/>
+                                                                                <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Border.Style>
+                                                                <TextBlock Text="{Binding VramStatusText}" FontSize="10" FontWeight="Bold">
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsVramOverflowWarning}" Value="True">
+                                                                                    <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+                                                            </Border>
+                                                        </Grid>
+
+                                                        <!-- Description -->
+                                                        <TextBlock Grid.Row="1" Text="{DynamicResource Diag.Vram.Desc}" FontSize="10.5" Foreground="{StaticResource BrushTextMuted}" Margin="0,0,0,10" TextTrimming="CharacterEllipsis"/>
+
+                                                        <!-- Readiness Indicator Badge -->
+                                                        <Border Grid.Row="2" Background="#14111E" BorderBrush="#2A2246" BorderThickness="1" CornerRadius="6" Padding="8,6" HorizontalAlignment="Stretch">
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                                <Ellipse Width="6" Height="6" Margin="0,0,6,0" VerticalAlignment="Center">
+                                                                    <Ellipse.Style>
+                                                                        <Style TargetType="Ellipse">
+                                                                            <Setter Property="Fill" Value="{StaticResource BrushSuccess}"/>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsVramOverflowWarning}" Value="True">
+                                                                                    <Setter Property="Fill" Value="{StaticResource BrushDanger}"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Ellipse.Style>
+                                                                </Ellipse>
+                                                                <TextBlock FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource BrushTextSecondary}">
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Setter Property="Text" Value="DXGI VRAM Budget"/>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsVramOverflowWarning}" Value="False">
+                                                                                    <Setter Property="Text" Value="{Binding VramUsageDetails, FallbackValue='DXGI Video Memory In Budget'}"/>
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding IsVramOverflowWarning}" Value="True">
+                                                                                    <Setter Property="Text" Value="{Binding VramUsageDetails, FallbackValue='VRAM Overcommit Warning'}"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Grid>
+                                                </Border>
+
+                                                <!-- Tile 6: CPU Thermal & Power Throttling -->
+                                                <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource CardInset}" Padding="14,12" Margin="6,0,0,0">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="Auto"/>
+                                                        </Grid.RowDefinitions>
+
+                                                        <!-- Header: Icon + Title + Status Badge -->
+                                                        <Grid Grid.Row="0" Margin="0,0,0,6">
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                <controls:AppIcon Data="{StaticResource Icon.Bolt}" Size="14" Foreground="#F59E0B" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                                <TextBlock Text="{DynamicResource Diag.CpuThrottle.Title}" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                            <!-- Status Badge -->
+                                                            <Border HorizontalAlignment="Right" CornerRadius="4" Padding="6,2">
+                                                                <Border.Style>
+                                                                    <Style TargetType="Border">
+                                                                        <Setter Property="Background" Value="#0D2E20"/>
+                                                                        <Setter Property="BorderBrush" Value="{StaticResource BrushSuccess}"/>
+                                                                        <Setter Property="BorderThickness" Value="1"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsCpuThrottlingWarning}" Value="True">
+                                                                                <Setter Property="Background" Value="#2D1117"/>
+                                                                                <Setter Property="BorderBrush" Value="{StaticResource BrushDanger}"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Border.Style>
+                                                                <TextBlock Text="{Binding CpuThrottleStatusText}" FontSize="10" FontWeight="Bold">
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Setter Property="Foreground" Value="{StaticResource BrushSuccess}"/>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsCpuThrottlingWarning}" Value="True">
+                                                                                    <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+                                                            </Border>
+                                                        </Grid>
+
+                                                        <!-- Description -->
+                                                        <TextBlock Grid.Row="1" Text="{DynamicResource Diag.CpuThrottle.Desc}" FontSize="10.5" Foreground="{StaticResource BrushTextMuted}" Margin="0,0,0,10" TextTrimming="CharacterEllipsis"/>
+
+                                                        <!-- Readiness Indicator Badge -->
+                                                        <Border Grid.Row="2" Background="#14111E" BorderBrush="#2A2246" BorderThickness="1" CornerRadius="6" Padding="8,6" HorizontalAlignment="Stretch">
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                                <Ellipse Width="6" Height="6" Margin="0,0,6,0" VerticalAlignment="Center">
+                                                                    <Ellipse.Style>
+                                                                        <Style TargetType="Ellipse">
+                                                                            <Setter Property="Fill" Value="{StaticResource BrushSuccess}"/>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsCpuThrottlingWarning}" Value="True">
+                                                                                    <Setter Property="Fill" Value="{StaticResource BrushDanger}"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Ellipse.Style>
+                                                                </Ellipse>
+                                                                <TextBlock FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource BrushTextSecondary}">
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Setter Property="Text" Value="NtPower Core Frequencies"/>
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsCpuThrottlingWarning}" Value="False">
+                                                                                    <Setter Property="Text" Value="{Binding CpuThrottleDetails, FallbackValue='Full Performance (100%)'}"/>
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding IsCpuThrottlingWarning}" Value="True">
+                                                                                    <Setter Property="Text" Value="{Binding CpuThrottleDetails, FallbackValue='Throttling Detected'}"/>
                                                                                 </DataTrigger>
                                                                             </Style.Triggers>
                                                                         </Style>

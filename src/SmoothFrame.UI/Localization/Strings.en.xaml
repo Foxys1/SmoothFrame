@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Settings</sys:String>
     <sys:String x:Key="Nav.Protect">Protection</sys:String>
     <sys:String x:Key="Side.Language">Interface language</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.2.0 — safe game-process optimizer</sys:String>
+    <sys:String x:Key="Footer.Left">SmoothFrame v2.3.0 — safe game-process optimizer</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMIZATION ACTIVE • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SYSTEM READY • STANDBY FOR GAME</sys:String>
@@ -103,7 +103,7 @@
     <sys:String x:Key="Dialog.Close.Cancel">Cancel</sys:String>
     <sys:String x:Key="Set.Lang.Title">Interface language</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Instant language switching across the entire application (English / Russian).</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.2.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.3.0 Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Safe Win32 API mode • 0% memory injection • Safe for all anti-cheats</sys:String>
     <sys:String x:Key="Set.Engine.Badge">ACTIVE</sys:String>
 
@@ -249,5 +249,32 @@
     <sys:String x:Key="Diag.Status.Active">Enabled</sys:String>
     <sys:String x:Key="Diag.Status.Disabled">Disabled</sys:String>
     <sys:String x:Key="Diag.Status.Unknown">Unknown</sys:String>
+
+    <!-- Game RAM Memory Priority (R1) -->
+    <sys:String x:Key="Deck.MemPrio.Title">RAM Protection</sys:String>
+    <sys:String x:Key="Deck.MemPrio.Desc">Prevent pagefile paging</sys:String>
+    <sys:String x:Key="Set.MemPrio.Title">Game RAM Priority (SetProcessInformation)</sys:String>
+    <sys:String x:Key="Set.MemPrio.Desc">Keeps game memory resident (MEMORY_PRIORITY_NORMAL) while lower-prioritizing background processes to prevent pagefile stutter.</sys:String>
+
+    <!-- Smart Window Focus & Alt+Tab (R2) -->
+    <sys:String x:Key="Deck.SmartFocus.Title">Smart Alt+Tab Focus</sys:String>
+    <sys:String x:Key="Deck.SmartFocus.Desc">Auto-relax boost on switch</sys:String>
+    <sys:String x:Key="Set.SmartFocus.Title">Smart Window Focus &amp; Smooth Alt+Tab</sys:String>
+    <sys:String x:Key="Set.SmartFocus.Desc">Tracks active foreground window via WinEventHook. Boosts game to maximum; relaxes limits when user Alt+Tabs to browser/chat.</sys:String>
+
+    <!-- Gaming Health Inspector New Diagnostics (R3) -->
+    <sys:String x:Key="Diag.DisplayHz.Title">Display Refresh Rate</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Desc">Monitor refresh rate check</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Btn">Display Settings</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Warn">60 Hz Reset Detected!</sys:String>
+    <sys:String x:Key="Diag.DisplayHz.Ok">Optimal Hz</sys:String>
+    <sys:String x:Key="Diag.Vram.Title">VRAM Overcommit</sys:String>
+    <sys:String x:Key="Diag.Vram.Desc">DXGI video memory budget</sys:String>
+    <sys:String x:Key="Diag.Vram.Ok">Normal Budget</sys:String>
+    <sys:String x:Key="Diag.Vram.Warn">VRAM Overcommit Risk</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Title">CPU Throttling</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Desc">Power/thermal frequency limit</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Ok">Full Performance</sys:String>
+    <sys:String x:Key="Diag.CpuThrottle.Warn">Throttling Detected!</sys:String>
 
 </ResourceDictionary>

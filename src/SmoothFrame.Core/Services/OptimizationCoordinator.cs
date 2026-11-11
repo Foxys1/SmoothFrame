@@ -60,6 +60,8 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
     private CancellationTokenSource? _watcherCts;
     private Task? _watcherTask;
     private SystemStateSnapshot? _currentSnapshot;
+    private WindowFocusTracker? _focusTracker;
+    private bool _isBackgroundThrottlingRelaxed;
 
     public bool IsActive { get; private set; }
     public GameInfo? CurrentOptimizedGame { get; private set; }
@@ -323,6 +325,12 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
             _watcherCts = new CancellationTokenSource();
             _watcherTask = Task.Run(() => WatchGameProcessAsync(game, opt, _watcherCts.Token));
 
+            // 5. Start smart window focus tracking (R2 Alt+Tab detection)
+            _focusTracker = new WindowFocusTracker();
+            _focusTracker.ForegroundWindowChanged += OnForegroundWindowChanged;
+            _focusTracker.Start();
+            _isBackgroundThrottlingRelaxed = false;
+
             IsActive = true;
             StateChanged?.Invoke(true);
 
@@ -397,6 +405,16 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                     _watcherCts = null;
                 }
 
+                // Stop and dispose window focus hook
+                if (_focusTracker != null)
+                {
+                    _focusTracker.ForegroundWindowChanged -= OnForegroundWindowChanged;
+                    _focusTracker.Stop();
+                    _focusTracker.Dispose();
+                    _focusTracker = null;
+                }
+                _isBackgroundThrottlingRelaxed = false;
+
                 // 1. Revert processes
                 _processTuner.RestoreProcesses();
 
@@ -461,6 +479,39 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
         await Task.CompletedTask;
     }
 
+    private void OnForegroundWindowChanged(uint foregroundProcessId, bool isGameForeground)
+    {
+        try
+        {
+            if (!IsActive) return;
+
+            int? gamePid = _currentSnapshot?.OptimizedGameProcessId;
+
+            if (isGameForeground)
+            {
+                if (_isBackgroundThrottlingRelaxed)
+                {
+                    _processTuner.RestoreBackgroundThrottling(gamePid);
+                    _isBackgroundThrottlingRelaxed = false;
+                    LogNotification?.Invoke("Возврат в игру: максимальный буст активирован.");
+                }
+            }
+            else
+            {
+                if (!_isBackgroundThrottlingRelaxed)
+                {
+                    _processTuner.RelaxBackgroundThrottling(gamePid);
+                    _isBackgroundThrottlingRelaxed = true;
+                    LogNotification?.Invoke("Alt+Tab обнаружен: фоновые ограничения временно ослаблены.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[OptimizationCoordinator] Foreground window handling error: {ex.Message}");
+        }
+    }
+
     private async Task WatchGameProcessAsync(GameInfo game, OptimizationOptions opt, CancellationToken token)
     {
         if (string.IsNullOrWhiteSpace(game?.ProcessName))
@@ -501,6 +552,11 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                             try { currentTargetProc.Dispose(); } catch { }
                             currentTargetProc = null;
 
+                            if (_focusTracker != null)
+                            {
+                                _focusTracker.TrackedGameProcessId = 0;
+                            }
+
                             if (gameOptimized)
                             {
                                 LogNotification?.Invoke($"Игра {game.Name} закрыта.");
@@ -528,6 +584,11 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                         if (targetProc != null)
                         {
                             currentTargetProc = targetProc;
+
+                            if (_focusTracker != null)
+                            {
+                                _focusTracker.TrackedGameProcessId = (uint)currentTargetProc.Id;
+                            }
 
                             ProcessState? state = null;
                             if (!gameOptimized && (opt.ElevateGamePriority || opt.ProcessQosEnabled))
@@ -655,6 +716,15 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                         _watcherCts = null;
                     }
 
+                    if (_focusTracker != null)
+                    {
+                        _focusTracker.ForegroundWindowChanged -= OnForegroundWindowChanged;
+                        _focusTracker.Stop();
+                        _focusTracker.Dispose();
+                        _focusTracker = null;
+                    }
+                    _isBackgroundThrottlingRelaxed = false;
+
                     _processTuner.RestoreProcesses();
                     if (_currentSnapshot != null)
                     {
@@ -695,6 +765,12 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
             catch { }
             _timerService.Dispose();
             _powerPlanService.Dispose();
+            try
+            {
+                _focusTracker?.Dispose();
+            }
+            catch { }
+            _focusTracker = null;
             try
             {
                 _watcherCts?.Dispose();
@@ -764,6 +840,15 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                         _watcherCts = null;
                     }
 
+                    if (_focusTracker != null)
+                    {
+                        _focusTracker.ForegroundWindowChanged -= OnForegroundWindowChanged;
+                        _focusTracker.Stop();
+                        _focusTracker.Dispose();
+                        _focusTracker = null;
+                    }
+                    _isBackgroundThrottlingRelaxed = false;
+
                     _processTuner.RestoreProcesses();
                     if (_currentSnapshot != null)
                     {
@@ -804,6 +889,12 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
             catch { }
             _timerService.Dispose();
             _powerPlanService.Dispose();
+            try
+            {
+                _focusTracker?.Dispose();
+            }
+            catch { }
+            _focusTracker = null;
             if (_watcherTask != null)
             {
                 try { _watcherTask.Wait(TimeSpan.FromSeconds(2)); } catch { }
