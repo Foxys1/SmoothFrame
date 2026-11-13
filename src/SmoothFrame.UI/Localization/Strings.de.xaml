@@ -280,4 +280,44 @@
     <sys:String x:Key="Diag.CpuThrottle.Ok">Volle Leistung</sys:String>
     <sys:String x:Key="Diag.CpuThrottle.Warn">Drosselung erkannt!</sys:String>
 
+    <!-- Appearance & Theme -->
+    <sys:String x:Key="Set.Theme.Title">Dunkles Design</sys:String>
+    <sys:String x:Key="Set.Theme.Desc">Zwischen sanftem Dunkelviolett und hellem Violett wechseln</sys:String>
+    <sys:String x:Key="Theme.Dark">Dunkel</sys:String>
+    <sys:String x:Key="Theme.Light">Hell</sys:String>
+
+    <!-- Update checker -->
+    <sys:String x:Key="Update.Badge">UPDATE VERFÜGBAR</sys:String>
+    <sys:String x:Key="Update.Title">Eine neue Version von SmoothFrame ist verfügbar!</sys:String>
+    <sys:String x:Key="Update.Current">Aktuelle Version</sys:String>
+    <sys:String x:Key="Update.New">Neue Version</sys:String>
+    <sys:String x:Key="Update.Desc">Es wird empfohlen, die App zu aktualisieren, um die neuesten Korrekturen und Funktionen zu erhalten.</sys:String>
+    <sys:String x:Key="Update.Download">Auf GitHub herunterladen</sys:String>
+    <sys:String x:Key="Update.Later">Später</sys:String>
+    <sys:String x:Key="Update.SettingsTitle">Nach Updates suchen</sys:String>
+    <sys:String x:Key="Update.SettingsDesc">Prüft automatisch auf neue SmoothFrame-Releases auf GitHub</sys:String>
+    <sys:String x:Key="Update.CheckBtn">Prüfen</sys:String>
+    <sys:String x:Key="Update.UpToDate">Sie haben die neueste Version installiert</sys:String>
+    <sys:String x:Key="Update.RemindLater">Später erinnern</sys:String>
+    <sys:String x:Key="Update.Remind1Day">In 1 Tag</sys:String>
+    <sys:String x:Key="Update.Remind3Days">In 3 Tagen</sys:String>
+    <sys:String x:Key="Update.Remind1Week">In 1 Woche</sys:String>
+    <sys:String x:Key="Update.SkipVersion">Diese Version überspringen</sys:String>
+    <sys:String x:Key="Update.PauseTitle">Updates pausieren</sys:String>
+    <sys:String x:Key="Update.PauseDesc">Prüfungen und Benachrichtigungen vorübergehend pausieren (wie in Windows, bis zu 1 Monat)</sys:String>
+    <sys:String x:Key="Update.PauseNone">Nicht pausieren</sys:String>
+    <sys:String x:Key="Update.Pause1Day">Für 1 Tag pausieren</sys:String>
+    <sys:String x:Key="Update.Pause1Week">Für 1 Woche pausieren</sys:String>
+    <sys:String x:Key="Update.Pause2Weeks">Für 2 Wochen pausieren</sys:String>
+    <sys:String x:Key="Update.Pause3Weeks">Für 3 Wochen pausieren</sys:String>
+    <sys:String x:Key="Update.Pause1Month">Für 1 Monat pausieren (max.)</sys:String>
+    <sys:String x:Key="Update.PausedUntil">Pausiert bis:</sys:String>
+    <sys:String x:Key="Update.ResumeBtn">Fortsetzen</sys:String>
+    <sys:String x:Key="Update.SkippedVersionNotice">Übersprungene Version:</sys:String>
+    <sys:String x:Key="Update.ResetSkipBtn">Zurücksetzen</sys:String>
+    <sys:String x:Key="Update.Checking">Nach Updates suchen...</sys:String>
+    <sys:String x:Key="Update.AvailableFormat">Version {0} ist verfügbar!</sys:String>
+    <sys:String x:Key="Update.FailedNetwork">Updates konnten nicht geprüft werden (Internetverbindung prüfen)</sys:String>
+    <sys:String x:Key="Update.Failed">Updates konnten nicht geprüft werden</sys:String>
+
 </ResourceDictionary>

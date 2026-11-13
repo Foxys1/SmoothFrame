@@ -65,6 +65,18 @@ public sealed class UiSettings
     [JsonPropertyName("linearMouseInput")]
     public bool LinearMouseInput { get; set; } = true;
 
+    [JsonPropertyName("isDarkTheme")]
+    public bool IsDarkTheme { get; set; } = true;
+
+    [JsonPropertyName("skippedUpdateVersion")]
+    public string? SkippedUpdateVersion { get; set; }
+
+    [JsonPropertyName("updatePausedUntilUtc")]
+    public DateTime? UpdatePausedUntilUtc { get; set; }
+
+    [JsonIgnore]
+    public bool IsUpdatePaused => UpdatePausedUntilUtc.HasValue && UpdatePausedUntilUtc.Value > DateTime.UtcNow;
+
     public static UiSettings Load()
     {
         try

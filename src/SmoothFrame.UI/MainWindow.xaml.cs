@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Shell;
+using SmoothFrame.Core.Services;
 using SmoothFrame.UI.Localization;
 using SmoothFrame.UI.Models;
 using SmoothFrame.UI.Services;
@@ -46,8 +48,16 @@ public partial class MainWindow : Window
             LocalizationManager.Initialize(_settings.Language);
         }
 
-        _viewModel = new MainViewModel();
+        _viewModel = new MainViewModel(uiSettings: _settings);
         DataContext = _viewModel;
+
+        if (Application.Current != null)
+        {
+            Application.Current.SessionEnding += (_, _) =>
+            {
+                _isExplicitExit = true;
+            };
+        }
 
         _trayManager = new SystemTrayManager(this, () => _viewModel.PurgeStandbyMemory());
         Closed += (_, _) =>
@@ -90,6 +100,20 @@ public partial class MainWindow : Window
         ShowPage(PageOpt, animate: false);
 
         ApplyWindowStateAdjustments();
+        Loaded += OnWindowLoaded;
+    }
+
+    private void GamesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (HeroTitleGroup == null || HeroTitleTranslate == null) return;
+
+        // Subtle glide & soft opacity pulse when switching the target game
+        var ease = new QuarticEase { EasingMode = EasingMode.EaseOut };
+        var slideAnim = new DoubleAnimation(8, 0, TimeSpan.FromMilliseconds(220)) { EasingFunction = ease };
+        var fadeAnim = new DoubleAnimation(0.35, 1.0, TimeSpan.FromMilliseconds(220)) { EasingFunction = ease };
+
+        HeroTitleTranslate.BeginAnimation(TranslateTransform.YProperty, slideAnim);
+        HeroTitleGroup.BeginAnimation(OpacityProperty, fadeAnim);
     }
 
     // ------------------------------------------------------------------
@@ -473,6 +497,7 @@ public partial class MainWindow : Window
         // Live preview of the chosen language on the welcome screen.
         LocalizationManager.ApplyLanguage(lang.Code);
         SelectLanguageInCombos(lang.Code);
+        InitializeUpdateSettingsUi();
 
         // Jump the welcome cycle to the chosen language and show it immediately.
         for (int i = 0; i < LocalizationManager.WelcomePhrases.Count; i++)
@@ -498,6 +523,7 @@ public partial class MainWindow : Window
         _settings.Language = lang.Code;
         _settings.Save();
         SelectLanguageInCombos(lang.Code);
+        InitializeUpdateSettingsUi();
     }
 
     private bool _onboardingSubmitting;
@@ -719,10 +745,287 @@ public partial class MainWindow : Window
 
     private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
     {
+        if (e.Key == Key.Escape && UpdateNotificationOverlay?.Visibility == Visibility.Visible)
+        {
+            UpdateNotificationOverlay.Visibility = Visibility.Collapsed;
+            e.Handled = true;
+            return;
+        }
+
         if (e.Key == Key.Escape && CloseConfirmationOverlay?.Visibility == Visibility.Visible)
         {
             HideCloseConfirmation();
             e.Handled = true;
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Update Checker & Notification
+    // ------------------------------------------------------------------
+
+    private UpdateCheckResult? _latestUpdateResult;
+    private bool _suppressUpdateComboEvents;
+
+    private void OnWindowLoaded(object sender, RoutedEventArgs e)
+    {
+        InitializeUpdateSettingsUi();
+
+        // Smoothly check for updates in background without stalling startup
+        Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(2000);
+
+                // Check if user paused updates (Windows-style pause up to 1 month)
+                if (_settings.IsUpdatePaused)
+                {
+                    return;
+                }
+
+                var result = await UpdateService.CheckForUpdatesAsync();
+                if (result != null && result.IsUpdateAvailable)
+                {
+                    // Check if this specific version was skipped by user
+                    if (!string.IsNullOrEmpty(_settings.SkippedUpdateVersion) &&
+                        string.Equals(result.LatestVersion, _settings.SkippedUpdateVersion, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return;
+                    }
+
+                    await Dispatcher.InvokeAsync(() => ShowUpdateDialog(result));
+                }
+            }
+            catch { }
+        });
+    }
+
+    public void ShowUpdateDialog(UpdateCheckResult result)
+    {
+        _latestUpdateResult = result;
+        if (UpdateNotificationOverlay == null) return;
+
+        UpdateCurVerText.Text = result.CurrentVersion;
+        UpdateNewVerText.Text = result.LatestVersion;
+        if (!string.IsNullOrWhiteSpace(result.ReleaseName))
+        {
+            UpdateDialogTitle.Text = result.ReleaseName;
+        }
+        if (!string.IsNullOrWhiteSpace(result.ReleaseNotes))
+        {
+            UpdateReleaseNotesText.Text = result.ReleaseNotes;
+        }
+
+        PopulateRemindCombo();
+
+        UpdateNotificationOverlay.Visibility = Visibility.Visible;
+        var ease = new QuarticEase { EasingMode = EasingMode.EaseOut };
+        UpdateModalScale.BeginAnimation(ScaleTransform.ScaleXProperty,
+            new DoubleAnimation(0.94, 1.0, TimeSpan.FromMilliseconds(220)) { EasingFunction = ease });
+        UpdateModalScale.BeginAnimation(ScaleTransform.ScaleYProperty,
+            new DoubleAnimation(0.94, 1.0, TimeSpan.FromMilliseconds(220)) { EasingFunction = ease });
+    }
+
+    private void PopulateRemindCombo()
+    {
+        if (UpdateRemindCombo == null) return;
+        _suppressUpdateComboEvents = true;
+        UpdateRemindCombo.Items.Clear();
+        UpdateRemindCombo.Items.Add(new ComboBoxItem { Content = "⏰ " + (TryFindResource("Update.RemindLater") as string ?? "Напомнить позже"), Tag = 0 });
+        UpdateRemindCombo.Items.Add(new ComboBoxItem { Content = TryFindResource("Update.Remind1Day") as string ?? "Через 1 день", Tag = 1 });
+        UpdateRemindCombo.Items.Add(new ComboBoxItem { Content = TryFindResource("Update.Remind3Days") as string ?? "Через 3 дня", Tag = 3 });
+        UpdateRemindCombo.Items.Add(new ComboBoxItem { Content = TryFindResource("Update.Remind1Week") as string ?? "Через 1 неделю", Tag = 7 });
+        UpdateRemindCombo.Items.Add(new ComboBoxItem { Content = TryFindResource("Update.Pause1Month") as string ?? "Через 1 месяц (макс.)", Tag = 30 });
+        UpdateRemindCombo.SelectedIndex = 0;
+        _suppressUpdateComboEvents = false;
+    }
+
+    private void UpdateRemindCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressUpdateComboEvents) return;
+        if (UpdateRemindCombo?.SelectedItem is ComboBoxItem item && item.Tag is int days && days > 0)
+        {
+            var until = DateTime.UtcNow.AddDays(days);
+            _settings.UpdatePausedUntilUtc = until;
+            _settings.Save();
+            UpdatePauseUiState();
+            UpdateNotificationOverlay.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void UpdateDialogSkip_Click(object sender, RoutedEventArgs e)
+    {
+        if (_latestUpdateResult != null && !string.IsNullOrEmpty(_latestUpdateResult.LatestVersion))
+        {
+            _settings.SkippedUpdateVersion = _latestUpdateResult.LatestVersion;
+            _settings.Save();
+            UpdateSkippedVersionUiState();
+        }
+        UpdateNotificationOverlay.Visibility = Visibility.Collapsed;
+    }
+
+    private void InitializeUpdateSettingsUi()
+    {
+        if (PauseUpdatesCombo == null) return;
+
+        _suppressUpdateComboEvents = true;
+        PauseUpdatesCombo.Items.Clear();
+        PauseUpdatesCombo.Items.Add(new ComboBoxItem { Content = TryFindResource("Update.PauseNone") as string ?? "Не приостанавливать", Tag = 0 });
+        PauseUpdatesCombo.Items.Add(new ComboBoxItem { Content = TryFindResource("Update.Pause1Day") as string ?? "Приостановить на 1 день", Tag = 1 });
+        PauseUpdatesCombo.Items.Add(new ComboBoxItem { Content = TryFindResource("Update.Pause1Week") as string ?? "Приостановить на 1 неделю", Tag = 7 });
+        PauseUpdatesCombo.Items.Add(new ComboBoxItem { Content = TryFindResource("Update.Pause2Weeks") as string ?? "Приостановить на 2 недели", Tag = 14 });
+        PauseUpdatesCombo.Items.Add(new ComboBoxItem { Content = TryFindResource("Update.Pause3Weeks") as string ?? "Приостановить на 3 недели", Tag = 21 });
+        PauseUpdatesCombo.Items.Add(new ComboBoxItem { Content = TryFindResource("Update.Pause1Month") as string ?? "Приостановить на 1 месяц (макс.)", Tag = 30 });
+
+        UpdatePauseUiState();
+        UpdateSkippedVersionUiState();
+
+        _suppressUpdateComboEvents = false;
+    }
+
+    private void UpdatePauseUiState()
+    {
+        if (PauseStatusBadge == null || ResumeUpdatesBtn == null || PauseUpdatesCombo == null) return;
+
+        if (_settings.IsUpdatePaused && _settings.UpdatePausedUntilUtc.HasValue)
+        {
+            var untilLocal = _settings.UpdatePausedUntilUtc.Value.ToLocalTime();
+            var pausedLabel = TryFindResource("Update.PausedUntil") as string ?? "Приостановлено до:";
+            PauseStatusBadgeText.Text = $"{pausedLabel} {untilLocal:dd.MM.yyyy}";
+            PauseStatusBadge.Visibility = Visibility.Visible;
+            ResumeUpdatesBtn.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            PauseStatusBadge.Visibility = Visibility.Collapsed;
+            ResumeUpdatesBtn.Visibility = Visibility.Collapsed;
+            if (PauseUpdatesCombo.Items.Count > 0)
+            {
+                PauseUpdatesCombo.SelectedIndex = 0;
+            }
+        }
+    }
+
+    private void UpdateSkippedVersionUiState()
+    {
+        if (SkippedVersionPanel == null || SkippedVersionLabel == null) return;
+
+        if (!string.IsNullOrEmpty(_settings.SkippedUpdateVersion))
+        {
+            SkippedVersionLabel.Text = _settings.SkippedUpdateVersion;
+            SkippedVersionPanel.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            SkippedVersionPanel.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void PauseUpdatesCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressUpdateComboEvents) return;
+        if (PauseUpdatesCombo?.SelectedItem is ComboBoxItem item && item.Tag is int days)
+        {
+            if (days <= 0)
+            {
+                _settings.UpdatePausedUntilUtc = null;
+            }
+            else
+            {
+                // Max 35 days limit (1 month)
+                int safeDays = Math.Min(days, 35);
+                _settings.UpdatePausedUntilUtc = DateTime.UtcNow.AddDays(safeDays);
+            }
+            _settings.Save();
+            UpdatePauseUiState();
+        }
+    }
+
+    private void ResumeUpdatesBtn_Click(object sender, RoutedEventArgs e)
+    {
+        _suppressUpdateComboEvents = true;
+        _settings.UpdatePausedUntilUtc = null;
+        _settings.Save();
+        if (PauseUpdatesCombo != null && PauseUpdatesCombo.Items.Count > 0)
+        {
+            PauseUpdatesCombo.SelectedIndex = 0;
+        }
+        UpdatePauseUiState();
+        _suppressUpdateComboEvents = false;
+    }
+
+    private void ResetSkippedVersion_Click(object sender, RoutedEventArgs e)
+    {
+        _settings.SkippedUpdateVersion = null;
+        _settings.Save();
+        UpdateSkippedVersionUiState();
+    }
+
+    private void UpdateDialogDownload_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var url = _latestUpdateResult?.HtmlUrl ?? "https://github.com/Foxys1/SmoothFrame/releases/latest";
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        }
+        catch { }
+        UpdateNotificationOverlay.Visibility = Visibility.Collapsed;
+    }
+
+    private void UpdateDialogDismiss_Click(object sender, RoutedEventArgs e)
+    {
+        UpdateNotificationOverlay.Visibility = Visibility.Collapsed;
+    }
+
+    private async void CheckUpdatesButton_Click(object sender, RoutedEventArgs e)
+    {
+        var btn = sender as Button;
+        if (btn != null) btn.IsEnabled = false;
+
+        if (SettingsUpdateStatusText != null)
+        {
+            SettingsUpdateStatusText.Text = TryFindResource("Update.Checking") as string ?? "Проверка обновлений...";
+        }
+
+        try
+        {
+            var result = await UpdateService.CheckForUpdatesAsync();
+            if (result != null && result.IsUpdateAvailable)
+            {
+                if (SettingsUpdateStatusText != null)
+                {
+                    var fmt = TryFindResource("Update.AvailableFormat") as string ?? "Доступна версия {0}!";
+                    SettingsUpdateStatusText.Text = string.Format(fmt, result.LatestVersion);
+                }
+                ShowUpdateDialog(result);
+            }
+            else if (!string.IsNullOrEmpty(result?.ErrorMessage))
+            {
+                if (SettingsUpdateStatusText != null)
+                {
+                    SettingsUpdateStatusText.Text = TryFindResource("Update.FailedNetwork") as string
+                        ?? "Не удалось проверить обновления (проверьте интернет)";
+                }
+            }
+            else
+            {
+                if (SettingsUpdateStatusText != null)
+                {
+                    var upToDate = TryFindResource("Update.UpToDate") as string ?? "У вас установлена актуальная версия";
+                    SettingsUpdateStatusText.Text = $"{upToDate} ({result?.CurrentVersion ?? "v3.0.0"})";
+                }
+            }
+        }
+        catch
+        {
+            if (SettingsUpdateStatusText != null)
+            {
+                SettingsUpdateStatusText.Text = TryFindResource("Update.Failed") as string ?? "Не удалось проверить обновления";
+            }
+        }
+        finally
+        {
+            if (btn != null) btn.IsEnabled = true;
         }
     }
 
@@ -805,7 +1108,7 @@ public partial class MainWindow : Window
             RootBorder.CornerRadius = new CornerRadius(16);
             RootBorder.BorderThickness = new Thickness(1.5);
             RootBorder.Margin = new Thickness(0);
-            RootBorder.Effect = (Effect)FindResource("WindowDropShadow");
+            RootBorder.Effect = null;
             TitleBarBorder.CornerRadius = new CornerRadius(15, 15, 0, 0);
             FooterBorder.CornerRadius = new CornerRadius(0, 0, 15, 15);
 
@@ -814,6 +1117,8 @@ public partial class MainWindow : Window
         }
     }
 
+    private const int WM_QUERYENDSESSION = 0x0011;
+    private const int WM_ENDSESSION = 0x0016;
     private const int WM_GETMINMAXINFO = 0x0024;
     private const int WM_WINDOWPOSCHANGED = 0x0047;
     private const int WM_DPICHANGED = 0x02E0;
@@ -869,7 +1174,12 @@ public partial class MainWindow : Window
 
     private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        if (msg == WM_GETMINMAXINFO)
+        if (msg == WM_QUERYENDSESSION || msg == WM_ENDSESSION)
+        {
+            _isExplicitExit = true;
+            handled = false;
+        }
+        else if (msg == WM_GETMINMAXINFO)
         {
             WmGetMinMaxInfo(hwnd, lParam);
             handled = true;

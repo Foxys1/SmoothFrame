@@ -277,4 +277,44 @@
     <sys:String x:Key="Diag.CpuThrottle.Ok">Номинальная частота</sys:String>
     <sys:String x:Key="Diag.CpuThrottle.Warn">Обнаружен троттлинг!</sys:String>
 
+    <!-- Appearance & Theme -->
+    <sys:String x:Key="Set.Theme.Title">Тёмная тема</sys:String>
+    <sys:String x:Key="Set.Theme.Desc">Переключение между мягкой тёмно-фиолетовой и светлой темой интерфейса</sys:String>
+    <sys:String x:Key="Theme.Dark">Тёмная</sys:String>
+    <sys:String x:Key="Theme.Light">Светлая</sys:String>
+
+    <!-- Update checker -->
+    <sys:String x:Key="Update.Badge">ДОСТУПНО ОБНОВЛЕНИЕ</sys:String>
+    <sys:String x:Key="Update.Title">Вышла новая версия SmoothFrame!</sys:String>
+    <sys:String x:Key="Update.Current">Текущая версия</sys:String>
+    <sys:String x:Key="Update.New">Новая версия</sys:String>
+    <sys:String x:Key="Update.Desc">Рекомендуется обновить приложение для получения последних исправлений, оптимизаций и новых функций.</sys:String>
+    <sys:String x:Key="Update.Download">Скачать на GitHub</sys:String>
+    <sys:String x:Key="Update.Later">Позже</sys:String>
+    <sys:String x:Key="Update.SettingsTitle">Проверка обновлений</sys:String>
+    <sys:String x:Key="Update.SettingsDesc">Автоматическая проверка новых релизов SmoothFrame на GitHub</sys:String>
+    <sys:String x:Key="Update.CheckBtn">Проверить</sys:String>
+    <sys:String x:Key="Update.UpToDate">У вас установлена актуальная версия</sys:String>
+    <sys:String x:Key="Update.RemindLater">Напомнить позже</sys:String>
+    <sys:String x:Key="Update.Remind1Day">Через 1 день</sys:String>
+    <sys:String x:Key="Update.Remind3Days">Через 3 дня</sys:String>
+    <sys:String x:Key="Update.Remind1Week">Через 1 неделю</sys:String>
+    <sys:String x:Key="Update.SkipVersion">Пропустить эту версию</sys:String>
+    <sys:String x:Key="Update.PauseTitle">Приостановка обновлений</sys:String>
+    <sys:String x:Key="Update.PauseDesc">Временная блокировка уведомлений и проверок (как в Windows, до 1 месяца)</sys:String>
+    <sys:String x:Key="Update.PauseNone">Не приостанавливать</sys:String>
+    <sys:String x:Key="Update.Pause1Day">Приостановить на 1 день</sys:String>
+    <sys:String x:Key="Update.Pause1Week">Приостановить на 1 неделю</sys:String>
+    <sys:String x:Key="Update.Pause2Weeks">Приостановить на 2 недели</sys:String>
+    <sys:String x:Key="Update.Pause3Weeks">Приостановить на 3 недели</sys:String>
+    <sys:String x:Key="Update.Pause1Month">Приостановить на 1 месяц (макс.)</sys:String>
+    <sys:String x:Key="Update.PausedUntil">Приостановлено до:</sys:String>
+    <sys:String x:Key="Update.ResumeBtn">Возобновить</sys:String>
+    <sys:String x:Key="Update.SkippedVersionNotice">Пропущена версия:</sys:String>
+    <sys:String x:Key="Update.ResetSkipBtn">Сбросить</sys:String>
+    <sys:String x:Key="Update.Checking">Проверка обновлений...</sys:String>
+    <sys:String x:Key="Update.AvailableFormat">Доступна версия {0}!</sys:String>
+    <sys:String x:Key="Update.FailedNetwork">Не удалось проверить обновления (проверьте интернет)</sys:String>
+    <sys:String x:Key="Update.Failed">Не удалось проверить обновления</sys:String>
+
 </ResourceDictionary>

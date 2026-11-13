@@ -50,6 +50,7 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
     private bool _processQosEnabled = true;
     private bool _windowedGameOptimization = true;
     private bool _linearMouseInput = true;
+    private bool _isDarkTheme = true;
     private bool _isVbsActive;
     private string _vbsStatusText = string.Empty;
     private bool _isHagsActive;
@@ -442,6 +443,22 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         }
     }
 
+    public bool IsDarkTheme
+    {
+        get => _isDarkTheme;
+        set
+        {
+            if (_isDarkTheme != value)
+            {
+                _isDarkTheme = value;
+                OnPropertyChanged();
+                _uiSettings.IsDarkTheme = value;
+                _uiSettings.Save();
+                App.ApplyTheme(value);
+            }
+        }
+    }
+
     public bool IsVbsActive
     {
         get => _isVbsActive;
@@ -605,15 +622,18 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
     public ICommand InstallSmoothFrameModCommand { get; }
     public ICommand UninstallSmoothFrameModCommand { get; }
 
+    public UiSettings Settings => _uiSettings;
+
     public MainViewModel(
         OptimizationCoordinator? coordinator = null,
         GameDiscoveryService? discoveryService = null,
-        StartupService? startupService = null)
+        StartupService? startupService = null,
+        UiSettings? uiSettings = null)
     {
         _coordinator = coordinator ?? new OptimizationCoordinator();
         _discoveryService = discoveryService ?? new GameDiscoveryService();
         _startupService = startupService ?? new StartupService();
-        _uiSettings = UiSettings.Load();
+        _uiSettings = uiSettings ?? UiSettings.Load();
 
         _highPrecisionTimer = _uiSettings.HighPrecisionTimer;
         _highPerformancePlan = _uiSettings.HighPerformancePlan;
@@ -629,6 +649,7 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         _processQosEnabled = _uiSettings.ProcessQosEnabled;
         _windowedGameOptimization = _uiSettings.WindowedGameOptimization;
         _linearMouseInput = _uiSettings.LinearMouseInput;
+        _isDarkTheme = _uiSettings.IsDarkTheme;
 
         // Check autostart asynchronously on background thread to avoid blocking the UI thread (SF-09)
         Task.Run(() =>

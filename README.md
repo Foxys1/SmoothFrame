@@ -3,11 +3,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011%20(x64)-informational.svg)]()
 [![.NET](https://img.shields.io/badge/.NET-8.0%20WPF-purple.svg)]()
-[![Release](https://img.shields.io/badge/Release-v2.3.0-8B5CF6.svg)](https://github.com/Foxys1/SmoothFrame/releases/tag/v2.3.0)
+[![Release](https://img.shields.io/badge/Release-v3.0.0-8B5CF6.svg)](https://github.com/Foxys1/SmoothFrame/releases/tag/v3.0.0)
 
 🌐 **English** | **[Русский](README_RU.md)**
 
 > **SmoothFrame** is a modern, lightweight, transparent, and 100% reversible game optimization suite for Windows 10 and 11.
+> *Version 3.0 brings a complete UI overhaul: sleek dark neon aesthetic that's easy on the eyes and eliminates eye strain!*
 
 Engineered to eliminate micro-stutters, stabilize frame pacing (1% Low FPS), reduce input latency, and optimize Java game heaps (Minecraft NeoForge 1.21.1) without dangerous system tweaks or permanent registry pollution.
 
@@ -15,8 +16,8 @@ Engineered to eliminate micro-stutters, stabilize frame pacing (1% Low FPS), red
 
 ## 🚀 Key Features
 
-### 🖥️ Obsidian & Laser Monolith Minimalist UI (v2.3)
-* **Cyber Aesthetic:** Modern deep-obsidian palette (`#08080C`) paired with electric neon-violet accents (`#8B5CF6`).
+### 🖥️ Obsidian & Laser Monolith Minimalist UI (v3.0)
+* **Eye-Care Visual Comfort & Cyber Aesthetic:** Fully refreshed user interface — deep-obsidian palette (`#08080C`) paired with soft electric neon-violet accents (`#8B5CF6`) that look stunning and eliminate eye strain during late-night gaming.
 * **Bento Grid 3x2 Layout & Quick Control Deck:** Modular telemetry and toggle cards for real-time timer status, active power plans, process priority, P-core isolation, background task silencing, Standby RAM cache purge, Power Throttling QoS, Windowed Flip Model, 1:1 Mouse Input, and Gaming Health (expanded 3x2 grid with monitor refresh rate drop alerts, DXGI VRAM budget inspection, and CPU throttling detection).
 * **Subpixel ClearType Preservation:** Decoupled drop-shadow layer architecture isolating effect transforms from visual text tree, preventing WPF text blurs and maintaining razor-sharp ClearType readability.
 * **Interactive Close Dialog:** Smart exit prompt allowing instant selection between minimizing to the System Tray (retaining active gameplay optimizations) or completely exiting (triggering full, safe WAL state restoration).
@@ -36,7 +37,7 @@ Engineered to eliminate micro-stutters, stabilize frame pacing (1% Low FPS), red
 * **Universal Launcher Auto-Detection:** Automatically discovers profiles and mods directories for CurseForge, Prism Launcher, Modrinth, Modded Launchers, and the standard Minecraft Launcher.
 * **Hardware GPU Binding & RAM Purge:** Enforces high-performance discrete GPU binding (NVIDIA/AMD) for `javaw.exe` via Windows Settings registry and provides instantaneous Standby List memory clearing.
 
-### ⚡ System-Level Kernel & OS Optimizations (v2.3)
+### ⚡ System-Level Kernel & OS Optimizations (v3.0)
 * **Process Memory Priority Protection (RAM Protection):** Enforces `MEMORY_PRIORITY_NORMAL (5)` for the active game process via native `SetProcessInformation(ProcessMemoryPriority)` to prevent Windows Memory Manager from paging the game working set into the disk pagefile (swap), while setting `MEMORY_PRIORITY_VERY_LOW (1)` for background applications. Fully reversible with guaranteed rollback to default priority upon game exit.
 * **Smart Window Focus & Smooth Alt+Tab:** Tracks foreground window transitions via unmanaged `SetWinEventHook(EVENT_SYSTEM_FOREGROUND)` in a dedicated STA message pump with zero DLL injection. Unleashes maximum boost when inside the game, automatically relaxes background limitations when the user switches to browser or messenger, and instantly re-applies full boost upon returning to the game.
 * **Gaming Health Inspector (100% Read-Only):** Real-time non-invasive hardware inspection: displays current and maximum monitor refresh rate with automatic warning on 60 Hz drops and a 1-click shortcut to `ms-settings:display`; tracks dedicated GPU VRAM budget and current usage via DXGI (`IDXGIAdapter3`) to alert on overflow risk with zero COM leaks; and inspects per-core CPU thermal and power limits via `CallNtPowerInformation` to detect hardware throttling.

@@ -280,4 +280,44 @@
     <sys:String x:Key="Diag.CpuThrottle.Ok">频率正常</sys:String>
     <sys:String x:Key="Diag.CpuThrottle.Warn">触发降频！</sys:String>
 
+    <!-- Appearance & Theme -->
+    <sys:String x:Key="Set.Theme.Title">深色主题</sys:String>
+    <sys:String x:Key="Set.Theme.Desc">在柔和深紫暗色与浅紫亮色界面之间切换</sys:String>
+    <sys:String x:Key="Theme.Dark">深色</sys:String>
+    <sys:String x:Key="Theme.Light">浅色</sys:String>
+
+    <!-- Update checker -->
+    <sys:String x:Key="Update.Badge">有可用更新</sys:String>
+    <sys:String x:Key="Update.Title">SmoothFrame 有新版本可用！</sys:String>
+    <sys:String x:Key="Update.Current">当前版本</sys:String>
+    <sys:String x:Key="Update.New">新版本</sys:String>
+    <sys:String x:Key="Update.Desc">建议更新应用程序以获得最新修复、优化和功能。</sys:String>
+    <sys:String x:Key="Update.Download">在 GitHub 下载</sys:String>
+    <sys:String x:Key="Update.Later">稍后</sys:String>
+    <sys:String x:Key="Update.SettingsTitle">检查更新</sys:String>
+    <sys:String x:Key="Update.SettingsDesc">自动在 GitHub 上检查 SmoothFrame 的新版本</sys:String>
+    <sys:String x:Key="Update.CheckBtn">检查</sys:String>
+    <sys:String x:Key="Update.UpToDate">您已安装最新版本</sys:String>
+    <sys:String x:Key="Update.RemindLater">稍后提醒</sys:String>
+    <sys:String x:Key="Update.Remind1Day">1天后</sys:String>
+    <sys:String x:Key="Update.Remind3Days">3天后</sys:String>
+    <sys:String x:Key="Update.Remind1Week">1周后</sys:String>
+    <sys:String x:Key="Update.SkipVersion">跳过此版本</sys:String>
+    <sys:String x:Key="Update.PauseTitle">暂停更新</sys:String>
+    <sys:String x:Key="Update.PauseDesc">暂停检查与通知（类似 Windows，最长1个月）</sys:String>
+    <sys:String x:Key="Update.PauseNone">不暂停</sys:String>
+    <sys:String x:Key="Update.Pause1Day">暂停 1 天</sys:String>
+    <sys:String x:Key="Update.Pause1Week">暂停 1 周</sys:String>
+    <sys:String x:Key="Update.Pause2Weeks">暂停 2 周</sys:String>
+    <sys:String x:Key="Update.Pause3Weeks">暂停 3 周</sys:String>
+    <sys:String x:Key="Update.Pause1Month">暂停 1 个月（最长）</sys:String>
+    <sys:String x:Key="Update.PausedUntil">已暂停至：</sys:String>
+    <sys:String x:Key="Update.ResumeBtn">恢复</sys:String>
+    <sys:String x:Key="Update.SkippedVersionNotice">已跳过版本：</sys:String>
+    <sys:String x:Key="Update.ResetSkipBtn">重置</sys:String>
+    <sys:String x:Key="Update.Checking">正在检查更新...</sys:String>
+    <sys:String x:Key="Update.AvailableFormat">版本 {0} 可用！</sys:String>
+    <sys:String x:Key="Update.FailedNetwork">检查更新失败（请检查网络连接）</sys:String>
+    <sys:String x:Key="Update.Failed">检查更新失败</sys:String>
+
 </ResourceDictionary>

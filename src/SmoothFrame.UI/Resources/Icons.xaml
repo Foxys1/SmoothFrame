@@ -30,6 +30,7 @@
     <Geometry x:Key="Icon.Max">M7.3 7.3h9.4v9.4H7.3Z</Geometry>
     <Geometry x:Key="Icon.Close">M6.4 6.4l11.2 11.2M17.6 6.4 6.4 17.6</Geometry>
     <Geometry x:Key="Icon.Check">M5.4 12.6l4.3 4.3L18.6 8</Geometry>
+    <Geometry x:Key="Icon.Download">M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M7 10l5 5 5-5 M12 15V3</Geometry>
 
     <!-- Additional System & Hardware Icons -->
     <Geometry x:Key="Icon.Trash">M3 6h18 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2</Geometry>
