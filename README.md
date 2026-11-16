@@ -3,12 +3,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011%20(x64)-informational.svg)]()
 [![.NET](https://img.shields.io/badge/.NET-8.0%20WPF-purple.svg)]()
-[![Release](https://img.shields.io/badge/Release-v3.0.0-8B5CF6.svg)](https://github.com/Foxys1/SmoothFrame/releases/tag/v3.0.0)
+[![Release](https://img.shields.io/badge/Release-v3.1.0-8B5CF6.svg)](https://github.com/Foxys1/SmoothFrame/releases/tag/v3.1.0)
 
 🌐 **English** | **[Русский](README_RU.md)**
 
 > **SmoothFrame** is a modern, lightweight, transparent, and 100% reversible game optimization suite for Windows 10 and 11.
-> *Version 3.0 brings a complete UI overhaul: sleek dark neon aesthetic that's easy on the eyes and eliminates eye strain!*
+> *Version 3.1 introduces native Roblox auto-discovery with dynamic path self-healing, alongside our sleek eye-care Obsidian & Violet UI!*
 
 Engineered to eliminate micro-stutters, stabilize frame pacing (1% Low FPS), reduce input latency, and optimize Java game heaps (Minecraft NeoForge 1.21.1) without dangerous system tweaks or permanent registry pollution.
 
@@ -25,6 +25,12 @@ Engineered to eliminate micro-stutters, stabilize frame pacing (1% Low FPS), red
 * **Staged First-Launch Onboarding:** Orchestrated entrance animations, language indicator badges, and a calibrated 1-second pause before smooth multi-language greeting cycling.
 * **Laser Precision Monolith Installer:** Setup wizard featuring interactive micro-scale button physics and physical metric verification chips (`NT_TIMER: 0.50 ms`, `UDP_HUD: 127.0.0.1`, `SAFETY: 100% REVERSIBLE`).
 * **Robust Internationalization (i18n):** Complete key coverage across English, Russian, German, Spanish, French, and Chinese, with automated English fallback protection.
+
+### 🕹️ Native Roblox Integration & Dynamic Self-Healing (v3.1)
+* **Comprehensive Auto-Discovery:** Discovers Roblox client installations across all distribution vectors: per-user `%LOCALAPPDATA%\Roblox\Versions`, machine-wide `Program Files`, `roblox-player://` protocol handler registration, Windows uninstall keys, and Microsoft Store (UWP `ROBLOXCORPORATION.ROBLOX` / `Windows10Universal.exe`).
+* **Dynamic Path Self-Healing:** Seamlessly tracks Roblox version updates across newly generated hash folders (`version-xxxxxxxxxxxx`) by synchronizing paths directly from the active process without requiring game re-discovery or app restarts.
+* **Active Process Detection:** Instantly detects unlisted running `RobloxPlayerBeta.exe` processes on launch, extracts hi-res application icons, registers the session, and triggers auto-boost seamlessly.
+* **Discrete GPU Enforcement:** Automatically binds Roblox binaries to High Performance Discrete GPU mode within Windows Graphics Preferences.
 
 ### 🎮 Dedicated Minecraft Optimization Suite (NeoForge 1.21.1)
 * **Real-Time UDP Loopback Telemetry HUD:** High-frequency (4 Hz) loopback connection (`127.0.0.1:28511`) directly streaming in-game FPS, 1% Low FPS, frametime, and JVM memory heap usage into the desktop app.

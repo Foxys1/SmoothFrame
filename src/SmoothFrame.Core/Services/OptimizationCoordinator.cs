@@ -527,11 +527,30 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
         var registeredGpuPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         Process? currentTargetProc = null;
 
+        bool isMinecraft = procName.Equals("minecraft", StringComparison.OrdinalIgnoreCase) ||
+                           procName.Equals("javaw", StringComparison.OrdinalIgnoreCase) ||
+                           (!string.IsNullOrEmpty(game.Name) && game.Name.Contains("Minecraft", StringComparison.OrdinalIgnoreCase));
+
+        bool isRoblox = game.Source == GameSource.Roblox ||
+                        procName.Contains("roblox", StringComparison.OrdinalIgnoreCase) ||
+                        (!string.IsNullOrEmpty(game.Name) && game.Name.Contains("Roblox", StringComparison.OrdinalIgnoreCase));
+
+        var candidateNames = new List<string> { procName };
+        if (isMinecraft)
+        {
+            if (!candidateNames.Contains("javaw", StringComparer.OrdinalIgnoreCase)) candidateNames.Add("javaw");
+            if (!candidateNames.Contains("java", StringComparer.OrdinalIgnoreCase)) candidateNames.Add("java");
+        }
+        else if (isRoblox)
+        {
+            if (!candidateNames.Contains("RobloxPlayerBeta", StringComparer.OrdinalIgnoreCase)) candidateNames.Add("RobloxPlayerBeta");
+            if (!candidateNames.Contains("Windows10Universal", StringComparer.OrdinalIgnoreCase)) candidateNames.Add("Windows10Universal");
+        }
+
         try
         {
             while (!token.IsCancellationRequested)
             {
-                Process[]? processes = null;
                 try
                 {
                     // Check if existing tracked process is still alive and running
@@ -568,18 +587,45 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                     // Enumerate processes only if no valid process is currently tracked
                     if (currentTargetProc == null)
                     {
-                        processes = Process.GetProcessesByName(procName);
-                        if ((processes == null || processes.Length == 0) &&
-                            (procName.Equals("minecraft", StringComparison.OrdinalIgnoreCase) || procName.Equals("javaw", StringComparison.OrdinalIgnoreCase)))
+                        Process? targetProc = null;
+                        foreach (var name in candidateNames)
                         {
-                            processes = Process.GetProcessesByName("javaw");
-                            if (processes == null || processes.Length == 0)
+                            if (string.IsNullOrWhiteSpace(name)) continue;
+                            Process[]? procs = null;
+                            try
                             {
-                                processes = Process.GetProcessesByName("java");
+                                procs = Process.GetProcessesByName(name);
+                                foreach (var p in procs)
+                                {
+                                    bool exited = true;
+                                    try { exited = p.HasExited; } catch { exited = true; }
+                                    if (!exited && targetProc == null)
+                                    {
+                                        targetProc = p;
+                                    }
+                                    else
+                                    {
+                                        try { p.Dispose(); } catch { }
+                                    }
+                                }
                             }
-                        }
+                            catch { }
+                            finally
+                            {
+                                if (procs != null)
+                                {
+                                    foreach (var p in procs)
+                                    {
+                                        if (!ReferenceEquals(p, targetProc))
+                                        {
+                                            try { p.Dispose(); } catch { }
+                                        }
+                                    }
+                                }
+                            }
 
-                        var targetProc = processes?.FirstOrDefault(p => !p.HasExited);
+                            if (targetProc != null) break;
+                        }
 
                         if (targetProc != null)
                         {
@@ -604,11 +650,12 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                                 gameOptimized = true;
                             }
 
-                            // Dynamic DirectX High Performance GPU registration for Minecraft javaw.exe
-                            if (currentTargetProc.ProcessName.Equals("javaw", StringComparison.OrdinalIgnoreCase) ||
+                            // Dynamic DirectX High Performance GPU registration for Minecraft javaw.exe & Roblox
+                            if (isMinecraft || isRoblox ||
+                                currentTargetProc.ProcessName.Equals("javaw", StringComparison.OrdinalIgnoreCase) ||
                                 currentTargetProc.ProcessName.Equals("java", StringComparison.OrdinalIgnoreCase) ||
-                                game.ProcessName.Contains("javaw", StringComparison.OrdinalIgnoreCase) ||
-                                game.ProcessName.Contains("minecraft", StringComparison.OrdinalIgnoreCase))
+                                currentTargetProc.ProcessName.Equals("RobloxPlayerBeta", StringComparison.OrdinalIgnoreCase) ||
+                                currentTargetProc.ProcessName.Equals("Windows10Universal", StringComparison.OrdinalIgnoreCase))
                             {
                                 try
                                 {
@@ -641,19 +688,6 @@ public class OptimizationCoordinator : IDisposable, IAsyncDisposable
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Watcher error: {ex.Message}");
-                }
-                finally
-                {
-                    if (processes != null)
-                    {
-                        foreach (var p in processes)
-                        {
-                            if (!ReferenceEquals(p, currentTargetProc))
-                            {
-                                try { p.Dispose(); } catch { }
-                            }
-                        }
-                    }
                 }
 
                 try

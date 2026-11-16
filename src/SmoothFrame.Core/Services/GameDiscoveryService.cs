@@ -62,13 +62,16 @@ public class GameDiscoveryService
         // 6. Riot Games
         games.AddRange(GetRiotGames());
 
-        // 7. Custom Games
+        // 7. Roblox Games
+        games.AddRange(GetRobloxGames());
+
+        // 8. Custom Games
         games.AddRange(GetCustomGames());
 
         // Deduplicate by normalized executable path AND by game name
         return games
-            .Where(g => !IsExcludedGame(g.Name))
-            .GroupBy(g => NormalizePathSafe(g.ExecutablePath))
+            .Where(g => !string.IsNullOrWhiteSpace(g.Name) && !IsExcludedGame(g.Name))
+            .GroupBy(g => !string.IsNullOrWhiteSpace(g.ExecutablePath) ? NormalizePathSafe(g.ExecutablePath) : g.Id)
             .Select(grp => grp.First())
             .GroupBy(g => g.Name.Trim().ToLowerInvariant())
             .Select(grp => grp.First())
@@ -78,13 +81,14 @@ public class GameDiscoveryService
 
     private static string NormalizePathSafe(string path)
     {
+        if (string.IsNullOrWhiteSpace(path)) return string.Empty;
         try
         {
             return Path.GetFullPath(path).ToLowerInvariant();
         }
         catch
         {
-            return (path ?? string.Empty).Trim().ToLowerInvariant();
+            return path.Trim().ToLowerInvariant();
         }
     }
 
@@ -413,31 +417,302 @@ public class GameDiscoveryService
             ("League of Legends", @"Riot Games\League of Legends\LeagueClient.exe")
         };
 
-        var drives = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Fixed);
-        foreach (var drive in drives)
+        try
         {
-            foreach (var (name, relPath) in commonRiotGames)
+            DriveInfo[] drives;
+            try
+            {
+                drives = DriveInfo.GetDrives();
+            }
+            catch
+            {
+                return list;
+            }
+
+            foreach (var drive in drives)
             {
                 try
                 {
-                    var fullPath = Path.Combine(drive.RootDirectory.FullName, relPath);
-                    if (File.Exists(fullPath))
+                    if (!drive.IsReady || drive.DriveType != DriveType.Fixed)
+                        continue;
+
+                    foreach (var (name, relPath) in commonRiotGames)
                     {
-                        list.Add(new GameInfo
+                        try
                         {
-                            Name = name,
-                            ExecutablePath = fullPath,
-                            ProcessName = Path.GetFileNameWithoutExtension(fullPath),
-                            IconBase64 = ExtractIconAsBase64(fullPath),
-                            Source = GameSource.Riot
-                        });
+                            var fullPath = Path.Combine(drive.RootDirectory.FullName, relPath);
+                            if (File.Exists(fullPath))
+                            {
+                                list.Add(new GameInfo
+                                {
+                                    Name = name,
+                                    ExecutablePath = fullPath,
+                                    ProcessName = Path.GetFileNameWithoutExtension(fullPath),
+                                    IconBase64 = ExtractIconAsBase64(fullPath),
+                                    Source = GameSource.Riot
+                                });
+                            }
+                        }
+                        catch { }
                     }
                 }
                 catch { }
             }
         }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to discover Riot games: {ex.Message}");
+        }
 
         return list;
+    }
+
+    public List<GameInfo> GetRobloxGames()
+    {
+        var list = new List<GameInfo>();
+
+        try
+        {
+            string? bestExe = null;
+
+            // 1. Scan %LOCALAPPDATA%\Roblox\Versions (Standard user install)
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            if (!string.IsNullOrEmpty(localAppData))
+            {
+                bestExe = FindLatestRobloxExecutable(Path.Combine(localAppData, "Roblox", "Versions"));
+            }
+
+            // 2. Scan %ProgramFiles(x86)%\Roblox\Versions & %ProgramFiles%\Roblox\Versions (System-wide install)
+            if (string.IsNullOrEmpty(bestExe))
+            {
+                var progFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+                if (!string.IsNullOrEmpty(progFilesX86))
+                {
+                    bestExe = FindLatestRobloxExecutable(Path.Combine(progFilesX86, "Roblox", "Versions"));
+                }
+            }
+
+            if (string.IsNullOrEmpty(bestExe))
+            {
+                var progFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                if (!string.IsNullOrEmpty(progFiles))
+                {
+                    bestExe = FindLatestRobloxExecutable(Path.Combine(progFiles, "Roblox", "Versions"));
+                }
+            }
+
+            // 3. Scan Registry Protocol Association (roblox-player://)
+            if (string.IsNullOrEmpty(bestExe))
+            {
+                var protocolKeys = new[]
+                {
+                    (Registry.CurrentUser, @"Software\Classes\roblox-player\shell\open\command"),
+                    (Registry.ClassesRoot, @"roblox-player\shell\open\command")
+                };
+
+                foreach (var (rootKey, subPath) in protocolKeys)
+                {
+                    try
+                    {
+                        using var key = rootKey.OpenSubKey(subPath);
+                        var cmd = key?.GetValue(null) as string;
+                        if (!string.IsNullOrWhiteSpace(cmd))
+                        {
+                            var match = Regex.Match(cmd, "(?:\"(?<path>[^\"]+RobloxPlayer(?:Beta|Launcher)\\.exe)\"|(?<path>[^\\s\"]+RobloxPlayer(?:Beta|Launcher)\\.exe))", RegexOptions.IgnoreCase);
+                            if (match.Success)
+                            {
+                                var launcherPath = match.Groups["path"].Value;
+                                var dir = Path.GetDirectoryName(launcherPath);
+                                if (!string.IsNullOrEmpty(dir))
+                                {
+                                    var playerBeta = Path.Combine(dir, "RobloxPlayerBeta.exe");
+                                    if (File.Exists(playerBeta))
+                                    {
+                                        bestExe = playerBeta;
+                                        break;
+                                    }
+                                    else if (File.Exists(launcherPath))
+                                    {
+                                        bestExe = launcherPath;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+            // 4. Scan Registry Uninstall keys
+            if (string.IsNullOrEmpty(bestExe))
+            {
+                var uninstallKeys = new[]
+                {
+                    @"Software\Microsoft\Windows\CurrentVersion\Uninstall",
+                    @"Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+                };
+
+                foreach (var baseKey in new[] { Registry.CurrentUser, Registry.LocalMachine })
+                {
+                    foreach (var uninstPath in uninstallKeys)
+                    {
+                        try
+                        {
+                            using var key = baseKey.OpenSubKey(uninstPath);
+                            if (key == null) continue;
+
+                            foreach (var subName in key.GetSubKeyNames())
+                            {
+                                if (!subName.Contains("Roblox", StringComparison.OrdinalIgnoreCase)) continue;
+
+                                using var subKey = key.OpenSubKey(subName);
+                                if (subKey == null) continue;
+
+                                var installLoc = subKey.GetValue("InstallLocation") as string;
+                                if (!string.IsNullOrEmpty(installLoc) && Directory.Exists(installLoc))
+                                {
+                                    var candidate = FindLatestRobloxExecutable(installLoc) ?? FindLatestRobloxExecutable(Path.Combine(installLoc, "Versions"));
+                                    if (!string.IsNullOrEmpty(candidate))
+                                    {
+                                        bestExe = candidate;
+                                        break;
+                                    }
+                                }
+
+                                var displayIcon = subKey.GetValue("DisplayIcon") as string;
+                                if (!string.IsNullOrEmpty(displayIcon))
+                                {
+                                    var cleanIconPath = displayIcon.Trim('"', ' ', ',');
+                                    if (cleanIconPath.Contains(','))
+                                        cleanIconPath = cleanIconPath.Split(',')[0].Trim();
+
+                                    if (File.Exists(cleanIconPath) && cleanIconPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var dir = Path.GetDirectoryName(cleanIconPath);
+                                        var playerBeta = Path.Combine(dir ?? "", "RobloxPlayerBeta.exe");
+                                        bestExe = File.Exists(playerBeta) ? playerBeta : cleanIconPath;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(bestExe)) break;
+                        }
+                        catch { }
+                    }
+                    if (!string.IsNullOrEmpty(bestExe)) break;
+                }
+            }
+
+            // If found, add standalone Roblox Player
+            if (!string.IsNullOrEmpty(bestExe) && File.Exists(bestExe))
+            {
+                list.Add(new GameInfo
+                {
+                    Name = "Roblox",
+                    ExecutablePath = bestExe,
+                    ProcessName = Path.GetFileNameWithoutExtension(bestExe),
+                    IconBase64 = ExtractIconAsBase64(bestExe),
+                    Source = GameSource.Roblox
+                });
+            }
+
+            // 5. Scan Microsoft Store (UWP) Roblox
+            var uwpRoblox = FindUwpRoblox();
+            if (uwpRoblox != null)
+            {
+                list.Add(uwpRoblox);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to discover Roblox games: {ex.Message}");
+        }
+
+        return list;
+    }
+
+    private static string? FindLatestRobloxExecutable(string versionsDir)
+    {
+        try
+        {
+            if (!Directory.Exists(versionsDir)) return null;
+
+            var direct = Path.Combine(versionsDir, "RobloxPlayerBeta.exe");
+            if (File.Exists(direct)) return direct;
+
+            var subDirs = Directory.GetDirectories(versionsDir)
+                .Select(d => new DirectoryInfo(d))
+                .OrderByDescending(d => d.LastWriteTimeUtc)
+                .ToList();
+
+            foreach (var dir in subDirs)
+            {
+                var candidate = Path.Combine(dir.FullName, "RobloxPlayerBeta.exe");
+                if (File.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+
+            foreach (var dir in subDirs)
+            {
+                var candidate = Directory.GetFiles(dir.FullName, "RobloxPlayer*.exe").FirstOrDefault();
+                if (!string.IsNullOrEmpty(candidate) && File.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+        }
+        catch { }
+
+        return null;
+    }
+
+    private static GameInfo? FindUwpRoblox()
+    {
+        var packageRoots = new[]
+        {
+            (Registry.CurrentUser, @"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages"),
+            (Registry.LocalMachine, @"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages")
+        };
+
+        foreach (var (rootKey, subPath) in packageRoots)
+        {
+            try
+            {
+                using var key = rootKey.OpenSubKey(subPath);
+                if (key != null)
+                {
+                    foreach (var subName in key.GetSubKeyNames())
+                    {
+                        if (subName.StartsWith("ROBLOXCORPORATION.ROBLOX", StringComparison.OrdinalIgnoreCase))
+                        {
+                            using var pkgKey = key.OpenSubKey(subName);
+                            var rootFolder = pkgKey?.GetValue("PackageRootFolder") as string;
+                            if (!string.IsNullOrEmpty(rootFolder) && Directory.Exists(rootFolder))
+                            {
+                                var exe = Path.Combine(rootFolder, "Windows10Universal.exe");
+                                if (File.Exists(exe))
+                                {
+                                    return new GameInfo
+                                    {
+                                        Name = "Roblox",
+                                        ExecutablePath = exe,
+                                        ProcessName = "Windows10Universal",
+                                        IconBase64 = ExtractIconAsBase64(exe),
+                                        Source = GameSource.Roblox
+                                    };
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        return null;
     }
 
     private static readonly object CustomGamesLock = new();
@@ -551,6 +826,9 @@ public class GameDiscoveryService
 
     public static string? ExtractIconAsBase64(string filePath)
     {
+        if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+            return null;
+
         try
         {
             using var icon = Icon.ExtractAssociatedIcon(filePath);
@@ -603,7 +881,10 @@ public class GameDiscoveryService
                     Regex.Replace(Path.GetFileNameWithoutExtension(p), @"[^\p{L}\p{N}]", "").ToLowerInvariant().Contains(cleanGame));
             }
 
-            return bestMatch ?? exes.OrderByDescending(p => new FileInfo(p).Length).FirstOrDefault();
+            return bestMatch ?? exes.OrderByDescending(p =>
+            {
+                try { return new FileInfo(p).Length; } catch { return 0L; }
+            }).FirstOrDefault();
         }
         catch
         {

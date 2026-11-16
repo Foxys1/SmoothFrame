@@ -827,18 +827,32 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
                     var runningGame = FindRunningGame();
                     if (runningGame != null)
                     {
-                        if (Application.Current?.Dispatcher != null)
+                        var dispatcher = Application.Current?.Dispatcher;
+                        if (dispatcher != null)
                         {
-                            await Application.Current.Dispatcher.InvokeAsync(async () =>
+                            if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
                             {
-                                if (!IsOptimizing && AutoBoostOnGameLaunch)
+                                await dispatcher.InvokeAsync(async () =>
                                 {
-                                    SelectedGame = runningGame;
-                                    _wasAutoStarted = true;
-                                    _autoStartedPid = GetRunningPid(runningGame);
-                                    await ToggleOptimizationAsync(isAutomated: true);
-                                }
-                            }).Task.Unwrap();
+                                    if (!IsOptimizing && AutoBoostOnGameLaunch && !_disposed)
+                                    {
+                                        SelectedGame = runningGame;
+                                        _wasAutoStarted = true;
+                                        _autoStartedPid = GetRunningPid(runningGame);
+                                        await ToggleOptimizationAsync(isAutomated: true);
+                                    }
+                                }).Task.Unwrap();
+                            }
+                        }
+                        else
+                        {
+                            if (!IsOptimizing && AutoBoostOnGameLaunch && !_disposed)
+                            {
+                                SelectedGame = runningGame;
+                                _wasAutoStarted = true;
+                                _autoStartedPid = GetRunningPid(runningGame);
+                                await ToggleOptimizationAsync(isAutomated: true);
+                            }
                         }
                     }
                 }
@@ -848,28 +862,59 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
                     try
                     {
                         using var proc = Process.GetProcessById(_autoStartedPid);
-                        if (!proc.HasExited) stillRunning = true;
+                        if (!proc.HasExited)
+                        {
+                            string currentProcName = proc.ProcessName;
+                            if (SelectedGame != null)
+                            {
+                                string targetProc = Path.GetFileNameWithoutExtension(SelectedGame.ExecutablePath ?? SelectedGame.Name);
+                                if (currentProcName.Equals(targetProc, StringComparison.OrdinalIgnoreCase) ||
+                                    (SelectedGame.Source == GameSource.Roblox && (currentProcName.Equals("RobloxPlayerBeta", StringComparison.OrdinalIgnoreCase) || currentProcName.Equals("Windows10Universal", StringComparison.OrdinalIgnoreCase))) ||
+                                    (SelectedGame.Name.Contains("Minecraft", StringComparison.OrdinalIgnoreCase) && (currentProcName.Equals("javaw", StringComparison.OrdinalIgnoreCase) || currentProcName.Equals("java", StringComparison.OrdinalIgnoreCase))))
+                                {
+                                    stillRunning = true;
+                                }
+                            }
+                            else
+                            {
+                                stillRunning = true;
+                            }
+                        }
                     }
                     catch { }
 
                     if (!stillRunning)
                     {
-                        if (Application.Current?.Dispatcher != null)
+                        var dispatcher = Application.Current?.Dispatcher;
+                        if (dispatcher != null)
                         {
-                            await Application.Current.Dispatcher.InvokeAsync(async () =>
+                            if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
                             {
-                                if (IsOptimizing && _wasAutoStarted)
+                                await dispatcher.InvokeAsync(async () =>
                                 {
-                                    _wasAutoStarted = false;
-                                    _autoStartedPid = 0;
-                                    await ToggleOptimizationAsync(isAutomated: true);
-                                }
-                            }).Task.Unwrap();
+                                    if (IsOptimizing && _wasAutoStarted && !_disposed)
+                                    {
+                                        _wasAutoStarted = false;
+                                        _autoStartedPid = 0;
+                                        await ToggleOptimizationAsync(isAutomated: true);
+                                    }
+                                }).Task.Unwrap();
+                            }
+                        }
+                        else
+                        {
+                            if (IsOptimizing && _wasAutoStarted && !_disposed)
+                            {
+                                _wasAutoStarted = false;
+                                _autoStartedPid = 0;
+                                await ToggleOptimizationAsync(isAutomated: true);
+                            }
                         }
                     }
                 }
             }
             catch (OperationCanceledException) { break; }
+            catch (ObjectDisposedException) { break; }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"AutoWatcher loop error: {ex.Message}");
@@ -882,17 +927,212 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         Process[]? processes = null;
         try
         {
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher != null && (dispatcher.HasShutdownStarted || dispatcher.HasShutdownFinished))
+                return null;
+
+            GameInfo[] gamesSnapshot;
+            if (dispatcher != null && !dispatcher.CheckAccess())
+            {
+                try
+                {
+                    gamesSnapshot = dispatcher.Invoke(() => Games.ToArray());
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                gamesSnapshot = Games.ToArray();
+            }
+
             processes = Process.GetProcesses();
             var processNames = new HashSet<string>(processes.Select(p => p.ProcessName), StringComparer.OrdinalIgnoreCase);
 
-            var gamesSnapshot = Games.ToArray();
             foreach (var game in gamesSnapshot)
             {
                 string targetProc = Path.GetFileNameWithoutExtension(game.ExecutablePath ?? game.Name);
                 if (!string.IsNullOrEmpty(targetProc) && processNames.Contains(targetProc))
                 {
+                    // If it's Roblox, self-heal live ExecutablePath in case Roblox auto-updated to a newer version folder
+                    if (game.Source == GameSource.Roblox || targetProc.Equals("RobloxPlayerBeta", StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            var proc = processes.FirstOrDefault(p => p.ProcessName.Equals(targetProc, StringComparison.OrdinalIgnoreCase));
+                            string? livePath = null;
+                            try { livePath = proc?.MainModule?.FileName; } catch { }
+                            if (string.IsNullOrEmpty(livePath) && proc != null)
+                            {
+                                livePath = ProcessTunerService.TryGetExecutablePath(proc);
+                            }
+
+                            if (!string.IsNullOrEmpty(livePath) && File.Exists(livePath) && !livePath.Equals(game.ExecutablePath, StringComparison.OrdinalIgnoreCase))
+                            {
+                                game.ExecutablePath = livePath;
+                            }
+                        }
+                        catch { }
+                    }
+
                     return game;
                 }
+            }
+
+            // Dynamic auto-discovery fallback for active Roblox session (Standalone / Web)
+            if (processNames.Contains("RobloxPlayerBeta"))
+            {
+                var existingRoblox = gamesSnapshot.FirstOrDefault(g =>
+                    g.Source == GameSource.Roblox ||
+                    g.ProcessName.Equals("RobloxPlayerBeta", StringComparison.OrdinalIgnoreCase) ||
+                    g.Name.Equals("Roblox", StringComparison.OrdinalIgnoreCase));
+
+                if (existingRoblox != null)
+                {
+                    return existingRoblox;
+                }
+
+                try
+                {
+                    var liveProc = processes.FirstOrDefault(p => p.ProcessName.Equals("RobloxPlayerBeta", StringComparison.OrdinalIgnoreCase));
+                    string? livePath = null;
+                    try { livePath = liveProc?.MainModule?.FileName; } catch { }
+                    if (string.IsNullOrEmpty(livePath) && liveProc != null)
+                    {
+                        livePath = ProcessTunerService.TryGetExecutablePath(liveProc);
+                    }
+
+                    if (!string.IsNullOrEmpty(livePath) && File.Exists(livePath))
+                    {
+                        var newRoblox = new GameInfo
+                        {
+                            Name = "Roblox",
+                            ExecutablePath = livePath,
+                            ProcessName = "RobloxPlayerBeta",
+                            IconBase64 = GameDiscoveryService.ExtractIconAsBase64(livePath),
+                            Source = GameSource.Roblox
+                        };
+
+                        if (dispatcher != null)
+                        {
+                            if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
+                            {
+                                if (!dispatcher.CheckAccess())
+                                {
+                                    dispatcher.Invoke(() =>
+                                    {
+                                        if (!Games.Any(g => g.ProcessName.Equals("RobloxPlayerBeta", StringComparison.OrdinalIgnoreCase) ||
+                                                            g.Source == GameSource.Roblox ||
+                                                            g.Name.Equals("Roblox", StringComparison.OrdinalIgnoreCase)))
+                                        {
+                                            Games.Add(newRoblox);
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    if (!Games.Any(g => g.ProcessName.Equals("RobloxPlayerBeta", StringComparison.OrdinalIgnoreCase) ||
+                                                        g.Source == GameSource.Roblox ||
+                                                        g.Name.Equals("Roblox", StringComparison.OrdinalIgnoreCase)))
+                                    {
+                                        Games.Add(newRoblox);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Games.Add(newRoblox);
+                        }
+
+                        return newRoblox;
+                    }
+                }
+                catch { }
+            }
+
+            // Dynamic auto-discovery fallback for Microsoft Store (UWP) Roblox
+            if (processNames.Contains("Windows10Universal"))
+            {
+                try
+                {
+                    var liveProc = processes.FirstOrDefault(p => p.ProcessName.Equals("Windows10Universal", StringComparison.OrdinalIgnoreCase));
+                    if (liveProc != null)
+                    {
+                        bool isRoblox = false;
+                        string? livePath = null;
+                        try { livePath = liveProc.MainModule?.FileName; } catch { }
+                        if (string.IsNullOrEmpty(livePath))
+                        {
+                            livePath = ProcessTunerService.TryGetExecutablePath(liveProc);
+                        }
+
+                        if (!string.IsNullOrEmpty(livePath) && livePath.Contains("ROBLOX", StringComparison.OrdinalIgnoreCase))
+                        {
+                            isRoblox = true;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                if (!string.IsNullOrEmpty(liveProc.MainWindowTitle) && liveProc.MainWindowTitle.Contains("Roblox", StringComparison.OrdinalIgnoreCase))
+                                    isRoblox = true;
+                            }
+                            catch { }
+                        }
+
+                        if (isRoblox)
+                        {
+                            var existing = gamesSnapshot.FirstOrDefault(g => g.ProcessName.Equals("Windows10Universal", StringComparison.OrdinalIgnoreCase) || (g.Source == GameSource.Roblox && g.Name.Equals("Roblox", StringComparison.OrdinalIgnoreCase)));
+                            if (existing != null) return existing;
+
+                            if (!string.IsNullOrEmpty(livePath) && File.Exists(livePath))
+                            {
+                                var uwpRoblox = new GameInfo
+                                {
+                                    Name = "Roblox",
+                                    ExecutablePath = livePath,
+                                    ProcessName = "Windows10Universal",
+                                    IconBase64 = GameDiscoveryService.ExtractIconAsBase64(livePath),
+                                    Source = GameSource.Roblox
+                                };
+
+                                if (dispatcher != null)
+                                {
+                                    if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
+                                    {
+                                        if (!dispatcher.CheckAccess())
+                                        {
+                                            dispatcher.Invoke(() =>
+                                            {
+                                                if (!Games.Any(g => g.ProcessName.Equals("Windows10Universal", StringComparison.OrdinalIgnoreCase)))
+                                                {
+                                                    Games.Add(uwpRoblox);
+                                                }
+                                            });
+                                        }
+                                        else
+                                        {
+                                            if (!Games.Any(g => g.ProcessName.Equals("Windows10Universal", StringComparison.OrdinalIgnoreCase)))
+                                            {
+                                                Games.Add(uwpRoblox);
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    Games.Add(uwpRoblox);
+                                }
+
+                                return uwpRoblox;
+                            }
+                        }
+                    }
+                }
+                catch { }
             }
         }
         catch { }
@@ -915,9 +1155,66 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         try
         {
             string targetProc = Path.GetFileNameWithoutExtension(game.ExecutablePath ?? game.Name);
-            procs = Process.GetProcessesByName(targetProc);
-            var proc = procs.FirstOrDefault();
-            return proc?.Id ?? 0;
+            if (!string.IsNullOrWhiteSpace(targetProc))
+            {
+                procs = Process.GetProcessesByName(targetProc);
+                var proc = procs.FirstOrDefault(p => { try { return !p.HasExited; } catch { return false; } });
+                if (proc != null) return proc.Id;
+            }
+
+            // Minecraft fallback if targetProc was "Minecraft" instead of "javaw" / "java"
+            if (game.Name.Contains("Minecraft", StringComparison.OrdinalIgnoreCase))
+            {
+                var jProcs = Process.GetProcessesByName("javaw");
+                try
+                {
+                    var liveJ = jProcs.FirstOrDefault(p => { try { return !p.HasExited; } catch { return false; } });
+                    if (liveJ != null) return liveJ.Id;
+                }
+                finally
+                {
+                    foreach (var p in jProcs) try { p.Dispose(); } catch { }
+                }
+
+                var javaProcs = Process.GetProcessesByName("java");
+                try
+                {
+                    var liveJava = javaProcs.FirstOrDefault(p => { try { return !p.HasExited; } catch { return false; } });
+                    if (liveJava != null) return liveJava.Id;
+                }
+                finally
+                {
+                    foreach (var p in javaProcs) try { p.Dispose(); } catch { }
+                }
+            }
+
+            // Roblox fallback if proc name didn't match directly
+            if (game.Source == GameSource.Roblox || game.Name.Equals("Roblox", StringComparison.OrdinalIgnoreCase))
+            {
+                var rProcs = Process.GetProcessesByName("RobloxPlayerBeta");
+                try
+                {
+                    var liveR = rProcs.FirstOrDefault(p => { try { return !p.HasExited; } catch { return false; } });
+                    if (liveR != null) return liveR.Id;
+                }
+                finally
+                {
+                    foreach (var p in rProcs) try { p.Dispose(); } catch { }
+                }
+
+                var uProcs = Process.GetProcessesByName("Windows10Universal");
+                try
+                {
+                    var liveU = uProcs.FirstOrDefault(p => { try { return !p.HasExited; } catch { return false; } });
+                    if (liveU != null) return liveU.Id;
+                }
+                finally
+                {
+                    foreach (var p in uProcs) try { p.Dispose(); } catch { }
+                }
+            }
+
+            return 0;
         }
         catch { return 0; }
         finally
@@ -1114,6 +1411,10 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
             else if (Games.Count > 0)
             {
                 SelectedGame = Games[0];
+            }
+            else
+            {
+                SelectedGame = null;
             }
         }
 
