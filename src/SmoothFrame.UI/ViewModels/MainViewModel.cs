@@ -495,6 +495,9 @@ public class MainViewModel : INotifyPropertyChanged, IDisposable
         private set { _gameModeStatusText = value; OnPropertyChanged(); }
     }
 
+    public string AppVersionText => $"v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "3.1.0"}";
+    public string AppTitleWithVersion => $"SmoothFrame {AppVersionText}";
+
     public string WindowsVersionText
     {
         get => _windowsVersionText;

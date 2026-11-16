@@ -1156,6 +1156,8 @@
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                     <TextBlock VerticalAlignment="Center" FontSize="10.5" Foreground="{DynamicResource BrushTextMuted}"
                                TextWrapping="Wrap">
+                        <Run Text="{Binding AppTitleWithVersion, Mode=OneWay}" />
+                        <Run Text=" — " />
                         <Run Text="{DynamicResource Footer.Left}" />
                         <Run Text=" · " />
                         <Run Text="{Binding WindowsVersionText, Mode=OneWay}" />

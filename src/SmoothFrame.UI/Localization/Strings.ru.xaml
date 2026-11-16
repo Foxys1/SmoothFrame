@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Настройки</sys:String>
     <sys:String x:Key="Nav.Protect">Защита</sys:String>
     <sys:String x:Key="Side.Language">Язык интерфейса</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.3.0 — безопасный оптимизатор игрового процесса</sys:String>
+    <sys:String x:Key="Footer.Left">безопасный оптимизатор игрового процесса</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">ОПТИМИЗАЦИЯ АКТИВНА • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">СИСТЕМА В НОРМЕ • ОЖИДАНИЕ ИГРЫ</sys:String>
@@ -103,7 +103,7 @@
     <sys:String x:Key="Dialog.Close.Cancel">Отмена</sys:String>
     <sys:String x:Key="Set.Lang.Title">Язык интерфейса</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Мгновенное переключение языка программы (English / Русский).</sys:String>
-    <sys:String x:Key="Set.Engine.Title">Фоновая служба SmoothFrame Engine v2.3.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">Фоновая служба SmoothFrame Engine Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Безопасный режим Win32 API • 0% инъекций в память • Совместимо со всеми античитами</sys:String>
     <sys:String x:Key="Set.Engine.Badge">АКТИВНО</sys:String>
 

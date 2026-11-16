@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">Settings</sys:String>
     <sys:String x:Key="Nav.Protect">Protection</sys:String>
     <sys:String x:Key="Side.Language">Interface language</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.3.0 — safe game-process optimizer</sys:String>
+    <sys:String x:Key="Footer.Left">safe game-process optimizer</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">OPTIMIZATION ACTIVE • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">SYSTEM READY • STANDBY FOR GAME</sys:String>
@@ -103,7 +103,7 @@
     <sys:String x:Key="Dialog.Close.Cancel">Cancel</sys:String>
     <sys:String x:Key="Set.Lang.Title">Interface language</sys:String>
     <sys:String x:Key="Set.Lang.Desc">Instant language switching across the entire application (English / Russian).</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.3.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">Safe Win32 API mode • 0% memory injection • Safe for all anti-cheats</sys:String>
     <sys:String x:Key="Set.Engine.Badge">ACTIVE</sys:String>
 

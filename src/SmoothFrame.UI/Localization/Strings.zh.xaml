@@ -12,7 +12,7 @@
     <sys:String x:Key="Nav.Settings">设置</sys:String>
     <sys:String x:Key="Nav.Protect">防护</sys:String>
     <sys:String x:Key="Side.Language">界面语言</sys:String>
-    <sys:String x:Key="Footer.Left">SmoothFrame v2.3.0 — 安全的游戏进程优化器</sys:String>
+    <sys:String x:Key="Footer.Left">安全的游戏进程优化器</sys:String>
     <sys:String x:Key="Footer.Right">Windows 10/11 x64</sys:String>
     <sys:String x:Key="TitleBar.Active">优化已启用 • 0.50 ms ULTRA-LOW</sys:String>
     <sys:String x:Key="TitleBar.Standby">系统就绪 • 等待游戏启动</sys:String>
@@ -201,7 +201,7 @@
     <sys:String x:Key="Set.Group.AutomationDesc">游戏检测规则、Windows 开机自启与全局快捷键</sys:String>
     <sys:String x:Key="Set.Group.App">界面与系统</sys:String>
     <sys:String x:Key="Set.Group.AppDesc">界面语言偏好与 SmoothFrame 后台引擎运行状态</sys:String>
-    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service v2.3.0 Pro</sys:String>
+    <sys:String x:Key="Set.Engine.Title">SmoothFrame Engine Service Pro</sys:String>
     <sys:String x:Key="Set.Engine.Desc">安全 Win32 API 模式 • 0% 内存注入 • 适配所有主流反作弊系统</sys:String>
     <sys:String x:Key="Set.Engine.Badge">已激活</sys:String>
 
