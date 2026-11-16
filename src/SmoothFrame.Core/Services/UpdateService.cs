@@ -11,7 +11,7 @@ namespace SmoothFrame.Core.Services;
 public class UpdateCheckResult
 {
     public bool IsUpdateAvailable { get; set; }
-    public string CurrentVersion { get; set; } = "v3.1.0";
+    public string CurrentVersion { get; set; } = "v3.1.1";
     public string LatestVersion { get; set; } = "";
     public string ReleaseName { get; set; } = "";
     public string ReleaseNotes { get; set; } = "";
@@ -33,7 +33,7 @@ public static class UpdateService
     {
         var asmVer = Assembly.GetEntryAssembly()?.GetName().Version 
                      ?? typeof(UpdateService).Assembly.GetName().Version;
-        if (asmVer == null) return new Version(3, 1, 0, 0);
+        if (asmVer == null) return new Version(3, 1, 1, 0);
         return new Version(
             Math.Max(0, asmVer.Major),
             Math.Max(0, asmVer.Minor),
@@ -55,7 +55,7 @@ public static class UpdateService
         try
         {
             using var req = new HttpRequestMessage(HttpMethod.Get, GitHubApiReleasesUrl);
-            req.Headers.UserAgent.Add(new ProductInfoHeaderValue("SmoothFrame-App", "3.1.0"));
+            req.Headers.UserAgent.Add(new ProductInfoHeaderValue("SmoothFrame-App", "3.1.1"));
             req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
 
             using var resp = await _httpClient.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);

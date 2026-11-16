@@ -44,21 +44,19 @@ foreach ($prevTag in @("v2.1.0", "v2.1.1")) {
 }
 
 $releaseNotes = @'
-# SmoothFrame v3.1.0 :zap:
+# SmoothFrame v3.1.1 :zap:
 
 A modern, transparent, safe, and 100% reversible game optimization suite for Windows 10 & 11.
 
-## What's New in v3.1.0:
-- **Native Roblox Auto-Discovery & Dynamic Process Self-Healing**:
+## What's New in v3.1.1:
+- **Dynamic Assembly Version Binding in UI**:
+  - The Status Footer and System Tray tooltip now dynamically bind to `Assembly.Version`, completely eliminating static version lag across all 6 localization languages.
+- **Native Roblox Auto-Discovery & Dynamic Process Self-Healing (from v3.1)**:
   - Full discovery across `%LOCALAPPDATA%\Roblox\Versions`, `Program Files`, registry protocol `roblox-player://`, uninstall entries, and Microsoft Store (UWP `ROBLOXCORPORATION.ROBLOX`).
   - **Path Self-Healing**: Dynamic tracking of changing version folders (`version-*`) without manual re-selection or app restarts.
   - **Live Process Fallback**: Instant automatic detection and optimization of running `RobloxPlayerBeta.exe` and `Windows10Universal.exe` processes.
   - **Discrete GPU Binding**: Automatically enforces high-performance discrete GPU mode via Windows Graphics preferences.
-- **Robust Process Safety & Thread Marshaling**:
-  - Thread-safe WPF `Dispatcher` marshaling for dynamic game library updates.
-  - Guaranteed process handle cleanup preventing OS descriptor leaks.
-  - 100% test pass rate across 443 unit, integration, and empirical gaming stress tests.
-- **Eye-Care Violet UI & Theme Engine (From v3.0)**:
+- **Eye-Care Violet UI & Theme Engine**:
   - Deep violet cyber aesthetic (`#08080C`, `#8B5CF6`) designed to eliminate eye strain during night sessions ("теперь не режет глаза!").
   - Windows-style update management (Snooze, Pause, Skip version).
   - Physics-based smooth scrolling (`SmoothScrollViewer`).
@@ -68,9 +66,9 @@ Download **SmoothFrame_Setup.exe** below and run the installer.
 '@
 
 $bodyObj = @{
-    tag_name = "v3.1.0"
+    tag_name = "v3.1.1"
     target_commitish = "main"
-    name = "SmoothFrame v3.1.0 - Roblox Native Auto-Discovery & Dynamic Process Self-Healing"
+    name = "SmoothFrame v3.1.1 - Dynamic UI Version Binding & Eye-Care Hotfix"
     body = $releaseNotes
     draft = $false
     prerelease = $false
